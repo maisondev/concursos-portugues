@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
+import { useRoadmapStore } from '@/stores/roadmap'
+import AppLayout from '@/components/templates/AppLayout.vue'
 import { onMounted } from 'vue'
 
-const router = useRouter()
 const settingsStore = useSettingsStore()
+const roadmapStore = useRoadmapStore()
 
 onMounted(() => {
   settingsStore.initSettings()
+  roadmapStore.initRoadmap()
 })
 </script>
 
 <template>
-  <RouterView />
+  <AppLayout />
 </template>
 
 <style>
