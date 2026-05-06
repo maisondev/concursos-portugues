@@ -40,6 +40,8 @@ export interface Block {
 }
 
 // Roadmap Types
+export type RoadmapColor = 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'pink' | 'orange' | 'gray'
+
 export interface Roadmap {
   id: string
   title: string
@@ -49,6 +51,7 @@ export interface Roadmap {
   updatedAt: string
   order?: number
   rating?: number
+  color?: RoadmapColor
 }
 
 // Daily Log Types

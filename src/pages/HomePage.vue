@@ -92,6 +92,10 @@ function handleRoadmapMoveDown(roadmapId: string) {
   roadmapStore.moveRoadmapDown(roadmapId)
   initRoadmapOrder()
 }
+
+function handleRoadmapUpdateColor(roadmapId: string, color: string) {
+  roadmapStore.updateRoadmapColor(roadmapId, color as any)
+}
 </script>
 
 <template>
@@ -157,6 +161,7 @@ function handleRoadmapMoveDown(roadmapId: string) {
           @move-down="handleRoadmapMoveDown(id)"
           @edit="handleRoadmapEdit(id)"
           @delete="handleRoadmapDelete(id)"
+          @update-color="(color) => handleRoadmapUpdateColor(id, color)"
         />
       </div>
 

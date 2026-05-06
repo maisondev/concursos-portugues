@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
-import type { Roadmap, Block, Topic, Resource, TopicStatus } from '@/types'
+import type { Roadmap, Block, Topic, Resource, TopicStatus, RoadmapColor } from '@/types'
 import { roadmapInterpretacaoTextos } from '@/data/roadmaps/interpretacao-textos'
 
 const STORAGE_KEY = 'concursos-portugues-roadmaps-v1'
@@ -333,6 +333,14 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     }
   }
 
+  function updateRoadmapColor(id: string, color: RoadmapColor) {
+    const roadmap = roadmaps.value[id]
+    if (roadmap) {
+      roadmap.color = color
+      roadmap.updatedAt = new Date().toISOString()
+    }
+  }
+
   function moveRoadmapUp(id: string) {
     const ids = Object.keys(roadmaps.value)
     const currentIndex = ids.indexOf(id)
@@ -405,6 +413,7 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     addRoadmap,
     removeRoadmap,
     updateRoadmap,
+    updateRoadmapColor,
     moveRoadmapUp,
     moveRoadmapDown,
     persistToStorage

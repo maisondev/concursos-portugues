@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { Roadmap } from '@/types'
+import type { Roadmap, RoadmapColor } from '@/types'
 import { PencilIcon, ChevronUpIcon, ChevronDownIcon, StarIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { StarIcon as StarSolidIcon } from '@heroicons/vue/24/solid'
 import AppButton from '@/components/atoms/AppButton.vue'
@@ -26,6 +26,7 @@ interface Emits {
   moveDown: []
   edit: []
   updateRating: [rating: number]
+  updateColor: [color: RoadmapColor]
   delete: []
 }
 
@@ -35,23 +36,42 @@ withDefaults(defineProps<Props>(), {
   isEditing: false
 })
 
-defineEmits<Emits>()
+const emit = defineEmits<Emits>()
 
 const showEditModal = ref(false)
 const editTitle = ref('')
 const editDescription = ref('')
 const editRating = ref(0)
+const editColor = ref<RoadmapColor>('blue')
+
+const colors: { color: RoadmapColor; label: string; class: string }[] = [
+  { color: 'blue', label: 'Azul', class: 'bg-blue-500' },
+  { color: 'red', label: 'Vermelho', class: 'bg-red-500' },
+  { color: 'green', label: 'Verde', class: 'bg-green-500' },
+  { color: 'yellow', label: 'Amarelo', class: 'bg-yellow-500' },
+  { color: 'purple', label: 'Roxo', class: 'bg-purple-500' },
+  { color: 'pink', label: 'Rosa', class: 'bg-pink-500' },
+  { color: 'orange', label: 'Laranja', class: 'bg-orange-500' },
+  { color: 'gray', label: 'Cinza', class: 'bg-gray-500' }
+]
+
+const getColorClass = (color?: RoadmapColor) => {
+  const colorObj = colors.find(c => c.color === color)
+  return colorObj?.class || colors[0].class
+}
 
 const openEditModal = () => {
   editTitle.value = props.roadmap.title
   editDescription.value = props.roadmap.description
   editRating.value = props.roadmap.rating || 0
+  editColor.value = props.roadmap.color || 'blue'
   showEditModal.value = true
 }
 
 const saveEdit = () => {
-  // Emit event para atualizar no store
-  // O parent vai fazer o update
+  if (editColor.value !== props.roadmap.color) {
+    emit('updateColor', editColor.value)
+  }
   showEditModal.value = false
 }
 
@@ -61,7 +81,10 @@ const setRating = (rating: number) => {
 </script>
 
 <template>
-  <div class="p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 space-y-4 group">
+  <div class="p-6 border-l-4 rounded-lg bg-white dark:bg-gray-800 space-y-4 group border border-gray-300 dark:border-gray-700" :class="[`border-l-${getColorClass(roadmap.color).split('-')[1]}-${getColorClass(roadmap.color).split('-')[2]}`]">
+    <!-- Color indicator -->
+    <div class="absolute top-0 left-0 w-1 h-full rounded-l" :class="getColorClass(roadmap.color)" />
+
     <!-- Header com título e botões -->
     <div class="flex items-start justify-between gap-3">
       <div class="flex-1 min-w-0 cursor-pointer group/content" @click="$emit('navigate')">
@@ -199,6 +222,25 @@ const setRating = (rating: number) => {
                 class="w-5 h-5 text-gray-300 dark:text-gray-600"
               />
             </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Cor
+          </label>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="c in colors"
+              :key="c.color"
+              @click="editColor = c.color"
+              :class="[
+                c.class,
+                'w-8 h-8 rounded-lg border-2 transition-all',
+                editColor === c.color ? 'border-gray-900 dark:border-white' : 'border-transparent'
+              ]"
+              :title="c.label"
+            />
           </div>
         </div>
       </div>
