@@ -4,6 +4,8 @@ import RoadmapPage from '@/pages/RoadmapPage.vue'
 import BlockDetailPage from '@/pages/BlockDetailPage.vue'
 import DashboardPage from '@/pages/DashboardPage.vue'
 import SettingsPage from '@/pages/SettingsPage.vue'
+import ChangelogPage from '@/pages/ChangelogPage.vue'
+import HelpPage from '@/pages/HelpPage.vue'
 
 const routes = [
   {
@@ -32,6 +34,16 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: SettingsPage
+  },
+  {
+    path: '/changelog',
+    name: 'changelog',
+    component: ChangelogPage
+  },
+  {
+    path: '/help',
+    name: 'help',
+    component: HelpPage
   },
   {
     path: '/:pathMatch(.*)*',
