@@ -72,9 +72,17 @@ Construir uma base sólida em Português para concursos, organizada em blocos pr
 ### 🟢 Módulo 1 — Fundamentos da Leitura
 | Tópico | Aula | Duração |
 |---|---|---|
-| Compreensão x Interpretação | [Pamba — Interpretação e Compreensão de Texto 2.0](https://www.youtube.com/watch?v=kjdIkG99qE8) | ~22 min ✅ |
-| Resolução de exercícios | [Pamba — Interpretação e Compreensão (Resolução de Exercícios)](https://www.youtube.com/watch?v=fUk63C5KNOA) | ~23 min ✅ |
-| Revisão geral | [Noslen — Compreensão e Interpretação de Texto (Revisão)](https://www.youtube.com/watch?v=glPhVO3NbM4) | ~33 min ⚠️ |
+| 1.1 Compreensão x Interpretação | [Pamba — Interpretação e Compreensão de Texto 2.0](https://www.youtube.com/watch?v=kjdIkG99qE8) | ~22 min ✅ |
+| 1.1 Compreensão x Interpretação | [Noslen — Compreensão e Interpretação de Texto – Revisão ENEM](https://www.youtube.com/watch?v=XsN0e_xPyNI) | ~? min |
+| 1.1 Compreensão x Interpretação | [Prof. Álvaro Ferreira — INTERPRETAÇÃO de TEXTOS para CONCURSO - Nunca mais erre!](https://www.youtube.com/watch?v=22iA3PPjr7c) | ~? min |
+| 1.1 Compreensão x Interpretação | [Rafaela Motta — Módulo 1: Aula 1/5: Compreensão e Interpretação de Textos Parte I](https://www.youtube.com/watch?v=RY5T63ZMgNE) | ~? min |
+| 1.1 Compreensão x Interpretação | [Sidney Martins — Aula 13/38 - Compreender e Interpretar Textos](https://www.youtube.com/watch?v=GUNjrcFywsY) | ~? min |
+|---|---|---|
+| 1.2 Leitura Ativa | [Prof. Tiago Benedetti — LEITURA ATIVA: Aprenda 4 estratégias simples](https://www.youtube.com/watch?v=WIqnbIcLjws) | ~13 min |
+| 1.2 Leitura Ativa | [Prof. Altermir — NÍVEIS DE LEITURA aula 01 - Vestibular com Prof. Altermir](https://www.youtube.com/watch?v=KlEx4V5ev5E) | ~10 min |
+| 1.2 Leitura Ativa | [Seja Um Estudante Melhor — 5 DICAS PARA A LEITURA ATIVA](https://www.youtube.com/watch?v=BCTzui1QyCQ) | ~5 min |
+| 1.2 Leitura Ativa | [Seja Um Estudante Melhor — O PODER DA LEITURA ATIVA](https://www.youtube.com/watch?v=BCTzui1QyCQ) | ~5 min |
+| 1.2 Leitura Ativa | [Professora Pamba — INTERPRETAÇÃO E COMPREENSÃO DE TEXTOS (Níveis de leitura)](https://www.youtube.com/watch?v=LJvZKJN_E2w) | ~12 min |
 
 ### 🟢 Módulo 2 — Tipos e Gêneros Textuais
 | Tópico | Aula |
@@ -100,6 +108,40 @@ Construir uma base sólida em Português para concursos, organizada em blocos pr
 - [Álvaro Ferreira](https://www.youtube.com/@profalvaroferreira) — formato curto e direto
 - [Cíntia Chagas](https://www.youtube.com/@cintiachagas) — bom-humor, ótima pra fixar regras
 - [Fernando Moura — Gran Cursos](https://www.grancursosonline.com.br/) — interpretação modular
+
+---
+
+## ☁️ Cursos Armazenados (Drive/OneDrive/Cloud)
+
+Materiais e cursos completos organizados por tema:
+
+### 🟢 Bloco 1 — Fundamentos da Leitura
+| Tópico | Curso | Local |
+|---|---|---|
+| 1.1 Compreensão x Interpretação | Curso completo | [Acessar Drive](link-aqui) |
+| 1.2 Leitura Ativa | [Prof. Tiago Benedetti — LEITURA ATIVA: 4 estratégias](https://www.youtube.com/watch?v=WIqnbIcLjws) | [YouTube](https://www.youtube.com/watch?v=WIqnbIcLjws) |
+| 1.2 Leitura Ativa | [Prof. Altermir — NÍVEIS DE LEITURA aula 01](https://www.youtube.com/watch?v=KlEx4V5ev5E) | [YouTube](https://www.youtube.com/watch?v=KlEx4V5ev5E) |
+| 1.2 Leitura Ativa | [Seja Um Estudante Melhor — 5 DICAS PARA A LEITURA ATIVA](https://www.youtube.com/watch?v=BCTzui1QyCQ) | [YouTube](https://www.youtube.com/watch?v=BCTzui1QyCQ) |
+| 1.2 Leitura Ativa | [Seja Um Estudante Melhor — O PODER DA LEITURA ATIVA](https://www.youtube.com/watch?v=BCTzui1QyCQ) | [YouTube](https://www.youtube.com/watch?v=BCTzui1QyCQ) |
+| 1.2 Leitura Ativa | [Professora Pamba — INTERPRETAÇÃO E COMPREENSÃO (Níveis)](https://www.youtube.com/watch?v=LJvZKJN_E2w) | [YouTube](https://www.youtube.com/watch?v=LJvZKJN_E2w) |
+
+### 🟢 Bloco 2 — Tipos e Gêneros Textuais
+| Tópico | Curso | Local |
+|---|---|---|
+| 2.1 Tipologia textual | Curso completo | [Acessar Drive](link-aqui) |
+| 2.2 Gêneros textuais | Curso completo | [Acessar Drive](link-aqui) |
+
+### 🟡 Bloco 3 — Funções da Linguagem e Intenção do Autor
+| Tópico | Curso | Local |
+|---|---|---|
+| 3.1 Funções de Jakobson | Curso completo | [Acessar Drive](link-aqui) |
+
+### 🟡 Bloco 4 — Coesão Textual ⭐
+| Tópico | Curso | Local |
+|---|---|---|
+| 4.1 Coesão referencial | Curso completo | [Acessar Drive](link-aqui) |
+| 4.2 Coesão sequencial | Curso completo | [Acessar Drive](link-aqui) |
+| 4.3 Conjunções e conectivos | Curso completo | [Acessar Drive](link-aqui) |
 
 ---
 
