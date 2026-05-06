@@ -83,7 +83,7 @@ function handleStatusChange(newStatus: boolean | 'indeterminate') {
           v-if="canMoveUp"
           variant="ghost"
           size="sm"
-          @click.stop="emit('move-up')"
+          @click="(e) => { e.stopPropagation(); emit('move-up') }"
           title="Mover tópico para cima"
         >
           <AppIcon name="chevron-up" size="sm" />
@@ -92,7 +92,7 @@ function handleStatusChange(newStatus: boolean | 'indeterminate') {
           v-if="canMoveDown"
           variant="ghost"
           size="sm"
-          @click.stop="emit('move-down')"
+          @click="(e) => { e.stopPropagation(); emit('move-down') }"
           title="Mover tópico para baixo"
         >
           <AppIcon name="chevron-down" size="sm" />

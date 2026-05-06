@@ -40,7 +40,6 @@ const sizeClasses = {
       sizeClasses[size]
     ]"
     :disabled="disabled || loading"
-    @click="$emit('click')"
   >
     <span v-if="loading" class="inline-block mr-2">⏳</span>
     <slot />

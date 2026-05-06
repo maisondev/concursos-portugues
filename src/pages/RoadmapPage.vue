@@ -151,7 +151,7 @@ function moveBlockDown(blockId: string) {
                   v-if="idx > 0"
                   variant="ghost"
                   size="sm"
-                  @click.stop="moveBlockUp(block.id)"
+                  @click="(e) => { e.stopPropagation(); moveBlockUp(block.id) }"
                   title="Mover módulo para cima"
                 >
                   <AppIcon name="chevron-up" size="sm" />
@@ -160,7 +160,7 @@ function moveBlockDown(blockId: string) {
                   v-if="idx < roadmapStore.activeRoadmap.blocks.length - 1"
                   variant="ghost"
                   size="sm"
-                  @click.stop="moveBlockDown(block.id)"
+                  @click="(e) => { e.stopPropagation(); moveBlockDown(block.id) }"
                   title="Mover módulo para baixo"
                 >
                   <AppIcon name="chevron-down" size="sm" />

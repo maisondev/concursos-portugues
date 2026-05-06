@@ -165,7 +165,7 @@ function renderStars(rating: number, hover: number) {
           variant="ghost"
           size="sm"
           class="text-gray-600 dark:text-gray-400"
-          @click="emit('moveUp')"
+          @click="(e) => { e.stopPropagation(); emit('moveUp') }"
           title="Mover para cima"
         >
           <AppIcon name="chevron-up" size="sm" />
@@ -175,7 +175,7 @@ function renderStars(rating: number, hover: number) {
           variant="ghost"
           size="sm"
           class="text-gray-600 dark:text-gray-400"
-          @click="emit('moveDown')"
+          @click="(e) => { e.stopPropagation(); emit('moveDown') }"
           title="Mover para baixo"
         >
           <AppIcon name="chevron-down" size="sm" />
