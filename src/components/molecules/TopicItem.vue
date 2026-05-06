@@ -11,7 +11,7 @@ interface Props {
 
 defineProps<Props>()
 
-defineEmits<{
+const emit = defineEmits<{
   'update:status': [value: string]
   open: []
 }>()
@@ -31,11 +31,6 @@ function handleStatusChange(newStatus: boolean | 'indeterminate') {
   }
   emit('update:status', status)
 }
-
-const emit = defineEmits<{
-  'update:status': [value: string]
-  open: []
-}>()
 </script>
 
 <template>
