@@ -1,126 +1,179 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useRoadmapStore } from '@/stores/roadmap'
 import { useDailyLogStore } from '@/stores/dailyLog'
 import { useProgressStore } from '@/stores/progress'
 import AppButton from '@/components/atoms/AppButton.vue'
+import AppIcon from '@/components/atoms/AppIcon.vue'
+import AppModal from '@/components/atoms/AppModal.vue'
 import StatBadge from '@/components/molecules/StatBadge.vue'
 import DailyLogEntry from '@/components/molecules/DailyLogEntry.vue'
 
 const router = useRouter()
+const roadmapStore = useRoadmapStore()
 const dailyLogStore = useDailyLogStore()
 const progressStore = useProgressStore()
 
+const showAddRoadmapModal = ref(false)
+const newRoadmapTitle = ref('')
+const newRoadmapDescription = ref('')
+
 dailyLogStore.initLogs()
+
+function navigateToRoadmap(roadmapId: string) {
+  roadmapStore.setActiveRoadmap(roadmapId)
+  router.push({
+    name: 'roadmap',
+    params: { roadmapId }
+  })
+}
+
+function createNewRoadmap() {
+  if (!newRoadmapTitle.value.trim()) {
+    alert('Digite um título para o roadmap')
+    return
+  }
+
+  const id = roadmapStore.addRoadmap(newRoadmapTitle.value.trim(), newRoadmapDescription.value.trim())
+  newRoadmapTitle.value = ''
+  newRoadmapDescription.value = ''
+  showAddRoadmapModal.value = false
+  navigateToRoadmap(id)
+}
+
+function getRoadmapStats(roadmapId: string) {
+  const roadmap = roadmapStore.roadmaps[roadmapId]
+  if (!roadmap) return { blocks: 0, topics: 0, percent: 0 }
+
+  let totalTopics = 0
+  let completedTopics = 0
+  roadmap.blocks.forEach(block => {
+    totalTopics += block.topics.length
+    completedTopics += block.topics.filter(t => t.status === 'concluido').length
+  })
+
+  return {
+    blocks: roadmap.blocks.length,
+    topics: totalTopics,
+    percent: totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0
+  }
+}
 </script>
 
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900">
-    <div class="max-w-5xl mx-auto p-4 space-y-8">
+    <div class="max-w-6xl mx-auto p-4 space-y-8">
       <!-- Header -->
       <div class="text-center py-8">
         <h1 class="text-5xl font-bold text-gray-900 dark:text-white mb-3">
-          📚 Interpretação de Textos
+          📚 Meus Roadmaps
         </h1>
-        <p class="text-xl text-gray-600 dark:text-gray-300 mb-2">
-          Roadmap de Estudo para Concursos Públicos
-        </p>
-        <p class="text-gray-500 dark:text-gray-400">
-          16 módulos • 100+ tópicos • Acompanhamento diário
+        <p class="text-xl text-gray-600 dark:text-gray-300">
+          Crie e acompanhe múltiplos roadmaps de estudo
         </p>
       </div>
 
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatBadge
-          label="Progresso Geral"
-          :value="`${progressStore.overallPercent}%`"
-          icon="📊"
-          :color="progressStore.overallPercent > 50 ? 'green' : progressStore.overallPercent > 20 ? 'yellow' : 'red'"
-        />
-        <StatBadge
-          label="Streak 🔥"
-          :value="dailyLogStore.streakDays"
-          icon="🔥"
-          color="purple"
-        />
-        <StatBadge
-          label="Questões Resolvidas"
-          :value="progressStore.snapshotInterpretacao.totalQuestoes"
-          icon="✅"
-          color="blue"
-        />
-      </div>
-
-      <!-- CTA Buttons -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Create Roadmap Button -->
+      <div class="flex justify-end">
         <AppButton
           variant="primary"
           size="lg"
-          @click="router.push('/roadmap/interpretacao-textos')"
-          class="w-full h-16 text-lg"
+          @click="showAddRoadmapModal = true"
+          class="flex items-center gap-2"
         >
-          🗺️ Ver Roadmap Completo
-        </AppButton>
-        <AppButton
-          variant="secondary"
-          size="lg"
-          @click="router.push('/dashboard')"
-          class="w-full h-16 text-lg"
-        >
-          📊 Ir para Dashboard
+          <AppIcon name="plus" size="sm" />
+          + Novo Roadmap
         </AppButton>
       </div>
 
-      <!-- Today's Log Preview -->
-      <div v-if="dailyLogStore.todayLog" class="p-6 border border-green-300 dark:border-green-700 rounded-lg bg-green-50 dark:bg-green-900/20">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">✅ Você já registrou hoje!</h2>
-        <DailyLogEntry :entry="dailyLogStore.todayLog" />
-        <AppButton
-          variant="ghost"
-          size="sm"
-          @click="router.push('/dashboard')"
-          class="mt-3"
+      <!-- Roadmaps Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          v-for="(roadmap, id) in roadmapStore.roadmaps"
+          :key="id"
+          @click="navigateToRoadmap(id)"
+          class="p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow cursor-pointer space-y-4"
         >
-          Editar registro →
-        </AppButton>
+          <!-- Title -->
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white break-words">
+              {{ roadmap.title }}
+            </h3>
+            <p v-if="roadmap.description" class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              {{ roadmap.description }}
+            </p>
+          </div>
+
+          <!-- Stats -->
+          <div class="flex gap-4 text-sm text-gray-600 dark:text-gray-400">
+            <div>
+              <span class="font-semibold text-gray-900 dark:text-white">{{ getRoadmapStats(id).blocks }}</span>
+              <span> módulos</span>
+            </div>
+            <div>
+              <span class="font-semibold text-gray-900 dark:text-white">{{ getRoadmapStats(id).topics }}</span>
+              <span> tópicos</span>
+            </div>
+          </div>
+
+          <!-- Progress -->
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Progresso</span>
+              <span class="text-sm font-bold text-gray-900 dark:text-white">{{ getRoadmapStats(id).percent }}%</span>
+            </div>
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div
+                :style="{ width: getRoadmapStats(id).percent + '%' }"
+                class="bg-blue-500 h-2 rounded-full transition-all duration-300"
+              />
+            </div>
+          </div>
+
+          <!-- Arrow -->
+          <div class="text-gray-400 text-right">
+            <AppIcon name="arrow-right" size="md" />
+          </div>
+        </div>
       </div>
 
-      <!-- Recent Activity -->
-      <div v-if="dailyLogStore.last7Days.length > 0">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Atividade Recente</h2>
-        <div class="space-y-2">
-          <DailyLogEntry
-            v-for="log in dailyLogStore.last7Days.slice(0, 3)"
-            :key="log.id"
-            :entry="log"
-            :compact="true"
-          />
-        </div>
-      </div>
+      <!-- Modal para criar novo roadmap -->
+      <AppModal
+        :open="showAddRoadmapModal"
+        title="Criar Novo Roadmap"
+        submit-label="Criar"
+        cancel-label="Cancelar"
+        @submit="createNewRoadmap"
+        @cancel="showAddRoadmapModal = false"
+      >
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Título do Roadmap
+            </label>
+            <input
+              v-model="newRoadmapTitle"
+              type="text"
+              placeholder="Ex: Gramática, Redação, Análise Combinatória"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              @keyup.enter="createNewRoadmap"
+            />
+          </div>
 
-      <!-- Info Section -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 py-8 border-t border-gray-300 dark:border-gray-700">
-        <div>
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Como usar?</h3>
-          <ul class="space-y-2 text-gray-600 dark:text-gray-300">
-            <li>✓ Navegue pelos 16 módulos de Interpretação de Textos</li>
-            <li>✓ Marque seus progressos tópico a tópico</li>
-            <li>✓ Adicione materiais de estudo (YouTube, Drive, PDFs)</li>
-            <li>✓ Acompanhe seu progresso no Dashboard</li>
-            <li>✓ Registre seu estudo diário e mantenha o streak</li>
-          </ul>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Descrição (Opcional)
+            </label>
+            <textarea
+              v-model="newRoadmapDescription"
+              placeholder="Descreva o foco deste roadmap..."
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            />
+          </div>
         </div>
-        <div>
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Estrutura</h3>
-          <ul class="space-y-2 text-gray-600 dark:text-gray-300">
-            <li>📚 Módulo 1: Fundamentos da Leitura</li>
-            <li>🔗 Módulo 7: Coesão Textual (Prioridade Máxima!)</li>
-            <li>💭 Módulo 10: Inferência e Pressuposto</li>
-            <li>🎨 Módulo 12: Figuras de Linguagem</li>
-            <li>🏆 Módulo 16: Treino por Banca</li>
-          </ul>
-        </div>
-      </div>
+      </AppModal>
     </div>
   </div>
 </template>

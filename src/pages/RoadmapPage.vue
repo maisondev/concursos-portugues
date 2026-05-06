@@ -49,7 +49,7 @@ function navigateToBlock(blockId: string) {
   router.push({
     name: 'block-detail',
     params: {
-      roadmapId: 'interpretacao-textos',
+      roadmapId: props.roadmapId,
       blockId
     }
   })
@@ -61,6 +61,15 @@ function moveBlockUp(blockId: string) {
 
 function moveBlockDown(blockId: string) {
   roadmapStore.moveBlockDown(blockId)
+}
+
+function toggleBlockCompletion(blockId: string) {
+  const progress = progressStore.blockProgressPercent(blockId)
+  if (progress === 100) {
+    roadmapStore.markBlockIncomplete(blockId)
+  } else {
+    roadmapStore.markBlockComplete(blockId)
+  }
 }
 </script>
 
@@ -145,6 +154,16 @@ function moveBlockDown(blockId: string) {
 
             <!-- Actions -->
             <div class="flex flex-col items-end gap-2">
+              <!-- Complete button -->
+              <AppButton
+                :variant="progressStore.blockProgressPercent(block.id) === 100 ? 'secondary' : 'ghost'"
+                size="sm"
+                @click="(e) => { e.stopPropagation(); toggleBlockCompletion(block.id) }"
+                :title="progressStore.blockProgressPercent(block.id) === 100 ? 'Desmarcar como concluído' : 'Marcar como concluído'"
+              >
+                <AppIcon :name="progressStore.blockProgressPercent(block.id) === 100 ? 'check-circle' : 'check'" size="sm" />
+              </AppButton>
+
               <!-- Move buttons -->
               <div class="flex gap-1">
                 <AppButton

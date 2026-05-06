@@ -7,6 +7,7 @@ const STORAGE_KEY = 'concursos-portugues-roadmaps-v1'
 
 export const useRoadmapStore = defineStore('roadmap', () => {
   const roadmaps = ref<Record<string, Roadmap>>({})
+  const activeRoadmapId = ref<string>('interpretacao-textos')
 
   function initRoadmap() {
     const stored = localStorage.getItem(STORAGE_KEY)
@@ -22,7 +23,7 @@ export const useRoadmapStore = defineStore('roadmap', () => {
   }
 
   const activeRoadmap = computed(() => {
-    return roadmaps.value['interpretacao-textos'] || roadmapInterpretacaoTextos
+    return roadmaps.value[activeRoadmapId.value] || roadmapInterpretacaoTextos
   })
 
   function blockById(blockId: string): Block | undefined {
@@ -263,6 +264,63 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     }
   }
 
+  function markBlockComplete(blockId: string) {
+    const block = blockById(blockId)
+    if (block) {
+      block.topics.forEach(t => {
+        t.status = 'concluido'
+      })
+      activeRoadmap.value.updatedAt = new Date().toISOString()
+    }
+  }
+
+  function markBlockIncomplete(blockId: string) {
+    const block = blockById(blockId)
+    if (block) {
+      block.topics.forEach(t => {
+        t.status = 'nao_iniciado'
+      })
+      activeRoadmap.value.updatedAt = new Date().toISOString()
+    }
+  }
+
+  function setActiveRoadmap(id: string) {
+    if (roadmaps.value[id]) {
+      activeRoadmapId.value = id
+    }
+  }
+
+  function addRoadmap(title: string, description: string): string {
+    const newId = `roadmap-${Date.now()}`
+    const newRoadmap: Roadmap = {
+      id: newId,
+      title,
+      description,
+      blocks: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+    roadmaps.value[newId] = newRoadmap
+    activeRoadmapId.value = newId
+    activeRoadmap.value.updatedAt = new Date().toISOString()
+    return newId
+  }
+
+  function removeRoadmap(id: string) {
+    if (Object.keys(roadmaps.value).length <= 1) {
+      return false
+    }
+    delete roadmaps.value[id]
+    if (activeRoadmapId.value === id) {
+      const remaining = Object.keys(roadmaps.value)[0]
+      if (remaining) {
+        activeRoadmapId.value = remaining
+      }
+    }
+    activeRoadmap.value.updatedAt = new Date().toISOString()
+    return true
+  }
+
   function persistToStorage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(roadmaps.value))
   }
@@ -271,6 +329,7 @@ export const useRoadmapStore = defineStore('roadmap', () => {
 
   return {
     roadmaps,
+    activeRoadmapId,
     activeRoadmap,
     initRoadmap,
     blockById,
@@ -292,6 +351,11 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     moveResourceUp,
     moveResourceDown,
     updateResourceRating,
+    markBlockComplete,
+    markBlockIncomplete,
+    setActiveRoadmap,
+    addRoadmap,
+    removeRoadmap,
     persistToStorage
   }
 })
