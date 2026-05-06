@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
-import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon } from '@heroicons/vue/24/outline'
+import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon } from '@heroicons/vue/24/outline'
 import AppButton from '@/components/atoms/AppButton.vue'
 
 const router = useRouter()
@@ -12,12 +12,11 @@ const settingsStore = useSettingsStore()
 const dailyLogStore = useDailyLogStore()
 
 const showBackButton = computed(() => {
-  return route.name === 'block-detail' || route.name === 'roadmap'
+  return route.name === 'block-detail'
 })
 
 const backLabel = computed(() => {
   if (route.name === 'block-detail') return 'Roadmap'
-  if (route.name === 'roadmap') return 'Início'
   return ''
 })
 
@@ -27,8 +26,6 @@ function goBack() {
       name: 'roadmap',
       params: { roadmapId: route.params.roadmapId }
     })
-  } else if (route.name === 'roadmap') {
-    router.push('/')
   }
 }
 
@@ -45,6 +42,7 @@ function toggleTheme() {
 
 const navItems = [
   { name: 'home', path: '/', label: 'Início', icon: HomeIcon },
+  { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
   { name: 'settings', path: '/settings', label: 'Configurações', icon: Cog6ToothIcon }
 ]
 
