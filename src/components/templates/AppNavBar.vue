@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
+import { ArrowLeftIcon, HomeIcon, ChartBarIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon } from '@heroicons/vue/24/outline'
 import AppButton from '@/components/atoms/AppButton.vue'
 
 const router = useRouter()
@@ -43,16 +44,16 @@ function toggleTheme() {
 }
 
 const navItems = [
-  { name: 'home', path: '/', label: 'Início', icon: '🏠' },
-  { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: '📊' },
-  { name: 'settings', path: '/settings', label: 'Configurações', icon: '⚙️' }
+  { name: 'home', path: '/', label: 'Início', icon: HomeIcon },
+  { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
+  { name: 'settings', path: '/settings', label: 'Configurações', icon: Cog6ToothIcon }
 ]
 
 const isActive = (name: string) => route.name === name
 </script>
 
 <template>
-  <nav class="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700 shadow-sm">
+  <nav class="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
     <div class="max-w-6xl mx-auto px-4">
       <!-- Main navbar -->
       <div class="flex items-center justify-between h-16">
@@ -63,20 +64,23 @@ const isActive = (name: string) => route.name === name
             <button
               v-if="showBackButton"
               @click="goBack"
-              class="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
-              ← {{ backLabel }}
+              <ArrowLeftIcon class="w-4 h-4" />
+              {{ backLabel }}
             </button>
           </Transition>
 
           <!-- Logo -->
           <div
             @click="router.push('/')"
-            class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+            class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity -ml-1"
           >
-            <span class="text-2xl">📚</span>
-            <h1 class="text-lg font-bold text-gray-900 dark:text-white hidden sm:block whitespace-nowrap">
-              Concursos Português
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm">
+              CP
+            </div>
+            <h1 class="text-base font-bold text-gray-900 dark:text-white hidden sm:block whitespace-nowrap">
+              Concursos
             </h1>
           </div>
         </div>
@@ -88,13 +92,14 @@ const isActive = (name: string) => route.name === name
             :key="item.name"
             @click="navigateTo(item.path, item.name)"
             :class="[
-              'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+              'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
               isActive(item.name)
                 ? 'bg-blue-500 text-white'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
             ]"
           >
-            {{ item.icon }} {{ item.label }}
+            <component :is="item.icon" class="w-4 h-4" />
+            {{ item.label }}
           </button>
         </div>
 
@@ -103,30 +108,32 @@ const isActive = (name: string) => route.name === name
           <!-- Streak counter -->
           <div
             v-if="dailyLogStore.streakDays > 0"
-            class="flex items-center gap-1 px-3 py-1 rounded-lg bg-orange-50 dark:bg-orange-950"
+            class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-orange-100 dark:bg-orange-900/30"
           >
-            <span class="text-lg">🔥</span>
-            <span class="text-sm font-semibold text-orange-600 dark:text-orange-400 whitespace-nowrap">
+            <div class="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-bold">
               {{ dailyLogStore.streakDays }}
+            </div>
+            <span class="text-xs font-semibold text-orange-700 dark:text-orange-300 whitespace-nowrap">
+              dias
             </span>
           </div>
 
           <!-- Theme toggle -->
-          <AppButton
-            variant="ghost"
-            size="sm"
+          <button
             @click="toggleTheme"
-            class="px-2"
+            class="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            :title="settingsStore.settings.theme === 'dark' ? 'Modo claro' : 'Modo escuro'"
           >
-            {{ settingsStore.settings.theme === 'dark' ? '☀️' : '🌙' }}
-          </AppButton>
+            <SunIcon v-if="settingsStore.settings.theme === 'dark'" class="w-5 h-5" />
+            <MoonIcon v-else class="w-5 h-5" />
+          </button>
 
           <!-- Mobile menu button -->
           <button
-            class="md:hidden px-2 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            class="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             @click="router.push('/')"
           >
-            ☰
+            <Bars3Icon class="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -134,20 +141,21 @@ const isActive = (name: string) => route.name === name
       <!-- Mobile navigation -->
       <div
         v-show="route.name !== 'home' && route.name !== 'block-detail' && route.name !== 'roadmap'"
-        class="md:hidden border-t border-gray-300 dark:border-gray-700 px-2 py-2 flex gap-1 overflow-x-auto"
+        class="md:hidden border-t border-gray-200 dark:border-gray-700 px-2 py-2 flex gap-1 overflow-x-auto"
       >
         <button
           v-for="item in navItems"
           :key="item.name"
           @click="navigateTo(item.path, item.name)"
           :class="[
-            'px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap',
+            'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap',
             isActive(item.name)
               ? 'bg-blue-500 text-white'
               : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
           ]"
         >
-          {{ item.icon }} {{ item.label }}
+          <component :is="item.icon" class="w-4 h-4" />
+          {{ item.label }}
         </button>
       </div>
     </div>

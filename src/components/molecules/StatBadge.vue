@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import type { FunctionalComponent } from 'vue'
+
 interface Props {
   label: string
   value: string | number
-  icon?: string
+  icon?: FunctionalComponent
   color?: 'blue' | 'green' | 'red' | 'yellow' | 'purple'
 }
 
 withDefaults(defineProps<Props>(), {
-  icon: '📊',
   color: 'blue'
 })
 
@@ -35,7 +36,9 @@ const textColors = {
         <p :class="['text-sm font-medium text-gray-600 dark:text-gray-400']">{{ label }}</p>
         <p :class="['text-3xl font-bold mt-1', textColors[color]]">{{ value }}</p>
       </div>
-      <div class="text-4xl opacity-50">{{ icon }}</div>
+      <div v-if="icon" class="flex items-center justify-center">
+        <component :is="icon" :class="['w-10 h-10', textColors[color], 'opacity-60']" />
+      </div>
     </div>
   </div>
 </template>

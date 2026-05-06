@@ -67,7 +67,7 @@ function getRoadmapStats(roadmapId: string) {
       <!-- Header -->
       <div class="text-center py-8">
         <h1 class="text-5xl font-bold text-gray-900 dark:text-white mb-3">
-          📚 Meus Roadmaps
+          Meus Roadmaps
         </h1>
         <p class="text-xl text-gray-600 dark:text-gray-300">
           Crie e acompanhe múltiplos roadmaps de estudo
@@ -96,7 +96,7 @@ function getRoadmapStats(roadmapId: string) {
           class="w-full h-12 text-base flex items-center justify-center gap-2"
         >
           <AppIcon name="bar-chart" size="sm" />
-          📊 Dashboard
+          Dashboard
         </AppButton>
         <AppButton
           variant="ghost"
@@ -105,7 +105,7 @@ function getRoadmapStats(roadmapId: string) {
           class="w-full h-12 text-base flex items-center justify-center gap-2"
         >
           <AppIcon name="settings" size="sm" />
-          ⚙️ Configurações
+          Configurações
         </AppButton>
       </div>
 
@@ -162,7 +162,7 @@ function getRoadmapStats(roadmapId: string) {
 
       <!-- Today's Log -->
       <div v-if="dailyLogStore.todayLog" class="p-6 border border-green-300 dark:border-green-700 rounded-lg bg-green-50 dark:bg-green-900/20">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">✅ Você já registrou hoje!</h2>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">Você já registrou hoje!</h2>
         <DailyLogEntry :entry="dailyLogStore.todayLog" />
         <AppButton
           variant="ghost"

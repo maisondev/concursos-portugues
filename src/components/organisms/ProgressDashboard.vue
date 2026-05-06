@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ProgressSnapshot, DailyLogEntry } from '@/types'
+import { ChartBarIcon, FireIcon, QuestionMarkCircleIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
 import StatBadge from '@/components/molecules/StatBadge.vue'
 import AppProgressBar from '@/components/atoms/AppProgressBar.vue'
 
@@ -35,25 +36,25 @@ const getTodayMinutes = (logs: DailyLogEntry[]): number => {
       <StatBadge
         label="Progresso Geral"
         :value="`${Math.round((snapshot.completedTopics / snapshot.totalTopics) * 100)}%`"
-        icon="📊"
+        :icon="ChartBarIcon"
         :color="getProgressColor((snapshot.completedTopics / snapshot.totalTopics) * 100)"
       />
       <StatBadge
-        label="Streak 🔥"
+        label="Sequência"
         :value="snapshot.streakDays"
-        icon="🔥"
+        :icon="FireIcon"
         color="purple"
       />
       <StatBadge
         label="Questões Feitas"
         :value="snapshot.totalQuestoes"
-        icon="❓"
+        :icon="QuestionMarkCircleIcon"
         color="blue"
       />
       <StatBadge
         label="Acerto Médio"
         :value="snapshot.avgAcerto ? `${Math.round(snapshot.avgAcerto)}%` : 'N/A'"
-        icon="✅"
+        :icon="CheckCircleIcon"
         color="green"
       />
     </div>
