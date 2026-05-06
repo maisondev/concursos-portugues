@@ -83,7 +83,29 @@ function getRoadmapStats(roadmapId: string) {
           class="flex items-center gap-2"
         >
           <AppIcon name="plus" size="sm" />
-          + Novo Roadmap
+          Novo Roadmap
+        </AppButton>
+      </div>
+
+      <!-- Quick Navigation -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <AppButton
+          variant="secondary"
+          size="lg"
+          @click="router.push('/dashboard')"
+          class="w-full h-12 text-base flex items-center justify-center gap-2"
+        >
+          <AppIcon name="bar-chart" size="sm" />
+          📊 Dashboard
+        </AppButton>
+        <AppButton
+          variant="ghost"
+          size="lg"
+          @click="router.push('/settings')"
+          class="w-full h-12 text-base flex items-center justify-center gap-2"
+        >
+          <AppIcon name="settings" size="sm" />
+          ⚙️ Configurações
         </AppButton>
       </div>
 
@@ -135,6 +157,33 @@ function getRoadmapStats(roadmapId: string) {
           <div class="text-gray-400 text-right">
             <AppIcon name="arrow-right" size="md" />
           </div>
+        </div>
+      </div>
+
+      <!-- Today's Log -->
+      <div v-if="dailyLogStore.todayLog" class="p-6 border border-green-300 dark:border-green-700 rounded-lg bg-green-50 dark:bg-green-900/20">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">✅ Você já registrou hoje!</h2>
+        <DailyLogEntry :entry="dailyLogStore.todayLog" />
+        <AppButton
+          variant="ghost"
+          size="sm"
+          @click="router.push('/dashboard')"
+          class="mt-3"
+        >
+          Editar registro →
+        </AppButton>
+      </div>
+
+      <!-- Recent Activity -->
+      <div v-if="dailyLogStore.last7Days.length > 0" class="space-y-4">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Atividade Recente</h2>
+        <div class="space-y-2">
+          <DailyLogEntry
+            v-for="log in dailyLogStore.last7Days.slice(0, 3)"
+            :key="log.id"
+            :entry="log"
+            :compact="true"
+          />
         </div>
       </div>
 
