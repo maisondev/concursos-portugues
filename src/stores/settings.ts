@@ -9,7 +9,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   language: 'pt-BR',
   dailyGoalMinutes: 60,
   dailyGoalQuestoes: 10,
-  showStreak: true
+  showStreak: true,
+  deletePassword: '1234'
 }
 
 export const useSettingsStore = defineStore('settings', () => {

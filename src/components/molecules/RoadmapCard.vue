@@ -6,6 +6,7 @@ import { StarIcon as StarSolidIcon } from '@heroicons/vue/24/solid'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppProgressBar from '@/components/atoms/AppProgressBar.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
+import AppConfirmModal from '@/components/atoms/AppConfirmModal.vue'
 
 interface Props {
   roadmap: Roadmap
@@ -27,7 +28,7 @@ interface Emits {
   edit: []
   updateRating: [rating: number]
   updateColor: [color: RoadmapColor]
-  delete: []
+  delete: [password?: string]
 }
 
 withDefaults(defineProps<Props>(), {
@@ -39,6 +40,7 @@ withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 const showEditModal = ref(false)
+const showDeleteConfirm = ref(false)
 const editTitle = ref('')
 const editDescription = ref('')
 const editRating = ref(0)
@@ -78,6 +80,15 @@ const saveEdit = () => {
 const setRating = (rating: number) => {
   editRating.value = rating
 }
+
+const confirmDelete = () => {
+  showDeleteConfirm.value = true
+}
+
+const handleDeleteConfirm = (password: string) => {
+  showDeleteConfirm.value = false
+  emit('delete', password)
+}
 </script>
 
 <template>
@@ -110,7 +121,7 @@ const setRating = (rating: number) => {
         <AppButton
           variant="ghost"
           size="sm"
-          @click="(e) => { e.stopPropagation(); $emit('delete') }"
+          @click="(e) => { e.stopPropagation(); confirmDelete() }"
           title="Deletar roadmap"
         >
           <TrashIcon class="w-4 h-4 text-red-500" />
@@ -169,6 +180,18 @@ const setRating = (rating: number) => {
         <ChevronDownIcon class="w-4 h-4" />
       </AppButton>
     </div>
+
+    <!-- Confirm Delete Modal -->
+    <AppConfirmModal
+      :open="showDeleteConfirm"
+      title="Deletar Roadmap"
+      message="Tem certeza que deseja deletar este roadmap? Esta ação é irreversível."
+      require-password
+      submit-label="Deletar"
+      cancel-label="Cancelar"
+      @submit="handleDeleteConfirm"
+      @cancel="showDeleteConfirm = false"
+    />
 
     <!-- Edit Modal -->
     <AppModal

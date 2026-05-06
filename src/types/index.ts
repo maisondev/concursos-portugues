@@ -85,6 +85,7 @@ export interface AppSettings {
   dailyGoalMinutes: number
   dailyGoalQuestoes: number
   showStreak: boolean
+  deletePassword?: string
 }
 
 // Storage Schema

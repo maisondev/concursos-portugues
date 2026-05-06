@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useRoadmapStore } from '@/stores/roadmap'
 import { useDailyLogStore } from '@/stores/dailyLog'
 import { useProgressStore } from '@/stores/progress'
+import { useSettingsStore } from '@/stores/settings'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppIcon from '@/components/atoms/AppIcon.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
@@ -15,6 +16,7 @@ const router = useRouter()
 const roadmapStore = useRoadmapStore()
 const dailyLogStore = useDailyLogStore()
 const progressStore = useProgressStore()
+const settingsStore = useSettingsStore()
 
 const showAddRoadmapModal = ref(false)
 const newRoadmapTitle = ref('')
@@ -76,11 +78,18 @@ function handleRoadmapEdit(roadmapId: string) {
   editingRoadmapId.value = roadmapId
 }
 
-function handleRoadmapDelete(roadmapId: string) {
-  if (confirm('Tem certeza que deseja deletar este roadmap?')) {
-    roadmapStore.removeRoadmap(roadmapId)
-    initRoadmapOrder()
+function handleRoadmapDelete(roadmapId: string, password?: string) {
+  if (!password) {
+    return
   }
+
+  if (password !== settingsStore.settings.deletePassword) {
+    alert('Senha incorreta!')
+    return
+  }
+
+  roadmapStore.removeRoadmap(roadmapId)
+  initRoadmapOrder()
 }
 
 function handleRoadmapMoveUp(roadmapId: string) {
@@ -160,7 +169,7 @@ function handleRoadmapUpdateColor(roadmapId: string, color: string) {
           @move-up="handleRoadmapMoveUp(id)"
           @move-down="handleRoadmapMoveDown(id)"
           @edit="handleRoadmapEdit(id)"
-          @delete="handleRoadmapDelete(id)"
+          @delete="(password) => handleRoadmapDelete(id, password)"
           @update-color="(color) => handleRoadmapUpdateColor(id, color)"
         />
       </div>
