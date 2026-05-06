@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRoadmapStore } from '@/stores/roadmap'
 import { useProgressStore } from '@/stores/progress'
+import { selectLocalPath, isLocalPathValid } from '@/composables/useFileSystem'
 import type { Topic } from '@/types'
 import TopicList from '@/components/organisms/TopicList.vue'
 import ResourceCard from '@/components/molecules/ResourceCard.vue'
@@ -24,7 +25,8 @@ const block = roadmapStore.blockById(props.blockId)
 const selectedTopic = ref<Topic | null>(null)
 const resourceLabel = ref('')
 const resourceUrl = ref('')
-const resourceType = ref<'youtube' | 'drive' | 'document' | 'link'>('youtube')
+const resourceType = ref<'youtube' | 'drive' | 'document' | 'link' | 'local'>('youtube')
+const isSelectingLocalPath = ref(false)
 
 function selectTopic(topic: Topic) {
   selectedTopic.value = topic
@@ -35,8 +37,13 @@ function updateTopicStatus(blockId: string, topicId: string, status: string) {
 }
 
 function addResource() {
-  if (!selectedTopic.value || !resourceLabel.value || !resourceUrl.value) {
-    alert('Preencha label e URL')
+  if (!selectedTopic.value || !resourceLabel.value) {
+    alert('Preencha o label')
+    return
+  }
+
+  if (resourceType.value !== 'local' && !resourceUrl.value) {
+    alert('Preencha a URL')
     return
   }
 
@@ -44,7 +51,7 @@ function addResource() {
     id: Math.random().toString(36).substr(2, 9),
     type: resourceType.value,
     label: resourceLabel.value,
-    url: resourceUrl.value,
+    ...(resourceType.value === 'local' ? { localPath: resourceUrl.value } : { url: resourceUrl.value }),
     addedAt: new Date().toISOString(),
     viewed: false
   }
@@ -53,6 +60,16 @@ function addResource() {
   resourceLabel.value = ''
   resourceUrl.value = ''
   resourceType.value = 'youtube'
+  isSelectingLocalPath.value = false
+}
+
+async function selectLocalFolder() {
+  isSelectingLocalPath.value = true
+  const path = await selectLocalPath()
+  if (path) {
+    resourceUrl.value = path
+  }
+  isSelectingLocalPath.value = false
 }
 
 function removeResource(topicId: string, resourceId: string) {
@@ -142,27 +159,57 @@ const priorityColor = computed(() => {
             <!-- Add Resource Form -->
             <div class="space-y-2 pt-4 border-t border-gray-300 dark:border-gray-700">
               <h4 class="text-sm font-medium text-gray-900 dark:text-white">Adicionar Recurso</h4>
+
+              <select
+                v-model="resourceType"
+                class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              >
+                <option value="youtube">▶️ YouTube</option>
+                <option value="drive">📁 Google Drive</option>
+                <option value="document">📄 Documento (URL)</option>
+                <option value="link">🔗 Link</option>
+                <option value="local">💾 Arquivo Local (HD)</option>
+              </select>
+
               <input
                 v-model="resourceLabel"
                 type="text"
                 placeholder="Título/Descrição"
                 class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               />
+
+              <!-- URL Input (for non-local resources) -->
               <input
+                v-if="resourceType !== 'local'"
                 v-model="resourceUrl"
                 type="url"
-                placeholder="URL"
+                :placeholder="`URL do ${resourceType}`"
                 class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               />
-              <select
-                v-model="resourceType"
-                class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-              >
-                <option value="youtube">YouTube</option>
-                <option value="drive">Google Drive</option>
-                <option value="document">Documento</option>
-                <option value="link">Link</option>
-              </select>
+
+              <!-- Local Path Input (for local resources) -->
+              <div v-else class="space-y-2">
+                <input
+                  v-model="resourceUrl"
+                  type="text"
+                  placeholder="Caminho será preenchido automaticamente"
+                  readonly
+                  class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white opacity-70"
+                />
+                <AppButton
+                  variant="secondary"
+                  size="sm"
+                  @click="selectLocalFolder"
+                  :loading="isSelectingLocalPath"
+                  class="w-full"
+                >
+                  📂 {{ isSelectingLocalPath ? 'Selecionando...' : 'Selecionar Pasta' }}
+                </AppButton>
+                <p v-if="resourceUrl" class="text-xs text-green-600 dark:text-green-400">
+                  ✓ Caminho selecionado: {{ resourceUrl }}
+                </p>
+              </div>
+
               <AppButton variant="primary" size="sm" @click="addResource" class="w-full">
                 + Adicionar
               </AppButton>

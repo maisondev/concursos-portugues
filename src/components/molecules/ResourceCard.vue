@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { Resource } from '@/types'
+import { openLocalPath } from '@/composables/useFileSystem'
 import AppLink from '@/components/atoms/AppLink.vue'
 import AppButton from '@/components/atoms/AppButton.vue'
 
@@ -17,12 +19,15 @@ defineEmits<{
   toggleViewed: []
 }>()
 
+const isOpeningLocal = ref(false)
+
 function getIcon(type: string): string {
   const icons = {
     youtube: '▶️',
     drive: '📁',
     document: '📄',
-    link: '🔗'
+    link: '🔗',
+    local: '💾'
   }
   return icons[type as keyof typeof icons] || '🔗'
 }
@@ -32,9 +37,18 @@ function getTypeLabel(type: string): string {
     youtube: 'YouTube',
     drive: 'Google Drive',
     document: 'Documento',
-    link: 'Link'
+    link: 'Link',
+    local: 'Arquivo Local'
   }
   return labels[type as keyof typeof labels] || type
+}
+
+async function handleClick() {
+  if (resource.type === 'local' && resource.localPath) {
+    isOpeningLocal.value = true
+    await openLocalPath(resource.localPath)
+    isOpeningLocal.value = false
+  }
 }
 </script>
 
@@ -57,7 +71,26 @@ function getTypeLabel(type: string): string {
           <span v-if="resource.duration" class="text-xs text-gray-500 dark:text-gray-500">{{ resource.duration }}</span>
           <span v-if="resource.viewed" class="text-xs font-semibold text-green-700 dark:text-green-300">✓ Visto</span>
         </div>
-        <AppLink :href="resource.url" external class="text-sm break-words" :class="resource.viewed ? 'opacity-70' : ''">
+
+        <!-- Local resource (clickable to open) -->
+        <button
+          v-if="resource.type === 'local'"
+          @click="handleClick"
+          :disabled="isOpeningLocal"
+          class="text-sm break-words text-blue-600 dark:text-blue-400 hover:underline transition-colors disabled:opacity-50 text-left"
+          :class="resource.viewed ? 'opacity-70' : ''"
+        >
+          {{ resource.label }} {{ isOpeningLocal ? '⏳' : '📂' }}
+        </button>
+
+        <!-- External resource (link) -->
+        <AppLink
+          v-else
+          :href="resource.url || '#'"
+          external
+          class="text-sm break-words"
+          :class="resource.viewed ? 'opacity-70' : ''"
+        >
           {{ resource.label }}
         </AppLink>
       </div>

@@ -1,11 +1,12 @@
 // Resource Types
-export type ResourceType = 'youtube' | 'drive' | 'document' | 'link'
+export type ResourceType = 'youtube' | 'drive' | 'document' | 'link' | 'local'
 
 export interface Resource {
   id: string
   type: ResourceType
   label: string
-  url: string
+  url?: string           // para URLs externas
+  localPath?: string     // para arquivos locais (ex: C:\Users\maiso\Documents\)
   duration?: string
   addedAt: string
   viewed: boolean
