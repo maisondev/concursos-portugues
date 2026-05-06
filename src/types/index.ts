@@ -47,6 +47,8 @@ export interface Roadmap {
   blocks: Block[]
   createdAt: string
   updatedAt: string
+  order?: number
+  rating?: number
 }
 
 // Daily Log Types

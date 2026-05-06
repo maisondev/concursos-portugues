@@ -321,6 +321,54 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     return true
   }
 
+  function updateRoadmap(id: string, title: string, description: string, rating?: number) {
+    const roadmap = roadmaps.value[id]
+    if (roadmap) {
+      roadmap.title = title
+      roadmap.description = description
+      if (rating !== undefined) {
+        roadmap.rating = rating
+      }
+      roadmap.updatedAt = new Date().toISOString()
+    }
+  }
+
+  function moveRoadmapUp(id: string) {
+    const ids = Object.keys(roadmaps.value)
+    const currentIndex = ids.indexOf(id)
+    if (currentIndex > 0) {
+      const temp = ids[currentIndex - 1]
+      ids[currentIndex - 1] = ids[currentIndex]
+      ids[currentIndex] = temp
+
+      // Reorder roadmaps based on new order
+      const ordered: Record<string, Roadmap> = {}
+      ids.forEach(key => {
+        ordered[key] = roadmaps.value[key]
+        ordered[key].order = ids.indexOf(key)
+      })
+      roadmaps.value = ordered
+    }
+  }
+
+  function moveRoadmapDown(id: string) {
+    const ids = Object.keys(roadmaps.value)
+    const currentIndex = ids.indexOf(id)
+    if (currentIndex < ids.length - 1) {
+      const temp = ids[currentIndex + 1]
+      ids[currentIndex + 1] = ids[currentIndex]
+      ids[currentIndex] = temp
+
+      // Reorder roadmaps based on new order
+      const ordered: Record<string, Roadmap> = {}
+      ids.forEach(key => {
+        ordered[key] = roadmaps.value[key]
+        ordered[key].order = ids.indexOf(key)
+      })
+      roadmaps.value = ordered
+    }
+  }
+
   function persistToStorage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(roadmaps.value))
   }
@@ -356,6 +404,9 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     setActiveRoadmap,
     addRoadmap,
     removeRoadmap,
+    updateRoadmap,
+    moveRoadmapUp,
+    moveRoadmapDown,
     persistToStorage
   }
 })
