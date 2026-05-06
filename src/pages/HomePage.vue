@@ -58,18 +58,24 @@ function createNewRoadmap() {
 
 function getRoadmapStats(roadmapId: string) {
   const roadmap = roadmapStore.roadmaps[roadmapId]
-  if (!roadmap) return { blocks: 0, topics: 0, percent: 0 }
+  if (!roadmap) return { blocks: 0, topics: 0, resources: 0, percent: 0 }
 
   let totalTopics = 0
   let completedTopics = 0
+  let totalResources = 0
+
   roadmap.blocks.forEach(block => {
     totalTopics += block.topics.length
     completedTopics += block.topics.filter(t => t.status === 'concluido').length
+    block.topics.forEach(topic => {
+      totalResources += topic.resources.length
+    })
   })
 
   return {
     blocks: roadmap.blocks.length,
     topics: totalTopics,
+    resources: totalResources,
     percent: totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0
   }
 }
@@ -130,28 +136,6 @@ function handleRoadmapUpdateColor(roadmapId: string, color: string) {
         >
           <AppIcon name="plus" size="sm" />
           Novo Roadmap
-        </AppButton>
-      </div>
-
-      <!-- Quick Navigation -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <AppButton
-          variant="secondary"
-          size="lg"
-          @click="router.push('/dashboard')"
-          class="w-full h-12 text-base flex items-center justify-center gap-2"
-        >
-          <AppIcon name="bar-chart" size="sm" />
-          Dashboard
-        </AppButton>
-        <AppButton
-          variant="ghost"
-          size="lg"
-          @click="router.push('/settings')"
-          class="w-full h-12 text-base flex items-center justify-center gap-2"
-        >
-          <AppIcon name="settings" size="sm" />
-          Configurações
         </AppButton>
       </div>
 

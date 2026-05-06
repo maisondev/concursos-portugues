@@ -15,7 +15,7 @@ interface Emits {
   cancel: []
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   requirePassword: false,
   submitLabel: 'Confirmar',
   cancelLabel: 'Cancelar'
@@ -25,11 +25,14 @@ const emit = defineEmits<Emits>()
 
 const password = ref('')
 
-watch((props) => props.open, (newVal) => {
-  if (!newVal) {
-    password.value = ''
+watch(
+  () => props.open,
+  (newVal) => {
+    if (!newVal) {
+      password.value = ''
+    }
   }
-}, { immediate: true })
+)
 
 const handleSubmit = () => {
   emit('submit', password.value)

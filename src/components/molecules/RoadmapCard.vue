@@ -14,6 +14,7 @@ interface Props {
   stats: {
     blocks: number
     topics: number
+    resources: number
     percent: number
   }
   canMoveUp?: boolean
@@ -147,6 +148,10 @@ const handleDeleteConfirm = (password: string) => {
       <div>
         <span class="font-semibold text-gray-900 dark:text-white">{{ stats.topics }}</span>
         <span> tópicos</span>
+      </div>
+      <div>
+        <span class="font-semibold text-gray-900 dark:text-white">{{ stats.resources }}</span>
+        <span> recursos</span>
       </div>
     </div>
 
