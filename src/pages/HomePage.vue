@@ -9,6 +9,7 @@ import AppIcon from '@/components/atoms/AppIcon.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
 import StatBadge from '@/components/molecules/StatBadge.vue'
 import DailyLogEntry from '@/components/molecules/DailyLogEntry.vue'
+import RoadmapCard from '@/components/molecules/RoadmapCard.vue'
 
 const router = useRouter()
 const roadmapStore = useRoadmapStore()
@@ -18,8 +19,19 @@ const progressStore = useProgressStore()
 const showAddRoadmapModal = ref(false)
 const newRoadmapTitle = ref('')
 const newRoadmapDescription = ref('')
+const editingRoadmapId = ref<string | null>(null)
 
 dailyLogStore.initLogs()
+
+const roadmapIds = ref<string[]>([])
+
+function initRoadmapOrder() {
+  roadmapIds.value = Object.keys(roadmapStore.roadmaps).sort((a, b) => {
+    const roadmapA = roadmapStore.roadmaps[a]
+    const roadmapB = roadmapStore.roadmaps[b]
+    return (roadmapA.order || 0) - (roadmapB.order || 0)
+  })
+}
 
 function navigateToRoadmap(roadmapId: string) {
   roadmapStore.setActiveRoadmap(roadmapId)
@@ -58,6 +70,27 @@ function getRoadmapStats(roadmapId: string) {
     topics: totalTopics,
     percent: totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0
   }
+}
+
+function handleRoadmapEdit(roadmapId: string) {
+  editingRoadmapId.value = roadmapId
+}
+
+function handleRoadmapDelete(roadmapId: string) {
+  if (confirm('Tem certeza que deseja deletar este roadmap?')) {
+    roadmapStore.removeRoadmap(roadmapId)
+    initRoadmapOrder()
+  }
+}
+
+function handleRoadmapMoveUp(roadmapId: string) {
+  roadmapStore.moveRoadmapUp(roadmapId)
+  initRoadmapOrder()
+}
+
+function handleRoadmapMoveDown(roadmapId: string) {
+  roadmapStore.moveRoadmapDown(roadmapId)
+  initRoadmapOrder()
 }
 </script>
 
@@ -111,53 +144,20 @@ function getRoadmapStats(roadmapId: string) {
 
       <!-- Roadmaps Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div
-          v-for="(roadmap, id) in roadmapStore.roadmaps"
+        <RoadmapCard
+          v-for="(id, idx) in Object.keys(roadmapStore.roadmaps)"
           :key="id"
-          @click="navigateToRoadmap(id)"
-          class="p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow cursor-pointer space-y-4"
-        >
-          <!-- Title -->
-          <div>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white break-words">
-              {{ roadmap.title }}
-            </h3>
-            <p v-if="roadmap.description" class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {{ roadmap.description }}
-            </p>
-          </div>
-
-          <!-- Stats -->
-          <div class="flex gap-4 text-sm text-gray-600 dark:text-gray-400">
-            <div>
-              <span class="font-semibold text-gray-900 dark:text-white">{{ getRoadmapStats(id).blocks }}</span>
-              <span> módulos</span>
-            </div>
-            <div>
-              <span class="font-semibold text-gray-900 dark:text-white">{{ getRoadmapStats(id).topics }}</span>
-              <span> tópicos</span>
-            </div>
-          </div>
-
-          <!-- Progress -->
-          <div>
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Progresso</span>
-              <span class="text-sm font-bold text-gray-900 dark:text-white">{{ getRoadmapStats(id).percent }}%</span>
-            </div>
-            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div
-                :style="{ width: getRoadmapStats(id).percent + '%' }"
-                class="bg-blue-500 h-2 rounded-full transition-all duration-300"
-              />
-            </div>
-          </div>
-
-          <!-- Arrow -->
-          <div class="text-gray-400 text-right">
-            <AppIcon name="arrow-right" size="md" />
-          </div>
-        </div>
+          :roadmap="roadmapStore.roadmaps[id]"
+          :roadmap-id="id"
+          :stats="getRoadmapStats(id)"
+          :can-move-up="idx > 0"
+          :can-move-down="idx < Object.keys(roadmapStore.roadmaps).length - 1"
+          @navigate="navigateToRoadmap(id)"
+          @move-up="handleRoadmapMoveUp(id)"
+          @move-down="handleRoadmapMoveDown(id)"
+          @edit="handleRoadmapEdit(id)"
+          @delete="handleRoadmapDelete(id)"
+        />
       </div>
 
       <!-- Today's Log -->
