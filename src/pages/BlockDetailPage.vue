@@ -10,6 +10,7 @@ import ResourceCard from '@/components/molecules/ResourceCard.vue'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppBadge from '@/components/atoms/AppBadge.vue'
 import AppProgressBar from '@/components/atoms/AppProgressBar.vue'
+import AppIcon from '@/components/atoms/AppIcon.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
 
 interface Props {
@@ -101,6 +102,26 @@ function toggleResourceViewed(topicId: string, resourceId: string) {
   roadmapStore.toggleResourceViewed(props.blockId, topicId, resourceId)
 }
 
+function moveResourceUp(topicId: string, resourceId: string) {
+  roadmapStore.moveResourceUp(props.blockId, topicId, resourceId)
+}
+
+function moveResourceDown(topicId: string, resourceId: string) {
+  roadmapStore.moveResourceDown(props.blockId, topicId, resourceId)
+}
+
+function updateResourceRating(topicId: string, resourceId: string, rating: number) {
+  roadmapStore.updateResourceRating(props.blockId, topicId, resourceId, rating)
+}
+
+function moveTopicUp(blockId: string, topicId: string) {
+  roadmapStore.moveTopicUp(blockId, topicId)
+}
+
+function moveTopicDown(blockId: string, topicId: string) {
+  roadmapStore.moveTopicDown(blockId, topicId)
+}
+
 const priorityColor = computed(() => {
   if (!block) return 'gray'
   if (block.priority === 'maxima') return 'purple'
@@ -112,15 +133,28 @@ const priorityColor = computed(() => {
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900">
     <div class="max-w-6xl mx-auto p-4 space-y-6">
+      <!-- Breadcrumb Navigation -->
+      <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <button
+          @click="router.push('/')"
+          class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+        >
+          <AppIcon name="home" size="sm" />
+          Início
+        </button>
+        <span class="text-gray-400">•</span>
+        <button
+          @click="router.push({ name: 'roadmap', params: { roadmapId: 'interpretacao-textos' } })"
+          class="text-blue-600 dark:text-blue-400 hover:underline"
+        >
+          Roadmap
+        </button>
+        <span class="text-gray-400">•</span>
+        <span class="font-medium text-gray-900 dark:text-white">{{ block?.title }}</span>
+      </div>
+
       <!-- Header -->
       <div v-if="block">
-        <button
-          @click="router.back()"
-          class="text-blue-600 dark:text-blue-400 hover:underline mb-4"
-        >
-          ← Voltar
-        </button>
-
         <div class="flex items-start justify-between gap-4">
           <div>
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ block.title }}</h1>
@@ -157,6 +191,8 @@ const priorityColor = computed(() => {
             :block-id="block.id"
             @update:topic-status="updateTopicStatus"
             @open-topic="selectTopic"
+            @move-topic-up="moveTopicUp"
+            @move-topic-down="moveTopicDown"
           />
         </div>
 
@@ -171,12 +207,18 @@ const priorityColor = computed(() => {
             <!-- Resources -->
             <div v-if="selectedTopic.resources.length > 0" class="space-y-2">
               <ResourceCard
-                v-for="resource in selectedTopic.resources"
+                v-for="(resource, index) in selectedTopic.resources.sort((a, b) => (b.rating || 0) - (a.rating || 0))"
                 :key="resource.id"
                 :resource="resource"
+                :can-move="true"
+                :index="index"
+                :total="selectedTopic.resources.length"
                 removable
                 @remove="removeResource(selectedTopic.id, resource.id)"
                 @toggleViewed="toggleResourceViewed(selectedTopic.id, resource.id)"
+                @moveUp="moveResourceUp(selectedTopic.id, resource.id)"
+                @moveDown="moveResourceDown(selectedTopic.id, resource.id)"
+                @updateRating="(rating) => updateResourceRating(selectedTopic.id, resource.id, rating)"
               />
             </div>
 

@@ -11,6 +11,7 @@ export interface Resource {
   addedAt: string
   viewed: boolean
   viewedAt?: string
+  rating: number         // 0-5 (0 = sem rating)
 }
 
 // Topic Types

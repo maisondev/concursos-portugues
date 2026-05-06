@@ -6,6 +6,7 @@ import { useProgressStore } from '@/stores/progress'
 import AppProgressBar from '@/components/atoms/AppProgressBar.vue'
 import AppBadge from '@/components/atoms/AppBadge.vue'
 import AppButton from '@/components/atoms/AppButton.vue'
+import AppIcon from '@/components/atoms/AppIcon.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
 
 const router = useRouter()
@@ -53,11 +54,32 @@ function navigateToBlock(blockId: string) {
     }
   })
 }
+
+function moveBlockUp(blockId: string) {
+  roadmapStore.moveBlockUp(blockId)
+}
+
+function moveBlockDown(blockId: string) {
+  roadmapStore.moveBlockDown(blockId)
+}
 </script>
 
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900">
     <div class="max-w-5xl mx-auto p-4 space-y-8">
+      <!-- Breadcrumb Navigation -->
+      <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <button
+          @click="router.push('/')"
+          class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+        >
+          <AppIcon name="home" size="sm" />
+          Início
+        </button>
+        <span class="text-gray-400">•</span>
+        <span class="font-medium text-gray-900 dark:text-white">{{ roadmapStore.activeRoadmap.title }}</span>
+      </div>
+
       <!-- Header -->
       <div>
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
@@ -84,11 +106,10 @@ function navigateToBlock(blockId: string) {
         <div
           v-for="(block, idx) in roadmapStore.activeRoadmap.blocks"
           :key="block.id"
-          @click="navigateToBlock(block.id)"
-          class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow cursor-pointer"
+          class="group p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow"
         >
           <div class="flex items-start justify-between gap-4">
-            <div class="flex-1 min-w-0">
+            <div class="flex-1 min-w-0 cursor-pointer" @click="navigateToBlock(block.id)">
               <!-- Title and Priority -->
               <div class="flex items-center gap-3 mb-2">
                 <span class="text-lg font-semibold text-gray-500 dark:text-gray-400">{{ idx + 1 }}.</span>
@@ -122,8 +143,33 @@ function navigateToBlock(blockId: string) {
               </div>
             </div>
 
-            <!-- Arrow -->
-            <div class="text-2xl text-gray-400 dark:text-gray-500">→</div>
+            <!-- Actions -->
+            <div class="flex flex-col items-end gap-2">
+              <!-- Move buttons -->
+              <div class="flex gap-1">
+                <AppButton
+                  v-if="idx > 0"
+                  variant="ghost"
+                  size="sm"
+                  @click.stop="moveBlockUp(block.id)"
+                  title="Mover módulo para cima"
+                >
+                  <AppIcon name="chevron-up" size="sm" />
+                </AppButton>
+                <AppButton
+                  v-if="idx < roadmapStore.activeRoadmap.blocks.length - 1"
+                  variant="ghost"
+                  size="sm"
+                  @click.stop="moveBlockDown(block.id)"
+                  title="Mover módulo para baixo"
+                >
+                  <AppIcon name="chevron-down" size="sm" />
+                </AppButton>
+              </div>
+
+              <!-- Open arrow -->
+              <AppIcon name="arrow-right" size="md" class="text-gray-400 dark:text-gray-500" />
+            </div>
           </div>
         </div>
       </div>

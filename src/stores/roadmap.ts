@@ -162,6 +162,107 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     }
   }
 
+  // Reordenação
+  function moveBlockUp(blockId: string) {
+    const index = activeRoadmap.value.blocks.findIndex(b => b.id === blockId)
+    if (index > 0) {
+      const temp = activeRoadmap.value.blocks[index]
+      activeRoadmap.value.blocks[index] = activeRoadmap.value.blocks[index - 1]
+      activeRoadmap.value.blocks[index - 1] = temp
+      // Atualizar números de ordem
+      activeRoadmap.value.blocks.forEach((block, idx) => {
+        block.order = idx + 1
+      })
+      activeRoadmap.value.updatedAt = new Date().toISOString()
+    }
+  }
+
+  function moveBlockDown(blockId: string) {
+    const index = activeRoadmap.value.blocks.findIndex(b => b.id === blockId)
+    if (index < activeRoadmap.value.blocks.length - 1) {
+      const temp = activeRoadmap.value.blocks[index]
+      activeRoadmap.value.blocks[index] = activeRoadmap.value.blocks[index + 1]
+      activeRoadmap.value.blocks[index + 1] = temp
+      // Atualizar números de ordem
+      activeRoadmap.value.blocks.forEach((block, idx) => {
+        block.order = idx + 1
+      })
+      activeRoadmap.value.updatedAt = new Date().toISOString()
+    }
+  }
+
+  function moveTopicUp(blockId: string, topicId: string) {
+    const block = blockById(blockId)
+    if (block) {
+      const index = block.topics.findIndex(t => t.id === topicId)
+      if (index > 0) {
+        const temp = block.topics[index]
+        block.topics[index] = block.topics[index - 1]
+        block.topics[index - 1] = temp
+        activeRoadmap.value.updatedAt = new Date().toISOString()
+      }
+    }
+  }
+
+  function moveTopicDown(blockId: string, topicId: string) {
+    const block = blockById(blockId)
+    if (block) {
+      const index = block.topics.findIndex(t => t.id === topicId)
+      if (index < block.topics.length - 1) {
+        const temp = block.topics[index]
+        block.topics[index] = block.topics[index + 1]
+        block.topics[index + 1] = temp
+        activeRoadmap.value.updatedAt = new Date().toISOString()
+      }
+    }
+  }
+
+  function moveResourceUp(blockId: string, topicId: string, resourceId: string) {
+    const block = blockById(blockId)
+    if (block) {
+      const topic = block.topics.find(t => t.id === topicId)
+      if (topic) {
+        const index = topic.resources.findIndex(r => r.id === resourceId)
+        if (index > 0) {
+          const temp = topic.resources[index]
+          topic.resources[index] = topic.resources[index - 1]
+          topic.resources[index - 1] = temp
+          activeRoadmap.value.updatedAt = new Date().toISOString()
+        }
+      }
+    }
+  }
+
+  function moveResourceDown(blockId: string, topicId: string, resourceId: string) {
+    const block = blockById(blockId)
+    if (block) {
+      const topic = block.topics.find(t => t.id === topicId)
+      if (topic) {
+        const index = topic.resources.findIndex(r => r.id === resourceId)
+        if (index < topic.resources.length - 1) {
+          const temp = topic.resources[index]
+          topic.resources[index] = topic.resources[index + 1]
+          topic.resources[index + 1] = temp
+          activeRoadmap.value.updatedAt = new Date().toISOString()
+        }
+      }
+    }
+  }
+
+  function updateResourceRating(blockId: string, topicId: string, resourceId: string, rating: number) {
+    const block = blockById(blockId)
+    if (block) {
+      const topic = block.topics.find(t => t.id === topicId)
+      if (topic) {
+        const resource = topic.resources.find(r => r.id === resourceId)
+        if (resource) {
+          resource.rating = Math.max(0, Math.min(5, rating))
+          activeRoadmap.value.updatedAt = new Date().toISOString()
+        }
+      }
+    }
+  }
+
   function persistToStorage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(roadmaps.value))
   }
@@ -184,6 +285,13 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     removeBlock,
     addTopic,
     removeTopic,
+    moveBlockUp,
+    moveBlockDown,
+    moveTopicUp,
+    moveTopicDown,
+    moveResourceUp,
+    moveResourceDown,
+    updateResourceRating,
     persistToStorage
   }
 })
