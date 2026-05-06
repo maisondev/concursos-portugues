@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
-import { ArrowLeftIcon, HomeIcon, ChartBarIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon } from '@heroicons/vue/24/outline'
+import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon } from '@heroicons/vue/24/outline'
 import AppButton from '@/components/atoms/AppButton.vue'
 
 const router = useRouter()
@@ -45,7 +45,6 @@ function toggleTheme() {
 
 const navItems = [
   { name: 'home', path: '/', label: 'Início', icon: HomeIcon },
-  { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
   { name: 'settings', path: '/settings', label: 'Configurações', icon: Cog6ToothIcon }
 ]
 
