@@ -234,7 +234,18 @@ const priorityColor = computed(() => {
 
             <!-- Add Resource Form -->
             <div class="space-y-2 pt-4 border-t border-gray-300 dark:border-gray-700">
-              <h4 class="text-sm font-medium text-gray-900 dark:text-white">Adicionar Recurso</h4>
+              <div class="flex items-center justify-between">
+                <h4 class="text-sm font-medium text-gray-900 dark:text-white">Adicionar Recurso</h4>
+                <AppButton
+                  variant="ghost"
+                  size="sm"
+                  @click="resourceLabel = ''; resourceUrl = ''; resourceType = 'youtube'"
+                  title="Adicionar novo recurso"
+                  class="px-2"
+                >
+                  <AppIcon name="plus" size="sm" />
+                </AppButton>
+              </div>
 
               <select
                 v-model="resourceType"
