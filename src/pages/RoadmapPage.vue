@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRoadmapStore } from '@/stores/roadmap'
 import { useProgressStore } from '@/stores/progress'
 import AppProgressBar from '@/components/atoms/AppProgressBar.vue'
 import AppBadge from '@/components/atoms/AppBadge.vue'
+import AppButton from '@/components/atoms/AppButton.vue'
+import AppModal from '@/components/atoms/AppModal.vue'
 
 const router = useRouter()
 const roadmapStore = useRoadmapStore()
@@ -12,6 +15,22 @@ const progressStore = useProgressStore()
 defineProps<{
   roadmapId: string
 }>()
+
+const showAddModal = ref(false)
+const newBlockTitle = ref('')
+const newBlockPriority = ref<'normal' | 'alta' | 'maxima'>('normal')
+
+function addNewBlock() {
+  if (!newBlockTitle.value.trim()) {
+    alert('Digite um título para o módulo')
+    return
+  }
+
+  roadmapStore.addBlock(newBlockTitle.value.trim(), newBlockPriority.value)
+  newBlockTitle.value = ''
+  newBlockPriority.value = 'normal'
+  showAddModal.value = false
+}
 
 const priorityLabels = {
   normal: 'Normal',
@@ -51,7 +70,12 @@ function navigateToBlock(blockId: string) {
 
       <!-- Overall Progress -->
       <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-        <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Progresso Geral do Roadmap</p>
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Progresso Geral do Roadmap</p>
+          <AppButton variant="secondary" size="sm" @click="showAddModal = true">
+            + Adicionar Módulo
+          </AppButton>
+        </div>
         <AppProgressBar :value="progressStore.overallPercent" show-label />
       </div>
 
@@ -103,6 +127,45 @@ function navigateToBlock(blockId: string) {
           </div>
         </div>
       </div>
+
+      <!-- Modal para adicionar novo módulo -->
+      <AppModal
+        :open="showAddModal"
+        title="Adicionar Novo Módulo"
+        submit-label="Criar"
+        cancel-label="Cancelar"
+        @submit="addNewBlock"
+        @cancel="showAddModal = false"
+      >
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Título do Módulo
+            </label>
+            <input
+              v-model="newBlockTitle"
+              type="text"
+              placeholder="Ex: Módulo 17 - Novo Tópico"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              @keyup.enter="addNewBlock"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Prioridade
+            </label>
+            <select
+              v-model="newBlockPriority"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            >
+              <option value="normal">Normal</option>
+              <option value="alta">Alta</option>
+              <option value="maxima">Máxima ⭐</option>
+            </select>
+          </div>
+        </div>
+      </AppModal>
     </div>
   </div>
 </template>

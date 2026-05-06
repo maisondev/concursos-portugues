@@ -10,6 +10,7 @@ import ResourceCard from '@/components/molecules/ResourceCard.vue'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppBadge from '@/components/atoms/AppBadge.vue'
 import AppProgressBar from '@/components/atoms/AppProgressBar.vue'
+import AppModal from '@/components/atoms/AppModal.vue'
 
 interface Props {
   roadmapId: string
@@ -27,6 +28,8 @@ const resourceLabel = ref('')
 const resourceUrl = ref('')
 const resourceType = ref<'youtube' | 'drive' | 'document' | 'link' | 'local'>('youtube')
 const isSelectingLocalPath = ref(false)
+const showAddTopicModal = ref(false)
+const newTopicTitle = ref('')
 
 function selectTopic(topic: Topic) {
   selectedTopic.value = topic
@@ -70,6 +73,24 @@ async function selectLocalFolder() {
     resourceUrl.value = path
   }
   isSelectingLocalPath.value = false
+}
+
+function addNewTopic() {
+  if (!newTopicTitle.value.trim()) {
+    alert('Digite um título para o tópico')
+    return
+  }
+
+  const topicId = roadmapStore.addTopic(block!.id, newTopicTitle.value.trim())
+  if (topicId) {
+    newTopicTitle.value = ''
+    showAddTopicModal.value = false
+    // Selecionar o novo tópico automaticamente
+    const newTopic = roadmapStore.topicById(block!.id, topicId)
+    if (newTopic) {
+      selectTopic(newTopic)
+    }
+  }
 }
 
 function removeResource(topicId: string, resourceId: string) {
@@ -125,8 +146,11 @@ const priorityColor = computed(() => {
       <div v-if="block" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Topics List -->
         <div class="lg:col-span-2">
-          <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 mb-4">
+          <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 mb-4 flex items-center justify-between">
             <h3 class="font-semibold text-gray-900 dark:text-white">Tópicos ({{ block.topics.length }})</h3>
+            <AppButton variant="secondary" size="sm" @click="showAddTopicModal = true">
+              + Novo Tópico
+            </AppButton>
           </div>
           <TopicList
             :topics="block.topics"
@@ -236,5 +260,28 @@ const priorityColor = computed(() => {
         </div>
       </div>
     </div>
+
+    <!-- Modal para adicionar novo tópico -->
+    <AppModal
+      :open="showAddTopicModal"
+      title="Adicionar Novo Tópico"
+      submit-label="Criar"
+      cancel-label="Cancelar"
+      @submit="addNewTopic"
+      @cancel="showAddTopicModal = false"
+    >
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Título do Tópico
+        </label>
+        <input
+          v-model="newTopicTitle"
+          type="text"
+          placeholder="Ex: Novo tópico de coesão"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+          @keyup.enter="addNewTopic"
+        />
+      </div>
+    </AppModal>
   </div>
 </template>

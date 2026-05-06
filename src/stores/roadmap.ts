@@ -105,6 +105,63 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     }
   }
 
+  function addBlock(title: string, priority: 'normal' | 'alta' | 'maxima' = 'normal') {
+    const newBlockId = `bloco-${activeRoadmap.value.blocks.length + 1}`
+    const newBlock: Block = {
+      id: newBlockId,
+      order: activeRoadmap.value.blocks.length + 1,
+      title,
+      priority,
+      topics: []
+    }
+    activeRoadmap.value.blocks.push(newBlock)
+    activeRoadmap.value.updatedAt = new Date().toISOString()
+    return newBlockId
+  }
+
+  function removeBlock(blockId: string) {
+    const index = activeRoadmap.value.blocks.findIndex(b => b.id === blockId)
+    if (index >= 0) {
+      activeRoadmap.value.blocks.splice(index, 1)
+      // Reordenar os blocos restantes
+      activeRoadmap.value.blocks.forEach((block, idx) => {
+        block.order = idx + 1
+      })
+      activeRoadmap.value.updatedAt = new Date().toISOString()
+    }
+  }
+
+  function addTopic(blockId: string, title: string) {
+    const block = blockById(blockId)
+    if (block) {
+      const topicNumber = block.topics.length + 1
+      const newTopic: Topic = {
+        id: `${block.order}.${topicNumber}`,
+        title,
+        status: 'nao_iniciado',
+        resources: [],
+        notes: '',
+        questoesSolvidas: 0,
+        acertoPercent: null
+      }
+      block.topics.push(newTopic)
+      activeRoadmap.value.updatedAt = new Date().toISOString()
+      return newTopic.id
+    }
+    return null
+  }
+
+  function removeTopic(blockId: string, topicId: string) {
+    const block = blockById(blockId)
+    if (block) {
+      const index = block.topics.findIndex(t => t.id === topicId)
+      if (index >= 0) {
+        block.topics.splice(index, 1)
+        activeRoadmap.value.updatedAt = new Date().toISOString()
+      }
+    }
+  }
+
   function persistToStorage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(roadmaps.value))
   }
@@ -123,6 +180,10 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     removeResource,
     updateTopicNotes,
     toggleResourceViewed,
+    addBlock,
+    removeBlock,
+    addTopic,
+    removeTopic,
     persistToStorage
   }
 })
