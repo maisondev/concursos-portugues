@@ -167,6 +167,26 @@ function importJSON(event: Event) {
           </AppButton>
         </div>
 
+        <!-- Comportamento -->
+        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Comportamento</h3>
+          <label class="flex items-start gap-3 cursor-pointer select-none">
+            <input
+              v-model="settingsStore.settings.markViewedOnOpen"
+              type="checkbox"
+              class="mt-1"
+            />
+            <div>
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                Marcar recurso como visto ao abrir
+              </p>
+              <p class="text-xs text-gray-600 dark:text-gray-400">
+                Ao clicar no título/link do recurso, ele será marcado como visto automaticamente.
+              </p>
+            </div>
+          </label>
+        </div>
+
         <!-- Metas -->
         <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
           <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Metas Diárias</h3>
@@ -216,6 +236,20 @@ function importJSON(event: Event) {
               />
             </label>
           </div>
+        </div>
+
+        <!-- Sobre -->
+        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Sobre</h3>
+          <p class="text-sm text-gray-700 dark:text-gray-300">
+            Desenvolvedor: <span class="font-semibold">Maison</span>
+          </p>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            Projeto pessoal para organização de estudos e evolução contínua do produto.
+          </p>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">
+            Repositório: <a class="text-blue-600 dark:text-blue-400 hover:underline" href="https://github.com/maisondev/concursos-portugues" target="_blank" rel="noreferrer">GitHub</a>
+          </p>
         </div>
       </div>
     </div>

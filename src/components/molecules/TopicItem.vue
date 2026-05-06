@@ -41,6 +41,35 @@ const statusMap = {
   concluido: { color: 'green' as const, label: 'Concluído' }
 }
 
+const resourceCounts = computed<Record<'youtube' | 'drive' | 'document' | 'link' | 'local', number>>(() => {
+  return props.topic.resources.reduce(
+    (acc, r) => {
+      acc[r.type] += 1
+      return acc
+    },
+    { youtube: 0, drive: 0, document: 0, link: 0, local: 0 }
+  )
+})
+
+function typeLabel(type: keyof typeof resourceCounts.value): string {
+  const map: Record<string, string> = {
+    youtube: 'YouTube',
+    drive: 'Drive',
+    document: 'Doc',
+    link: 'Link',
+    local: 'Local'
+  }
+  return map[type as string] ?? String(type)
+}
+
+function typeColor(type: keyof typeof resourceCounts.value): 'blue' | 'purple' | 'yellow' | 'gray' | 'red' {
+  if (type === 'youtube') return 'red'
+  if (type === 'drive') return 'yellow'
+  if (type === 'document') return 'purple'
+  if (type === 'local') return 'gray'
+  return 'blue'
+}
+
 const canMoveUp = computed(() => props.index > 0)
 const canMoveDown = computed(() => props.index < (props.total ?? 0) - 1)
 
@@ -93,9 +122,11 @@ function handleDeleteConfirm() {
             {{ statusMap[topic.status].label }}
           </AppBadge>
           <AppTag
-            v-if="topic.resources.length > 0"
-            :label="`${topic.resources.length} recurso${topic.resources.length > 1 ? 's' : ''}`"
-            color="blue"
+            v-for="type in (Object.keys(resourceCounts) as Array<keyof typeof resourceCounts>)"
+            :key="type"
+            v-show="resourceCounts[type] > 0"
+            :label="`${resourceCounts[type]} ${typeLabel(type)}`"
+            :color="typeColor(type)"
             size="sm"
           />
           <AppTag

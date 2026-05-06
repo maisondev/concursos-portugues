@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { useSettingsStore } from '@/stores/settings'
 import { useRoadmapStore } from '@/stores/roadmap'
+import { useAuthStore } from '@/stores/auth'
 import AppLayout from '@/components/templates/AppLayout.vue'
 import { onMounted } from 'vue'
 
 const settingsStore = useSettingsStore()
 const roadmapStore = useRoadmapStore()
+const authStore = useAuthStore()
 
 onMounted(() => {
   settingsStore.initSettings()
+  authStore.init()
   roadmapStore.initRoadmap()
 })
 </script>

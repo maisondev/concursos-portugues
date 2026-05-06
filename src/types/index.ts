@@ -8,6 +8,7 @@ export interface Resource {
   url?: string           // para URLs externas
   localPath?: string     // para arquivos locais (ex: C:\Users\maiso\Documents\)
   duration?: string
+  notes?: string
   addedAt: string
   viewed: boolean
   viewedAt?: string
@@ -42,6 +43,8 @@ export interface Block {
 // Roadmap Types
 export type RoadmapColor = 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'pink' | 'orange' | 'gray'
 
+export type RoadmapStatus = 'ativo' | 'pausado' | 'concluido'
+
 export interface Roadmap {
   id: string
   title: string
@@ -52,6 +55,10 @@ export interface Roadmap {
   order?: number
   rating?: number
   color?: RoadmapColor
+  status?: RoadmapStatus
+  tags?: string[]
+  category?: string
+  visibility?: 'public' | 'private'
 }
 
 // Daily Log Types
@@ -85,6 +92,7 @@ export interface AppSettings {
   dailyGoalMinutes: number
   dailyGoalQuestoes: number
   showStreak: boolean
+  markViewedOnOpen?: boolean
   deletePassword?: string
 }
 

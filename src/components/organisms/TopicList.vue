@@ -20,7 +20,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="space-y-2">
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
     <TopicItem
       v-for="(topic, index) in topics"
       :key="topic.id"

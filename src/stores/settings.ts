@@ -5,11 +5,12 @@ import type { AppSettings } from '@/types'
 const STORAGE_KEY = 'concursos-portugues-settings-v1'
 
 const DEFAULT_SETTINGS: AppSettings = {
-  theme: 'light',
+  theme: 'dark',
   language: 'pt-BR',
   dailyGoalMinutes: 60,
   dailyGoalQuestoes: 10,
   showStreak: true,
+  markViewedOnOpen: true,
   deletePassword: '1234'
 }
 

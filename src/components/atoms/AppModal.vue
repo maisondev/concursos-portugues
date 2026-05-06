@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onBeforeUnmount, watch } from 'vue'
+
 interface Props {
   open: boolean
   title: string
@@ -6,15 +8,50 @@ interface Props {
   cancelLabel?: string
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   submitLabel: 'Salvar',
   cancelLabel: 'Cancelar'
 })
 
-defineEmits<{
+const emit = defineEmits<{
   submit: []
   cancel: []
 }>()
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    emit('cancel')
+    return
+  }
+
+  if (e.key === 'Enter') {
+    const target = e.target as HTMLElement | null
+    const tag = (target?.tagName || '').toLowerCase()
+    // não salvar ao digitar em textarea (Enter = nova linha)
+    if (tag === 'textarea') return
+    // permite Shift+Enter sem salvar (se quiser usar pra quebrar linha em alguns inputs)
+    if (e.shiftKey) return
+    e.preventDefault()
+    emit('submit')
+  }
+}
+
+watch(
+  () => props.open,
+  (open) => {
+    if (open) {
+      window.addEventListener('keydown', onKeydown)
+    } else {
+      window.removeEventListener('keydown', onKeydown)
+    }
+  },
+  { immediate: true }
+)
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
 </script>
 
 <template>

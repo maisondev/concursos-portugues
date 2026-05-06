@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
-import type { Roadmap, Block, Topic, Resource, TopicStatus, RoadmapColor } from '@/types'
+import type { Roadmap, Block, Topic, Resource, TopicStatus, RoadmapColor, RoadmapStatus } from '@/types'
 import { roadmapInterpretacaoTextos } from '@/data/roadmaps/interpretacao-textos'
+import { useAuthStore } from '@/stores/auth'
 
 const STORAGE_KEY = 'concursos-portugues-roadmaps-v1'
 
@@ -76,6 +77,20 @@ export const useRoadmapStore = defineStore('roadmap', () => {
       if (topic) {
         topic.resources = topic.resources.filter(r => r.id !== resourceId)
         activeRoadmap.value.updatedAt = new Date().toISOString()
+      }
+    }
+  }
+
+  function updateResource(blockId: string, topicId: string, resourceId: string, updates: Partial<Resource>) {
+    const block = blockById(blockId)
+    if (block) {
+      const topic = block.topics.find(t => t.id === topicId)
+      if (topic) {
+        const resource = topic.resources.find(r => r.id === resourceId)
+        if (resource) {
+          Object.assign(resource, updates)
+          activeRoadmap.value.updatedAt = new Date().toISOString()
+        }
       }
     }
   }
@@ -310,15 +325,23 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     }
   }
 
-  function addRoadmap(title: string, description: string): string {
+  function addRoadmap(title: string, description: string, category?: string, tags?: string[], visibility: 'public' | 'private' = 'private'): string | null {
+    const authStore = useAuthStore()
+    if (!authStore.isLoggedIn && Object.keys(roadmaps.value).length >= 7) {
+      return null
+    }
     const newId = `roadmap-${Date.now()}`
     const newRoadmap: Roadmap = {
       id: newId,
       title,
       description,
       blocks: [],
+      status: 'ativo',
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      category: category || '',
+      tags: tags || [],
+      visibility
     }
     roadmaps.value[newId] = newRoadmap
     activeRoadmapId.value = newId
@@ -341,13 +364,25 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     return true
   }
 
-  function updateRoadmap(id: string, title: string, description: string, rating?: number) {
+  function updateRoadmap(id: string, title: string, description: string, rating?: number, status?: RoadmapStatus, category?: string, tags?: string[], visibility?: 'public' | 'private') {
     const roadmap = roadmaps.value[id]
     if (roadmap) {
       roadmap.title = title
       roadmap.description = description
       if (rating !== undefined) {
         roadmap.rating = rating
+      }
+      if (status !== undefined) {
+        roadmap.status = status
+      }
+      if (category !== undefined) {
+        roadmap.category = category
+      }
+      if (tags !== undefined) {
+        roadmap.tags = tags
+      }
+      if (visibility !== undefined) {
+        roadmap.visibility = visibility
       }
       roadmap.updatedAt = new Date().toISOString()
     }
@@ -414,6 +449,7 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     updateTopicQuestoes,
     addResource,
     removeResource,
+    updateResource,
     updateTopicNotes,
     updateTopicTitle,
     toggleResourceViewed,
@@ -438,6 +474,47 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     updateRoadmapColor,
     moveRoadmapUp,
     moveRoadmapDown,
-    persistToStorage
+    persistToStorage,
+    exportRoadmap,
+    importRoadmap
+  }
+
+  function exportRoadmap(id: string): string {
+    const roadmap = roadmaps.value[id]
+    if (!roadmap) return ''
+    
+    const exportData = {
+      title: roadmap.title,
+      description: roadmap.description,
+      category: roadmap.category || '',
+      tags: roadmap.tags || [],
+      visibility: roadmap.visibility || 'private',
+      blocks: roadmap.blocks,
+      exportedAt: new Date().toISOString()
+    }
+    
+    return JSON.stringify(exportData, null, 2)
+  }
+
+  function importRoadmap(jsonData: string): string | null {
+    try {
+      const importData = JSON.parse(jsonData)
+      
+      // Validar estrutura básica
+      if (!importData.title || !importData.description) {
+        throw new Error('Dados inválidos: título e descrição são obrigatórios')
+      }
+      
+      return addRoadmap(
+        importData.title,
+        importData.description,
+        importData.category,
+        importData.tags,
+        importData.visibility || 'private'
+      )
+    } catch (error) {
+      console.error('Erro ao importar roadmap:', error)
+      return null
+    }
   }
 })

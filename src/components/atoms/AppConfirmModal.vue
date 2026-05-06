@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 
 interface Props {
   open: boolean
@@ -42,6 +42,34 @@ const handleCancel = () => {
   password.value = ''
   emit('cancel')
 }
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    handleCancel()
+    return
+  }
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault()
+    handleSubmit()
+  }
+}
+
+watch(
+  () => props.open,
+  (open) => {
+    if (open) {
+      window.addEventListener('keydown', onKeydown)
+    } else {
+      window.removeEventListener('keydown', onKeydown)
+    }
+  },
+  { immediate: true }
+)
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
 </script>
 
 <template>

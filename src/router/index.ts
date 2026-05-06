@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import HomePage from '@/pages/HomePage.vue'
 import RoadmapPage from '@/pages/RoadmapPage.vue'
 import BlockDetailPage from '@/pages/BlockDetailPage.vue'
+import TopicResourcesPage from '@/pages/TopicResourcesPage.vue'
 import DashboardPage from '@/pages/DashboardPage.vue'
 import SettingsPage from '@/pages/SettingsPage.vue'
 import ChangelogPage from '@/pages/ChangelogPage.vue'
@@ -23,6 +24,12 @@ const routes = [
     path: '/roadmap/:roadmapId/bloco/:blockId',
     name: 'block-detail',
     component: BlockDetailPage,
+    props: true
+  },
+  {
+    path: '/roadmap/:roadmapId/bloco/:blockId/topico/:topicId',
+    name: 'topic-resources',
+    component: TopicResourcesPage,
     props: true
   },
   {

@@ -1,15 +1,46 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
+import { useAuthStore } from '@/stores/auth'
 import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon } from '@heroicons/vue/24/outline'
 import AppButton from '@/components/atoms/AppButton.vue'
+import AppModal from '@/components/atoms/AppModal.vue'
 
 const router = useRouter()
 const route = useRoute()
 const settingsStore = useSettingsStore()
 const dailyLogStore = useDailyLogStore()
+const authStore = useAuthStore()
+
+const showAuthModal = ref(false)
+const authMode = ref<'login' | 'register'>('login')
+const username = ref('')
+const password = ref('')
+const authError = ref<string | null>(null)
+
+function openLogin() {
+  authMode.value = authStore.hasAccount ? 'login' : 'register'
+  username.value = ''
+  password.value = ''
+  authError.value = null
+  showAuthModal.value = true
+}
+
+async function submitAuth() {
+  authError.value = null
+  try {
+    if (authMode.value === 'register') {
+      await authStore.register(username.value, password.value)
+    } else {
+      await authStore.login(password.value)
+    }
+    showAuthModal.value = false
+  } catch (e) {
+    authError.value = e instanceof Error ? e.message : String(e)
+  }
+}
 
 const showBackButton = computed(() => {
   return route.name === 'block-detail'
@@ -41,7 +72,7 @@ function toggleTheme() {
 }
 
 const navItems = [
-  { name: 'home', path: '/', label: 'Início', icon: HomeIcon },
+  { name: 'home', path: '/', label: 'Roadmaps', icon: HomeIcon },
   { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
   { name: 'settings', path: '/settings', label: 'Configurações', icon: Cog6ToothIcon }
 ]
@@ -112,6 +143,30 @@ const isActive = (name: string) => route.name === name
             <MoonIcon v-else class="w-5 h-5" />
           </button>
 
+          <!-- User area -->
+          <div class="hidden sm:flex items-center gap-2">
+            <div class="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/20 text-xs text-gray-700 dark:text-gray-200">
+              <span class="font-semibold">{{ authStore.isLoggedIn ? authStore.username : 'Visitante' }}</span>
+            </div>
+            <AppButton
+              v-if="!authStore.isLoggedIn"
+              variant="secondary"
+              size="sm"
+              @click="openLogin"
+            >
+              Entrar
+            </AppButton>
+            <AppButton
+              v-else
+              variant="ghost"
+              size="sm"
+              @click="authStore.logout()"
+              title="Sair"
+            >
+              Sair
+            </AppButton>
+          </div>
+
           <!-- Mobile menu button -->
           <button
             class="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -143,6 +198,53 @@ const isActive = (name: string) => route.name === name
         </button>
       </div>
     </div>
+
+    <AppModal
+      :open="showAuthModal"
+      :title="authMode === 'register' ? 'Criar conta (neste dispositivo)' : 'Entrar'"
+      submit-label="Continuar"
+      cancel-label="Cancelar"
+      @submit="submitAuth"
+      @cancel="showAuthModal = false"
+    >
+      <div class="space-y-4">
+        <div v-if="authMode === 'register'">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Usuário
+          </label>
+          <input
+            v-model="username"
+            type="text"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            placeholder="Ex: Maison"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Senha
+          </label>
+          <input
+            v-model="password"
+            type="password"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            placeholder="Mínimo 6 caracteres"
+          />
+        </div>
+
+        <p v-if="authError" class="text-sm text-red-600 dark:text-red-400">
+          {{ authError }}
+        </p>
+
+        <button
+          type="button"
+          class="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+          @click="authMode = authMode === 'login' ? 'register' : 'login'; authError = null"
+        >
+          {{ authMode === 'login' ? 'Criar conta' : 'Já tenho conta' }}
+        </button>
+      </div>
+    </AppModal>
   </nav>
 </template>
 
