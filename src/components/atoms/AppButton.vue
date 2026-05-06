@@ -15,7 +15,7 @@ withDefaults(defineProps<Props>(), {
 })
 
 defineEmits<{
-  click: []
+  click: [event: MouseEvent]
 }>()
 
 const variantClasses = {
@@ -40,7 +40,7 @@ const sizeClasses = {
       sizeClasses[size]
     ]"
     :disabled="disabled || loading"
-    @click="$emit('click')"
+    @click="(e) => $emit('click', e)"
   >
     <span v-if="loading" class="inline-block mr-2">⏳</span>
     <slot />
