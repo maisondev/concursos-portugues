@@ -13,7 +13,7 @@ const router = useRouter()
 const roadmapStore = useRoadmapStore()
 const progressStore = useProgressStore()
 
-defineProps<{
+const props = defineProps<{
   roadmapId: string
 }>()
 
