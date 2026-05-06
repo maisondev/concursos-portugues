@@ -91,6 +91,17 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     }
   }
 
+  function updateTopicTitle(blockId: string, topicId: string, title: string) {
+    const block = blockById(blockId)
+    if (block) {
+      const topic = block.topics.find(t => t.id === topicId)
+      if (topic) {
+        topic.title = title
+        activeRoadmap.value.updatedAt = new Date().toISOString()
+      }
+    }
+  }
+
   function toggleResourceViewed(blockId: string, topicId: string, resourceId: string) {
     const block = blockById(blockId)
     if (block) {
@@ -395,6 +406,7 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     addResource,
     removeResource,
     updateTopicNotes,
+    updateTopicTitle,
     toggleResourceViewed,
     addBlock,
     removeBlock,

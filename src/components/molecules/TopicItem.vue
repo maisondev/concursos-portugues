@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { Topic } from '@/types'
+import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import AppCheckbox from '@/components/atoms/AppCheckbox.vue'
 import AppBadge from '@/components/atoms/AppBadge.vue'
 import AppTag from '@/components/atoms/AppTag.vue'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppIcon from '@/components/atoms/AppIcon.vue'
+import AppModal from '@/components/atoms/AppModal.vue'
+import AppConfirmModal from '@/components/atoms/AppConfirmModal.vue'
 
 interface Props {
   topic: Topic
@@ -21,10 +24,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:status': [value: string]
+  'update:title': [title: string]
+  'delete': []
   open: []
   'move-up': []
   'move-down': []
 }>()
+
+const showEditModal = ref(false)
+const showDeleteConfirm = ref(false)
+const editTitle = ref(props.topic.title)
 
 const statusMap = {
   nao_iniciado: { color: 'gray' as const, label: 'Não iniciado' },
@@ -43,6 +52,27 @@ function handleStatusChange(newStatus: boolean | 'indeterminate') {
     status = 'em_andamento'
   }
   emit('update:status', status)
+}
+
+function openEditModal() {
+  editTitle.value = props.topic.title
+  showEditModal.value = true
+}
+
+function saveTitle() {
+  if (editTitle.value.trim()) {
+    emit('update:title', editTitle.value.trim())
+    showEditModal.value = false
+  }
+}
+
+function confirmDelete() {
+  showDeleteConfirm.value = true
+}
+
+function handleDeleteConfirm() {
+  showDeleteConfirm.value = false
+  emit('delete')
 }
 </script>
 
@@ -77,8 +107,16 @@ function handleStatusChange(newStatus: boolean | 'indeterminate') {
         </div>
       </div>
 
-      <!-- Move buttons -->
+      <!-- Action buttons -->
       <div class="flex gap-1">
+        <AppButton
+          variant="ghost"
+          size="sm"
+          @click="(e) => { e.stopPropagation(); openEditModal() }"
+          title="Editar título"
+        >
+          <PencilIcon class="w-4 h-4" />
+        </AppButton>
         <AppButton
           v-if="canMoveUp"
           variant="ghost"
@@ -97,7 +135,48 @@ function handleStatusChange(newStatus: boolean | 'indeterminate') {
         >
           <AppIcon name="chevron-down" size="sm" />
         </AppButton>
+        <AppButton
+          variant="ghost"
+          size="sm"
+          @click="(e) => { e.stopPropagation(); confirmDelete() }"
+          title="Deletar tópico"
+        >
+          <TrashIcon class="w-4 h-4 text-red-500" />
+        </AppButton>
       </div>
     </div>
   </div>
+
+  <!-- Edit Title Modal -->
+  <AppModal
+    :open="showEditModal"
+    title="Editar Título do Tópico"
+    submit-label="Salvar"
+    cancel-label="Cancelar"
+    @submit="saveTitle"
+    @cancel="showEditModal = false"
+  >
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        Título
+      </label>
+      <input
+        v-model="editTitle"
+        type="text"
+        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+        @keyup.enter="saveTitle"
+      />
+    </div>
+  </AppModal>
+
+  <!-- Delete Confirm Modal -->
+  <AppConfirmModal
+    :open="showDeleteConfirm"
+    title="Deletar Tópico"
+    message="Tem certeza que deseja deletar este tópico? Todos os recursos associados também serão removidos."
+    submit-label="Deletar"
+    cancel-label="Cancelar"
+    @submit="handleDeleteConfirm"
+    @cancel="showDeleteConfirm = false"
+  />
 </template>

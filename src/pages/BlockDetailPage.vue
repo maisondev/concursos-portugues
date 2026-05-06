@@ -122,6 +122,14 @@ function moveTopicDown(blockId: string, topicId: string) {
   roadmapStore.moveTopicDown(blockId, topicId)
 }
 
+function updateTopicTitle(blockId: string, topicId: string, newTitle: string) {
+  roadmapStore.updateTopicTitle(blockId, topicId, newTitle)
+}
+
+function deleteTopic(blockId: string, topicId: string) {
+  roadmapStore.removeTopic(blockId, topicId)
+}
+
 const priorityColor = computed(() => {
   if (!block) return 'gray'
   if (block.priority === 'maxima') return 'purple'
@@ -190,6 +198,8 @@ const priorityColor = computed(() => {
             :topics="block.topics"
             :block-id="block.id"
             @update:topic-status="updateTopicStatus"
+            @update:topic-title="updateTopicTitle"
+            @delete:topic="deleteTopic"
             @open-topic="selectTopic"
             @move-topic-up="moveTopicUp"
             @move-topic-down="moveTopicDown"
