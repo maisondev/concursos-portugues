@@ -8,6 +8,8 @@ export interface Resource {
   url: string
   duration?: string
   addedAt: string
+  viewed: boolean
+  viewedAt?: string
 }
 
 // Topic Types

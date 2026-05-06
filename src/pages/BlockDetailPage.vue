@@ -45,7 +45,8 @@ function addResource() {
     type: resourceType.value,
     label: resourceLabel.value,
     url: resourceUrl.value,
-    addedAt: new Date().toISOString()
+    addedAt: new Date().toISOString(),
+    viewed: false
   }
 
   roadmapStore.addResource(props.blockId, selectedTopic.value.id, resource)
@@ -56,6 +57,10 @@ function addResource() {
 
 function removeResource(topicId: string, resourceId: string) {
   roadmapStore.removeResource(props.blockId, topicId, resourceId)
+}
+
+function toggleResourceViewed(topicId: string, resourceId: string) {
+  roadmapStore.toggleResourceViewed(props.blockId, topicId, resourceId)
 }
 
 const priorityColor = computed(() => {
@@ -130,6 +135,7 @@ const priorityColor = computed(() => {
                 :resource="resource"
                 removable
                 @remove="removeResource(selectedTopic.id, resource.id)"
+                @toggleViewed="toggleResourceViewed(selectedTopic.id, resource.id)"
               />
             </div>
 

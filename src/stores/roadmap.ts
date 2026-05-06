@@ -90,6 +90,21 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     }
   }
 
+  function toggleResourceViewed(blockId: string, topicId: string, resourceId: string) {
+    const block = blockById(blockId)
+    if (block) {
+      const topic = block.topics.find(t => t.id === topicId)
+      if (topic) {
+        const resource = topic.resources.find(r => r.id === resourceId)
+        if (resource) {
+          resource.viewed = !resource.viewed
+          resource.viewedAt = new Date().toISOString()
+          activeRoadmap.value.updatedAt = new Date().toISOString()
+        }
+      }
+    }
+  }
+
   function persistToStorage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(roadmaps.value))
   }
@@ -107,6 +122,7 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     addResource,
     removeResource,
     updateTopicNotes,
+    toggleResourceViewed,
     persistToStorage
   }
 })
