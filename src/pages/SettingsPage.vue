@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useRoadmapStore } from '@/stores/roadmap'
 import { useDailyLogStore } from '@/stores/dailyLog'
+import AppButton from '@/components/atoms/AppButton.vue'
+import AppIcon from '@/components/atoms/AppIcon.vue'
 
+const router = useRouter()
 const settingsStore = useSettingsStore()
 const roadmapStore = useRoadmapStore()
 const dailyLogStore = useDailyLogStore()
@@ -46,19 +50,32 @@ function importJSON(event: Event) {
 
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900 p-4">
-    <div class="max-w-2xl mx-auto">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Configurações</h1>
+    <div class="max-w-2xl mx-auto space-y-6">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+        <button
+          @click="router.push('/')"
+          class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+        >
+          <AppIcon name="home" size="sm" />
+          Início
+        </button>
+        <span class="text-gray-400">•</span>
+        <span class="font-medium text-gray-900 dark:text-white">Configurações</span>
+      </div>
+
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Configurações</h1>
 
       <div class="space-y-6">
         <!-- Tema -->
         <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
           <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Tema</h3>
-          <button
+          <AppButton
+            variant="primary"
             @click="settingsStore.toggleTheme"
-            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           >
             Atual: {{ settingsStore.settings.theme }} (Alternar)
-          </button>
+          </AppButton>
         </div>
 
         <!-- Metas -->
@@ -88,14 +105,20 @@ function importJSON(event: Event) {
         <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
           <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Backup e Restauração</h3>
           <div class="flex gap-2">
-            <button
+            <AppButton
+              variant="secondary"
               @click="exportJSON"
-              class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex-1"
+              class="flex-1"
             >
               📥 Exportar JSON
-            </button>
-            <label class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded cursor-pointer">
-              📤 Importar JSON
+            </AppButton>
+            <label class="flex-1">
+              <AppButton
+                variant="secondary"
+                class="w-full"
+              >
+                📤 Importar JSON
+              </AppButton>
               <input
                 type="file"
                 accept=".json"
