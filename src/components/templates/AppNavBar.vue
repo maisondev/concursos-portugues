@@ -54,7 +54,7 @@ const isActive = (name: string) => route.name === name
     <div class="max-w-6xl mx-auto px-4">
       <!-- Main navbar -->
       <div class="flex items-center justify-between h-16">
-        <!-- Left section: back button + logo -->
+        <!-- Left section: back button -->
         <div class="flex items-center gap-4">
           <!-- Back button -->
           <Transition name="fade">
@@ -67,19 +67,6 @@ const isActive = (name: string) => route.name === name
               {{ backLabel }}
             </button>
           </Transition>
-
-          <!-- Logo -->
-          <div
-            @click="router.push('/')"
-            class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity -ml-1"
-          >
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm">
-              CP
-            </div>
-            <h1 class="text-base font-bold text-gray-900 dark:text-white hidden sm:block whitespace-nowrap">
-              Concursos
-            </h1>
-          </div>
         </div>
 
         <!-- Center section: desktop navigation -->

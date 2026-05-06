@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useRoadmapStore } from '@/stores/roadmap'
@@ -10,6 +11,44 @@ const router = useRouter()
 const settingsStore = useSettingsStore()
 const roadmapStore = useRoadmapStore()
 const dailyLogStore = useDailyLogStore()
+
+const newPassword = ref('')
+const confirmPassword = ref('')
+const currentPassword = ref('')
+
+function updatePassword() {
+  if (!currentPassword.value) {
+    alert('Digite a senha atual')
+    return
+  }
+
+  if (currentPassword.value !== settingsStore.settings.deletePassword) {
+    alert('Senha atual incorreta')
+    currentPassword.value = ''
+    return
+  }
+
+  if (!newPassword.value || !confirmPassword.value) {
+    alert('Digite a nova senha')
+    return
+  }
+
+  if (newPassword.value !== confirmPassword.value) {
+    alert('As senhas não coincidem')
+    return
+  }
+
+  if (newPassword.value === currentPassword.value) {
+    alert('A nova senha deve ser diferente da senha atual')
+    return
+  }
+
+  settingsStore.updateSettings({ deletePassword: newPassword.value })
+  alert('Senha alterada com sucesso!')
+  currentPassword.value = ''
+  newPassword.value = ''
+  confirmPassword.value = ''
+}
 
 function exportJSON() {
   const data = {
@@ -67,6 +106,56 @@ function importJSON(event: Event) {
       <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Configurações</h1>
 
       <div class="space-y-6">
+        <!-- Segurança -->
+        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Segurança</h3>
+          <div class="space-y-3">
+            <div>
+              <label class="block">
+                <span class="text-sm text-gray-700 dark:text-gray-300">Senha Atual</span>
+                <input
+                  v-model="currentPassword"
+                  type="password"
+                  placeholder="Digite sua senha atual"
+                  class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                />
+              </label>
+            </div>
+            <div>
+              <label class="block">
+                <span class="text-sm text-gray-700 dark:text-gray-300">Nova Senha</span>
+                <input
+                  v-model="newPassword"
+                  type="password"
+                  placeholder="Digite a nova senha"
+                  class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                />
+              </label>
+            </div>
+            <div>
+              <label class="block">
+                <span class="text-sm text-gray-700 dark:text-gray-300">Confirmar Nova Senha</span>
+                <input
+                  v-model="confirmPassword"
+                  type="password"
+                  placeholder="Confirme a nova senha"
+                  class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                />
+              </label>
+            </div>
+            <AppButton
+              variant="primary"
+              @click="updatePassword"
+              class="w-full"
+            >
+              Alterar Senha
+            </AppButton>
+            <p class="text-xs text-gray-600 dark:text-gray-400">
+              Senha atual: <strong>{{ settingsStore.settings.deletePassword }}</strong> (apenas para referência)
+            </p>
+          </div>
+        </div>
+
         <!-- Tema -->
         <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
           <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Tema</h3>

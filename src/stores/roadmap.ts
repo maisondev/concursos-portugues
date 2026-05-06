@@ -131,6 +131,15 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     return newBlockId
   }
 
+  function updateBlock(blockId: string, title: string, priority: 'normal' | 'alta' | 'maxima') {
+    const block = blockById(blockId)
+    if (block) {
+      block.title = title
+      block.priority = priority
+      activeRoadmap.value.updatedAt = new Date().toISOString()
+    }
+  }
+
   function removeBlock(blockId: string) {
     const index = activeRoadmap.value.blocks.findIndex(b => b.id === blockId)
     if (index >= 0) {
@@ -409,6 +418,7 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     updateTopicTitle,
     toggleResourceViewed,
     addBlock,
+    updateBlock,
     removeBlock,
     addTopic,
     removeTopic,

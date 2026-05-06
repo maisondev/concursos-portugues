@@ -8,6 +8,7 @@ import AppBadge from '@/components/atoms/AppBadge.vue'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppIcon from '@/components/atoms/AppIcon.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
+import AppConfirmModal from '@/components/atoms/AppConfirmModal.vue'
 
 const router = useRouter()
 const roadmapStore = useRoadmapStore()
@@ -18,8 +19,13 @@ const props = defineProps<{
 }>()
 
 const showAddModal = ref(false)
+const showEditModal = ref(false)
+const showDeleteConfirm = ref(false)
 const newBlockTitle = ref('')
 const newBlockPriority = ref<'normal' | 'alta' | 'maxima'>('normal')
+const editingBlockId = ref<string | null>(null)
+const editBlockTitle = ref('')
+const editBlockPriority = ref<'normal' | 'alta' | 'maxima'>('normal')
 
 function addNewBlock() {
   if (!newBlockTitle.value.trim()) {
@@ -69,6 +75,37 @@ function toggleBlockCompletion(blockId: string) {
     roadmapStore.markBlockIncomplete(blockId)
   } else {
     roadmapStore.markBlockComplete(blockId)
+  }
+}
+
+function openEditModal(blockId: string) {
+  const block = roadmapStore.blockById(blockId)
+  if (block) {
+    editingBlockId.value = blockId
+    editBlockTitle.value = block.title
+    editBlockPriority.value = block.priority
+    showEditModal.value = true
+  }
+}
+
+function saveBlockEdit() {
+  if (editingBlockId.value && editBlockTitle.value.trim()) {
+    roadmapStore.updateBlock(editingBlockId.value, editBlockTitle.value.trim(), editBlockPriority.value)
+    showEditModal.value = false
+    editingBlockId.value = null
+  }
+}
+
+function confirmDeleteBlock(blockId: string) {
+  editingBlockId.value = blockId
+  showDeleteConfirm.value = true
+}
+
+function deleteBlock() {
+  if (editingBlockId.value) {
+    roadmapStore.removeBlock(editingBlockId.value)
+    showDeleteConfirm.value = false
+    editingBlockId.value = null
   }
 }
 </script>
@@ -164,6 +201,26 @@ function toggleBlockCompletion(blockId: string) {
                 <AppIcon :name="progressStore.blockProgressPercent(block.id) === 100 ? 'check-circle' : 'check'" size="sm" />
               </AppButton>
 
+              <!-- Edit button -->
+              <AppButton
+                variant="ghost"
+                size="sm"
+                @click="(e) => { e.stopPropagation(); openEditModal(block.id) }"
+                title="Editar módulo"
+              >
+                <AppIcon name="pencil" size="sm" />
+              </AppButton>
+
+              <!-- Delete button -->
+              <AppButton
+                variant="ghost"
+                size="sm"
+                @click="(e) => { e.stopPropagation(); confirmDeleteBlock(block.id) }"
+                title="Deletar módulo"
+              >
+                <AppIcon name="trash" size="sm" />
+              </AppButton>
+
               <!-- Move buttons -->
               <div class="flex gap-1">
                 <AppButton
@@ -231,6 +288,55 @@ function toggleBlockCompletion(blockId: string) {
           </div>
         </div>
       </AppModal>
+
+      <!-- Modal para editar módulo -->
+      <AppModal
+        :open="showEditModal"
+        title="Editar Módulo"
+        submit-label="Salvar"
+        cancel-label="Cancelar"
+        @submit="saveBlockEdit"
+        @cancel="showEditModal = false"
+      >
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Título do Módulo
+            </label>
+            <input
+              v-model="editBlockTitle"
+              type="text"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              @keyup.enter="saveBlockEdit"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Prioridade
+            </label>
+            <select
+              v-model="editBlockPriority"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            >
+              <option value="normal">Normal</option>
+              <option value="alta">Alta</option>
+              <option value="maxima">Máxima ⭐</option>
+            </select>
+          </div>
+        </div>
+      </AppModal>
+
+      <!-- Modal para confirmar exclusão -->
+      <AppConfirmModal
+        :open="showDeleteConfirm"
+        title="Deletar Módulo"
+        message="Tem certeza que deseja deletar este módulo? Todos os tópicos e recursos serão removidos."
+        submit-label="Deletar"
+        cancel-label="Cancelar"
+        @submit="deleteBlock"
+        @cancel="showDeleteConfirm = false"
+      />
     </div>
   </div>
 </template>
