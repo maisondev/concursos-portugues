@@ -395,6 +395,7 @@ npm run preview  # preview do build
 - [ ] Sync integrado se necessário
 - [ ] Console.log removido (exceto debug propositais)
 - [ ] Commit message descritivo
+- [ ] **CHANGELOG.md atualizado** com features/fixes adicionados
 
 ---
 
