@@ -113,8 +113,4 @@ const submitFeedback = async () => {
     isSubmitting.value = false
   }
 }
-
-const emit = defineEmits<{
-  close: []
-}>()
 </script>
