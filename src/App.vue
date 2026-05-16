@@ -3,11 +3,14 @@ import { useSettingsStore } from '@/stores/settings'
 import { useRoadmapStore } from '@/stores/roadmap'
 import { useAuthStore } from '@/stores/auth'
 import AppLayout from '@/components/templates/AppLayout.vue'
+import AppLoadingOverlay from '@/components/molecules/AppLoadingOverlay.vue'
+import { useGlobalLoading } from '@/composables/useGlobalLoading'
 import { onMounted } from 'vue'
 
 const settingsStore = useSettingsStore()
 const roadmapStore = useRoadmapStore()
 const authStore = useAuthStore()
+const { isLoading, loadingMessage } = useGlobalLoading()
 
 onMounted(() => {
   settingsStore.initSettings()
@@ -18,6 +21,7 @@ onMounted(() => {
 
 <template>
   <AppLayout />
+  <AppLoadingOverlay :visible="isLoading" :message="loadingMessage" />
 </template>
 
 <style>
