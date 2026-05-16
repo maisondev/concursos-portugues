@@ -5,9 +5,10 @@ import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
 import { useAuthStore } from '@/stores/auth'
 import { useSync } from '@/composables/useSync'
-import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon, ShieldCheckIcon } from '@heroicons/vue/24/outline'
+import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon, ShieldCheckIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/24/outline'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
+import FeedbackModal from '@/components/molecules/FeedbackModal.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -21,6 +22,7 @@ const authMode = ref<'login' | 'register'>('login')
 const email = ref('')
 const password = ref('')
 const authError = ref<string | null>(null)
+const showFeedbackModal = ref(false)
 
 function openLogin() {
   authMode.value = 'login'
@@ -184,6 +186,15 @@ const isActive = (name: string) => route.name === name
             </span>
           </div>
 
+          <!-- Feedback button -->
+          <button
+            @click="showFeedbackModal = true"
+            class="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            title="Enviar Feedback"
+          >
+            <ChatBubbleLeftEllipsisIcon class="w-5 h-5" />
+          </button>
+
           <!-- Theme toggle -->
           <button
             @click="toggleTheme"
@@ -305,6 +316,11 @@ const isActive = (name: string) => route.name === name
         </button>
       </div>
     </AppModal>
+
+    <FeedbackModal
+      :open="showFeedbackModal"
+      @close="showFeedbackModal = false"
+    />
   </nav>
 </template>
 
