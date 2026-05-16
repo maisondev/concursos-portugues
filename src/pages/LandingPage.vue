@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import AppButton from '@/components/atoms/AppButton.vue'
+import BenefitIcon from '@/components/atoms/BenefitIcon.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -16,32 +17,32 @@ const isSubmitting = ref(false)
 
 const benefits = [
   {
-    icon: '📚',
+    icon: 'layers',
     title: 'Roadmaps Organizados',
     description: 'Crie e organize múltiplos roadmaps de estudo com blocos, tópicos e recursos estruturados'
   },
   {
-    icon: '📊',
+    icon: 'chart',
     title: 'Acompanhamento Detalhado',
     description: 'Veja seu progresso em tempo real com métricas de conclusão por roadmap'
   },
   {
-    icon: '📝',
+    icon: 'notebook',
     title: 'Registros Diários',
     description: 'Mantenha um registro diário de seus estudos, marca dias consecutivos de dedicação'
   },
   {
-    icon: '🎓',
+    icon: 'star',
     title: 'Ranking de Professores',
     description: 'Avalie e classifique seus professores para compartilhar conhecimento com a comunidade'
   },
   {
-    icon: '📱',
+    icon: 'cloud',
     title: 'Funciona Offline',
     description: 'Use a aplicação mesmo sem internet - suas mudanças sincronizam automaticamente'
   },
   {
-    icon: '🔒',
+    icon: 'shield',
     title: 'Seus Dados Protegidos',
     description: 'Autenticação segura com JWT e criptografia de senhas com bcrypt'
   }
@@ -167,7 +168,9 @@ async function submitAuth() {
             :key="idx"
             class="p-8 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-300 hover:shadow-lg"
           >
-            <div class="text-5xl mb-4">{{ benefit.icon }}</div>
+            <div class="mb-4">
+              <BenefitIcon :icon="benefit.icon" :size="56" />
+            </div>
             <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
               {{ benefit.title }}
             </h3>
