@@ -68,8 +68,6 @@ export const useAuthStore = defineStore('auth', () => {
     if (storedUser) {
       try {
         user.value = JSON.parse(storedUser)
-        console.log('[AUTH] User carregado do localStorage:', user.value)
-        console.log('[AUTH] isAdmin:', user.value?.isAdmin)
       } catch {
         user.value = null
       }

@@ -92,13 +92,9 @@ const navItems = computed(() => {
     { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
     { name: 'settings', path: '/settings', label: 'Configurações', icon: Cog6ToothIcon }
   ]
-  console.log('[NAVBAR] authStore.isAdmin:', authStore.isAdmin)
-  console.log('[NAVBAR] authStore.user:', authStore.user)
   if (authStore.isAdmin) {
-    console.log('[NAVBAR] Adicionando item Admin')
     items.push({ name: 'admin', path: '/admin', label: 'Admin', icon: ShieldCheckIcon })
   }
-  console.log('[NAVBAR] navItems:', items)
   return items
 })
 
