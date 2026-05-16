@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { useRoadmapStore } from './roadmap'
 
 type User = {
   id: string
@@ -137,6 +138,9 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem(USER_STORAGE_KEY)
+
+    const roadmapStore = useRoadmapStore()
+    roadmapStore.clearRoadmaps()
   }
 
   function getAuthHeaders() {

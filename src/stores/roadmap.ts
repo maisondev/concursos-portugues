@@ -4,14 +4,23 @@ import type { Roadmap, Block, Topic, Resource, TopicStatus, RoadmapColor, Roadma
 import { roadmapInterpretacaoTextos } from '@/data/roadmaps/interpretacao-textos'
 import { useAuthStore } from '@/stores/auth'
 
-const STORAGE_KEY = 'concursos-portugues-roadmaps-v1'
+const STORAGE_KEY_PREFIX = 'roadmap-roadmaps-v1'
+
+function getStorageKey(email?: string): string {
+  if (!email) {
+    return `${STORAGE_KEY_PREFIX}-guest`
+  }
+  return `${STORAGE_KEY_PREFIX}-${email}`
+}
 
 export const useRoadmapStore = defineStore('roadmap', () => {
   const roadmaps = ref<Record<string, Roadmap>>({})
   const activeRoadmapId = ref<string>('interpretacao-textos')
 
   function initRoadmap() {
-    const stored = localStorage.getItem(STORAGE_KEY)
+    const authStore = useAuthStore()
+    const storageKey = getStorageKey(authStore.username || undefined)
+    const stored = localStorage.getItem(storageKey)
     if (stored) {
       try {
         roadmaps.value = JSON.parse(stored)
@@ -433,7 +442,14 @@ export const useRoadmapStore = defineStore('roadmap', () => {
   }
 
   function persistToStorage() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(roadmaps.value))
+    const authStore = useAuthStore()
+    const storageKey = getStorageKey(authStore.username || undefined)
+    localStorage.setItem(storageKey, JSON.stringify(roadmaps.value))
+  }
+
+  function clearRoadmaps() {
+    roadmaps.value = { [roadmapInterpretacaoTextos.id]: roadmapInterpretacaoTextos }
+    activeRoadmapId.value = 'interpretacao-textos'
   }
 
   watch(() => roadmaps.value, persistToStorage, { deep: true })
@@ -475,6 +491,7 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     moveRoadmapUp,
     moveRoadmapDown,
     persistToStorage,
+    clearRoadmaps,
     exportRoadmap,
     importRoadmap
   }
