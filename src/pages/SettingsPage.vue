@@ -52,7 +52,7 @@ async function updatePassword() {
   isChangingPassword.value = true
 
   try {
-    await api.post('/auth/change-password', {
+    await api.post('/api/auth/change-password', {
       currentPassword: currentPassword.value,
       newPassword: newPassword.value
     })
