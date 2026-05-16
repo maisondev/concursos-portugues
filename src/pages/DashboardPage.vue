@@ -9,6 +9,7 @@ import DailyLogEntry from '@/components/molecules/DailyLogEntry.vue'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import AppIcon from '@/components/atoms/AppIcon.vue'
 
 const progressStore = useProgressStore()
 const dailyLogStore = useDailyLogStore()
@@ -294,13 +295,13 @@ function cancelEdit() {
                 </div>
                 <p v-if="entry.notes" class="text-sm text-gray-600 dark:text-gray-400 mt-1 break-words">{{ entry.notes }}</p>
               </div>
-              <div class="flex items-center gap-1 border border-blue-200 p-2 rounded relative z-10">
-                <div @click="startEditEntry(entry)" title="Editar" class="cursor-pointer p-1 border border-blue-300 bg-white dark:bg-gray-800 rounded">
+              <div class="flex items-center gap-2">
+                <AppButton variant="ghost" size="sm" @click="startEditEntry(entry)" title="Editar">
                   <PencilIcon class="w-4 h-4" />
-                </div>
-                <div @click="deleteRankingEntry(entry.id)" title="Remover" class="cursor-pointer p-1 border border-red-300 bg-white dark:bg-gray-800 rounded">
-                  <TrashIcon class="w-4 h-4 text-red-500" />
-                </div>
+                </AppButton>
+                <AppButton variant="danger" size="sm" @click="deleteRankingEntry(entry.id)" title="Remover">
+                  <TrashIcon class="w-4 h-4" />
+                </AppButton>
               </div>
             </div>
           </div>

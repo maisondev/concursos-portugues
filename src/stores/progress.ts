@@ -61,7 +61,9 @@ export const useProgressStore = defineStore('progress', () => {
   }
 
   const snapshotInterpretacao = computed(() => {
-    return recomputeSnapshot('interpretacao-textos')
+    // Se existir roadmap com ID específico, usar esse, senão buscar o primeiro ou geral
+    const firstRoadmapId = Object.keys(roadmapStore.roadmaps)[0]
+    return recomputeSnapshot(firstRoadmapId || 'default')
   })
 
   function blockProgressPercent(blockId: string): number {
