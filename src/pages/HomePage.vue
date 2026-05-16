@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { useRoadmapStore } from '@/stores/roadmap'
 import { useDailyLogStore } from '@/stores/dailyLog'
 import { useProgressStore } from '@/stores/progress'
@@ -11,8 +12,10 @@ import AppModal from '@/components/atoms/AppModal.vue'
 import StatBadge from '@/components/molecules/StatBadge.vue'
 import DailyLogEntry from '@/components/molecules/DailyLogEntry.vue'
 import RoadmapCard from '@/components/molecules/RoadmapCard.vue'
+import LandingPage from '@/pages/LandingPage.vue'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const roadmapStore = useRoadmapStore()
 const dailyLogStore = useDailyLogStore()
 const progressStore = useProgressStore()
@@ -342,7 +345,9 @@ function navigateToSearchResult(result: any) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-900">
+  <LandingPage v-if="!authStore.isLoggedIn" />
+
+  <div v-else class="min-h-screen bg-white dark:bg-gray-900">
     <div class="max-w-6xl mx-auto p-4 space-y-8">
       <!-- Header -->
       <div class="text-center py-8">
