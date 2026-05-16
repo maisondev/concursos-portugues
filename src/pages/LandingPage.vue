@@ -124,24 +124,62 @@ async function submitAuth() {
           </div>
         </div>
 
-        <!-- Right side - Visual -->
+        <!-- Right side - Visual: Roadmap Preview -->
         <div class="hidden md:block">
           <div class="relative">
             <div class="absolute -inset-8 bg-gradient-to-br from-emerald-100 to-blue-100 dark:from-emerald-900/20 dark:to-blue-900/20 rounded-2xl blur-2xl opacity-40"></div>
-            <div class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl p-12 space-y-6">
-              <div class="space-y-3">
-                <div class="h-4 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-lg w-3/4"></div>
-                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-5/6"></div>
-                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-4/6"></div>
+            <div class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden">
+              <!-- Roadmap Header -->
+              <div class="bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-slate-700 dark:to-slate-700 border-b border-slate-200 dark:border-slate-600 px-6 py-4">
+                <h3 class="font-bold text-slate-900 dark:text-white text-lg">Português</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400">Preparação para concursos</p>
               </div>
-              <div class="pt-6 space-y-4 border-t border-slate-200 dark:border-slate-700">
-                <div class="flex gap-3">
-                  <div class="w-10 h-10 bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-900/30 dark:to-emerald-800/20 rounded-lg flex-shrink-0"></div>
-                  <div class="flex-1 h-10 bg-slate-100 dark:bg-slate-700 rounded-lg"></div>
+
+              <!-- Roadmap Content -->
+              <div class="p-6 space-y-4">
+                <!-- Block 1 -->
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                  <div class="bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                    <p class="font-semibold text-emerald-900 dark:text-emerald-300 text-sm">Gramática</p>
+                  </div>
+                  <div class="p-4 space-y-2">
+                    <div class="flex items-center gap-2">
+                      <div class="w-4 h-4 rounded-full bg-emerald-500"></div>
+                      <span class="text-sm text-slate-700 dark:text-slate-300">Verbos e conjugação</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-4 h-4 rounded-full border-2 border-slate-300 dark:border-slate-600"></div>
+                      <span class="text-sm text-slate-700 dark:text-slate-300">Pontuação</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="flex gap-3">
-                  <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/30 dark:to-blue-800/20 rounded-lg flex-shrink-0"></div>
-                  <div class="flex-1 h-10 bg-slate-100 dark:bg-slate-700 rounded-lg"></div>
+
+                <!-- Block 2 -->
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                  <div class="bg-blue-50 dark:bg-blue-900/20 px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                    <p class="font-semibold text-blue-900 dark:text-blue-300 text-sm">Literatura</p>
+                  </div>
+                  <div class="p-4 space-y-2">
+                    <div class="flex items-center gap-2">
+                      <div class="w-4 h-4 rounded-full border-2 border-slate-300 dark:border-slate-600"></div>
+                      <span class="text-sm text-slate-700 dark:text-slate-300">Romantismo brasileiro</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-4 h-4 rounded-full border-2 border-slate-300 dark:border-slate-600"></div>
+                      <span class="text-sm text-slate-700 dark:text-slate-300">Modernismo</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Progress indicator -->
+                <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
+                  <div class="flex items-center justify-between text-xs mb-2">
+                    <span class="font-medium text-slate-700 dark:text-slate-300">Progresso</span>
+                    <span class="text-emerald-600 dark:text-emerald-400 font-semibold">40%</span>
+                  </div>
+                  <div class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div class="h-full w-2/5 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full"></div>
+                  </div>
                 </div>
               </div>
             </div>
