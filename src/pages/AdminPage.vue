@@ -27,9 +27,9 @@ async function loadStats() {
 
   try {
     const [statsData, usersData, activityData] = await Promise.all([
-      api.get('/admin/stats'),
-      api.get('/admin/users'),
-      api.get('/admin/activity')
+      api.get('/api/admin/stats'),
+      api.get('/api/admin/users'),
+      api.get('/api/admin/activity')
     ])
 
     stats.value = statsData
