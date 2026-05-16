@@ -6,11 +6,13 @@ interface Props {
   title: string
   submitLabel?: string
   cancelLabel?: string
+  submitVariant?: 'primary' | 'danger'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   submitLabel: 'Salvar',
-  cancelLabel: 'Cancelar'
+  cancelLabel: 'Cancelar',
+  submitVariant: 'primary'
 })
 
 const emit = defineEmits<{
@@ -73,7 +75,12 @@ onBeforeUnmount(() => {
           </button>
           <button
             @click="$emit('submit')"
-            class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors font-medium"
+            :class="[
+              'px-4 py-2 rounded-lg text-white transition-colors font-medium',
+              props.submitVariant === 'danger'
+                ? 'bg-red-500 hover:bg-red-600'
+                : 'bg-blue-500 hover:bg-blue-600'
+            ]"
           >
             {{ submitLabel }}
           </button>

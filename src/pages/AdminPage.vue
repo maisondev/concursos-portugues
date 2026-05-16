@@ -17,6 +17,8 @@ const error = ref<string | null>(null)
 const activeTab = ref<'stats' | 'users' | 'activity'>('stats')
 const togglingUserId = ref<string | null>(null)
 const deletingUserId = ref<string | null>(null)
+const showDeleteModal = ref(false)
+const userToDelete = ref<any>(null)
 
 onMounted(async () => {
   // Verificar se é admin (para futuro, agora só admin consegue acessar)
@@ -72,11 +74,15 @@ async function toggleAdmin(user: any) {
   }
 }
 
-async function deleteUser(user: any) {
-  if (!confirm(`Tem certeza que deseja deletar o usuário ${user.email}? Esta ação não pode ser desfeita.`)) {
-    return
-  }
+function confirmDelete(user: any) {
+  userToDelete.value = user
+  showDeleteModal.value = true
+}
 
+async function confirmDeleteUser() {
+  if (!userToDelete.value) return
+
+  const user = userToDelete.value
   deletingUserId.value = user.id
   try {
     await api.delete(`/api/admin/users/${user.id}`)
@@ -86,6 +92,8 @@ async function deleteUser(user: any) {
     error.value = err instanceof Error ? err.message : 'Erro ao deletar usuário'
   } finally {
     deletingUserId.value = null
+    showDeleteModal.value = false
+    userToDelete.value = null
   }
 }
 </script>
@@ -259,7 +267,7 @@ async function deleteUser(user: any) {
                       {{ togglingUserId === user.id ? '...' : (user.isAdmin ? 'Remover' : 'Promover') }}
                     </button>
                     <button
-                      @click="deleteUser(user)"
+                      @click="confirmDelete(user)"
                       :disabled="deletingUserId === user.id || togglingUserId === user.id || authStore.user?.id === user.id"
                       :class="[
                         'px-3 py-1 text-xs font-medium rounded transition-colors',
@@ -313,4 +321,24 @@ async function deleteUser(user: any) {
       </div>
     </div>
   </div>
+
+  <!-- Delete Confirmation Modal -->
+  <AppModal
+    :open="showDeleteModal"
+    title="Confirmar Exclusão"
+    submit-label="Deletar"
+    submit-variant="danger"
+    cancel-label="Cancelar"
+    @submit="confirmDeleteUser"
+    @cancel="showDeleteModal = false"
+  >
+    <div class="space-y-4">
+      <p class="text-gray-700 dark:text-gray-300">
+        Tem certeza que deseja deletar o usuário <strong>{{ userToDelete?.email }}</strong>?
+      </p>
+      <p class="text-sm text-red-600 dark:text-red-400 font-semibold">
+        ⚠️ Esta ação não pode ser desfeita. Todos os roadmaps, logs e dados do usuário serão permanentemente removidos.
+      </p>
+    </div>
+  </AppModal>
 </template>
