@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { ChevronDownIcon, LinkIcon } from '@heroicons/vue/24/outline'
+import FeedbackModal from '@/components/molecules/FeedbackModal.vue'
 
 interface HelpSection {
   title: string
@@ -84,6 +85,7 @@ const sections: HelpSection[] = [
 
 const expandedIndex = ref<number | null>(null)
 const copiedId = ref<string | null>(null)
+const showFeedbackModal = ref(false)
 
 // Gerar ID para cada seção baseado no título
 const processedSections = computed(() => {
@@ -198,13 +200,22 @@ onMounted(() => {
 
       <!-- FAQ Footer -->
       <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center">
-        <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+        <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4">
           Precisa de mais ajuda?
         </h3>
-        <p class="text-blue-800 dark:text-blue-200">
-          Entre em contato ou consulte a documentação do projeto no GitHub
-        </p>
+        <button
+          @click="showFeedbackModal = true"
+          class="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+        >
+          Enviar Feedback
+        </button>
       </div>
     </div>
+
+    <!-- Feedback Modal -->
+    <FeedbackModal
+      :open="showFeedbackModal"
+      @close="showFeedbackModal = false"
+    />
   </div>
 </template>
