@@ -1,203 +1,338 @@
-# 📚 concursos-portugues
+# 🗺️ Roadmap — Organize Seus Estudos com Inteligência
 
-> Curadoria pessoal de estudos de **Português para concursos públicos**, com foco em **Interpretação de Texto** e banca **FGV** (alvo: CGE-AM).
-> Repositório vivo — aulas, links, questões e acompanhamento de progresso.
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/maisondev/roadmap-web?style=social)](https://github.com/maisondev/roadmap-web)
+[![GitHub](https://img.shields.io/badge/GitHub-maisondev-black?logo=github)](https://github.com/maisondev/roadmap-web)
 
----
+> Um PWA (Progressive Web App) offline-first para criar, organizar e acompanhar roadmaps de estudo com sincronização automática em tempo real.
 
-## 🎯 Objetivo
-
-Construir uma base sólida em Português para concursos, organizada em blocos progressivos, com aulas curtas e direto ao ponto, intercaladas com resolução intensiva de questões.
-
-**Estilo de estudo:** vídeos curtos (preferencialmente até 30 min) + 10 questões mínimas após cada aula teórica.
+**[Acesse o app →](https://maisondev.github.io/roadmap-web/)**
 
 ---
 
-## 🗺️ Roadmap de Estudos
+## ✨ Features Principais
 
-### Bloco 1 — Fundamentos da Leitura
-- [ ] 1.1 Compreensão x Interpretação
-- [ ] 1.2 Leitura ativa
-- [ ] 1.3 Tema, ideia central e ideias secundárias
-- [ ] 1.4 Tópico frasal
-- [ ] 1.5 Estrutura argumentativa básica
+### 📚 **Organize Seus Estudos**
+- Crie múltiplos roadmaps para diferentes assuntos
+- Divida em blocos (módulos) → tópicos → recursos
+- Associe vídeos, artigos, PDFs e links a cada tópico
+- Personalize com cores e categorias
 
-### Bloco 2 — Tipos e Gêneros Textuais
-- [ ] 2.1 Tipologia textual (narração, descrição, dissertação, injunção, exposição)
-- [ ] 2.2 Gêneros textuais
-- [ ] 2.3 Diferença entre tipo e gênero
-- [ ] 2.4 Treino com questões de tipologia
+### 📊 **Acompanhe Progresso em Tempo Real**
+- Veja progresso por roadmap, bloco e tópico
+- Registros diários de estudo (minutos, questões, mood)
+- Streak counter — mantenha a consistência
+- Dashboard com estatísticas detalhadas
 
-### Bloco 3 — Funções da Linguagem e Intenção do Autor
-- [ ] 3.1 As 6 funções de Jakobson
-- [ ] 3.2 Função predominante x funções secundárias
-- [ ] 3.3 Intenção comunicativa do autor
-- [ ] 3.4 Posicionamento x neutralidade do enunciador
+### 📱 **Funciona Offline**
+- Use a app sem internet
+- Mudanças sincronizam automaticamente quando volta online
+- Sincronização inteligente (debounce de 2s)
+- Nunca perde dados
 
-### Bloco 4 — Coesão Textual ⭐ *(prioridade máxima)*
-- [ ] 4.1 Coesão referencial (anáfora, catáfora, elipse)
-- [ ] 4.2 Coesão sequencial
-- [ ] 4.3 Conjunções e conectivos — tabela completa
-- [ ] 4.4 Relações lógico-semânticas (causa, consequência, concessão, condição...)
-- [ ] 4.5 Pontuação aplicada às conjunções
-- [ ] 4.6 Coerência textual
+### 🔒 **Seus Dados Protegidos**
+- Autenticação segura com JWT
+- Senhas criptografadas com bcrypt
+- Dados privados e só seus
+- Sem tracking, sem ads
 
-### Bloco 5 — Inferência e Pressuposto
-- [ ] 5.1 Inferência válida x extrapolação
-- [ ] 5.2 Pressuposto x subentendido
-- [ ] 5.3 Implícitos textuais
-- [ ] 5.4 Treino dirigido (banca adora isso)
+### 🎓 **Comunidade**
+- Avalie e classifique seus professores
+- Ranking de professores por disciplina
+- Compartilhe feedback da comunidade
 
-### Bloco 6 — Reescritura e Equivalência
-- [ ] 6.1 Manutenção do sentido original
-- [ ] 6.2 Substituição por sinônimos contextuais
-- [ ] 6.3 Mudança de voz (ativa/passiva)
-- [ ] 6.4 Transformações sintáticas
-
-### Bloco 7 — Recursos Estilísticos
-- [ ] 7.1 Figuras de linguagem aplicadas à interpretação
-- [ ] 7.2 Metáfora, ironia, hipérbole, antítese
-- [ ] 7.3 Intertextualidade — paródia, paráfrase, citação
-- [ ] 7.4 Variação linguística e adequação ao contexto
-
-### Bloco 8 — Treino Dirigido por Banca (FGV)
-- [ ] 8.1 Vícios da banca FGV
-- [ ] 8.2 Resolução intensiva FGV — TCE/CGE/TCU/MP
-- [ ] 8.3 Simulados cronometrados
+### 🌙 **Dark Mode Padrão**
+- Interface moderna e profissional
+- Reduz fadiga ocular
+- Suporte completo a ambos temas
 
 ---
 
-## 🎬 Aulas Recomendadas (YouTube)
+## 🚀 Quick Start
 
-### 🟢 Módulo 1 — Fundamentos da Leitura
-| Tópico | Aula | Duração |
-|---|---|---|
-| 1.1 Compreensão x Interpretação | [Pamba — Interpretação e Compreensão de Texto 2.0](https://www.youtube.com/watch?v=kjdIkG99qE8) | ~22 min ✅ |
-| 1.1 Compreensão x Interpretação | [Noslen — Compreensão e Interpretação de Texto – Revisão ENEM](https://www.youtube.com/watch?v=XsN0e_xPyNI) | ~? min |
-| 1.1 Compreensão x Interpretação | [Prof. Álvaro Ferreira — INTERPRETAÇÃO de TEXTOS para CONCURSO - Nunca mais erre!](https://www.youtube.com/watch?v=22iA3PPjr7c) | ~? min |
-| 1.1 Compreensão x Interpretação | [Rafaela Motta — Módulo 1: Aula 1/5: Compreensão e Interpretação de Textos Parte I](https://www.youtube.com/watch?v=RY5T63ZMgNE) | ~? min |
-| 1.1 Compreensão x Interpretação | [Sidney Martins — Aula 13/38 - Compreender e Interpretar Textos](https://www.youtube.com/watch?v=GUNjrcFywsY) | ~? min |
-|---|---|---|
-| 1.2 Leitura Ativa | [Prof. Tiago Benedetti — LEITURA ATIVA: Aprenda 4 estratégias simples](https://www.youtube.com/watch?v=WIqnbIcLjws) | ~13 min |
-| 1.2 Leitura Ativa | [Prof. Altermir — NÍVEIS DE LEITURA aula 01 - Vestibular com Prof. Altermir](https://www.youtube.com/watch?v=KlEx4V5ev5E) | ~10 min |
-| 1.2 Leitura Ativa | [Seja Um Estudante Melhor — 5 DICAS PARA A LEITURA ATIVA](https://www.youtube.com/watch?v=BCTzui1QyCQ) | ~5 min |
-| 1.2 Leitura Ativa | [Seja Um Estudante Melhor — O PODER DA LEITURA ATIVA](https://www.youtube.com/watch?v=BCTzui1QyCQ) | ~5 min |
-| 1.2 Leitura Ativa | [Professora Pamba — INTERPRETAÇÃO E COMPREENSÃO DE TEXTOS (Níveis de leitura)](https://www.youtube.com/watch?v=LJvZKJN_E2w) | ~12 min |
+### Sem instalação (recomendado)
 
-### 🟢 Módulo 2 — Tipos e Gêneros Textuais
-| Tópico | Aula |
-|---|---|
-| Tipologia textual + 13 questões | [Décio Terror — Interpretação de textos / Tipologia textual](https://www.youtube.com/watch?v=6lFopVUhNJA) |
-| Reforço FGV | [Adriana Figueiredo — Playlist Português FGV](https://www.youtube.com/playlist?list=PLz11NWZjP-g6WYjSXHgj4C7KGTAJPad4s) |
+Acesse: **[https://maisondev.github.io/roadmap-web/](https://maisondev.github.io/roadmap-web/)**
 
-### 🟡 Módulo 3 — Funções da Linguagem
-| Tópico | Aula |
-|---|---|
-| 6 funções + intenção do autor | [Sidoka — Dominando Funções da Linguagem para Qualquer Banca](https://www.youtube.com/watch?v=YuQtGvlFpug) |
+1. Clique em "Cadastro"
+2. Crie sua conta com email e senha
+3. Comece a criar seus roadmaps!
 
-### 🟡 Módulo 4 — Coesão Textual ⭐
-| Tópico | Aula |
-|---|---|
-| Coesão e coerência | [Pamba — Coesão e Coerência: Aprenda Agora](https://www.youtube.com/watch?v=glPhVO3NbM4) |
-| Tabela de conjunções | [Elias Santana — Decore os conectivos! Tabela de conjunções 3.0](https://www.youtube.com/watch?v=MOnbMjG8Huw) |
-| Pontuação nas conjunções | [Elias Santana — Pontuação na tabela de conjunções (parte 1)](https://www.youtube.com/watch?v=hAmY_bMmRHs) |
+### Desenvolvimento Local
 
-### 📺 Canais de pílulas curtas (revisão e fixação)
-- [Adriana Figueiredo](https://www.youtube.com/@AdrianaFigueiredo) — referência FGV, mestra em Letras pela UFRJ
-- [Décio Terror](https://www.youtube.com/@decioterror) — uma das maiores referências do Brasil
-- [Álvaro Ferreira](https://www.youtube.com/@profalvaroferreira) — formato curto e direto
-- [Cíntia Chagas](https://www.youtube.com/@cintiachagas) — bom-humor, ótima pra fixar regras
-- [Fernando Moura — Gran Cursos](https://www.grancursosonline.com.br/) — interpretação modular
+**Requisitos:**
+- Node.js 18+
+- npm ou yarn
+
+```bash
+# Clonar repositório
+git clone https://github.com/maisondev/roadmap-web.git
+cd roadmap-web
+
+# Instalar dependências
+npm install
+
+# Iniciar servidor de desenvolvimento
+npm run dev
+
+# Build para produção
+npm run build
+
+# Preview do build
+npm run preview
+```
+
+Acesse `http://localhost:5173` no navegador.
 
 ---
 
-## ☁️ Cursos Armazenados (Drive/OneDrive/Cloud)
+## 📋 Como Funciona
 
-Materiais e cursos completos organizados por tema:
-
-### 🟢 Bloco 1 — Fundamentos da Leitura
-| Tópico | Curso | Local |
-|---|---|---|
-| 1.1 Compreensão x Interpretação | Curso completo | [Acessar Drive](link-aqui) |
-| 1.2 Leitura Ativa | [Prof. Tiago Benedetti — LEITURA ATIVA: 4 estratégias](https://www.youtube.com/watch?v=WIqnbIcLjws) | [YouTube](https://www.youtube.com/watch?v=WIqnbIcLjws) |
-| 1.2 Leitura Ativa | [Prof. Altermir — NÍVEIS DE LEITURA aula 01](https://www.youtube.com/watch?v=KlEx4V5ev5E) | [YouTube](https://www.youtube.com/watch?v=KlEx4V5ev5E) |
-| 1.2 Leitura Ativa | [Seja Um Estudante Melhor — 5 DICAS PARA A LEITURA ATIVA](https://www.youtube.com/watch?v=BCTzui1QyCQ) | [YouTube](https://www.youtube.com/watch?v=BCTzui1QyCQ) |
-| 1.2 Leitura Ativa | [Seja Um Estudante Melhor — O PODER DA LEITURA ATIVA](https://www.youtube.com/watch?v=BCTzui1QyCQ) | [YouTube](https://www.youtube.com/watch?v=BCTzui1QyCQ) |
-| 1.2 Leitura Ativa | [Professora Pamba — INTERPRETAÇÃO E COMPREENSÃO (Níveis)](https://www.youtube.com/watch?v=LJvZKJN_E2w) | [YouTube](https://www.youtube.com/watch?v=LJvZKJN_E2w) |
-
-### 🟢 Bloco 2 — Tipos e Gêneros Textuais
-| Tópico | Curso | Local |
-|---|---|---|
-| 2.1 Tipologia textual | Curso completo | [Acessar Drive](link-aqui) |
-| 2.2 Gêneros textuais | Curso completo | [Acessar Drive](link-aqui) |
-
-### 🟡 Bloco 3 — Funções da Linguagem e Intenção do Autor
-| Tópico | Curso | Local |
-|---|---|---|
-| 3.1 Funções de Jakobson | Curso completo | [Acessar Drive](link-aqui) |
-
-### 🟡 Bloco 4 — Coesão Textual ⭐
-| Tópico | Curso | Local |
-|---|---|---|
-| 4.1 Coesão referencial | Curso completo | [Acessar Drive](link-aqui) |
-| 4.2 Coesão sequencial | Curso completo | [Acessar Drive](link-aqui) |
-| 4.3 Conjunções e conectivos | Curso completo | [Acessar Drive](link-aqui) |
-
----
-
-## 📝 Bancos de Questões
-
-- [QConcursos](https://www.qconcursos.com/) — filtrar por **FGV** + assunto específico
-- [TEC Concursos](https://www.tecconcursos.com.br/)
-- [Gran Questões](https://www.grancursosonline.com.br/questoes-de-concursos)
-
----
-
-## 📊 Progresso Geral
-
-| Bloco | Status | Questões resolvidas | Acerto (%) |
-|---|---|---|---|
-| 1 — Fundamentos | ⬜ Não iniciado | 0 | — |
-| 2 — Tipos e Gêneros | ⬜ Não iniciado | 0 | — |
-| 3 — Funções da Linguagem | ⬜ Não iniciado | 0 | — |
-| 4 — Coesão ⭐ | ⬜ Não iniciado | 0 | — |
-| 5 — Inferência | ⬜ Não iniciado | 0 | — |
-| 6 — Reescritura | ⬜ Não iniciado | 0 | — |
-| 7 — Estilística | ⬜ Não iniciado | 0 | — |
-| 8 — Treino FGV | ⬜ Não iniciado | 0 | — |
-
-**Legenda:** ⬜ Não iniciado · 🟨 Em andamento · ✅ Concluído
-
----
-
-## 📅 Cronograma Sugerido (fase-base, sem edital)
-
-| Semanas | Foco |
-|---|---|
-| 1–2 | Bloco 1 + 20 questões FGV por tópico |
-| 3–4 | Bloco 2 (foco redobrado em **coesão**) |
-| 5–6 | Bloco 3 — inferência e pressuposto (dobro do tempo) |
-| 7–8 | Bloco 4 — reescritura |
-| 9+ | Bloco 5 — só questão FGV pra calibrar olho na banca |
-
----
-
-## 📂 Estrutura do Repositório
+### Fluxo Típico
 
 ```
-concursos-portugues/
-├── README.md              ← este arquivo (curadoria + progresso)
-├── anotacoes/             ← resumos pessoais por bloco (opcional)
-└── questoes/              ← prints/PDFs de questões marcantes (opcional)
+1. Cadastro/Login
+   ↓
+2. Criar Roadmap
+   └─ "Português para Concursos"
+   ↓
+3. Adicionar Blocos
+   ├─ Gramática
+   ├─ Literatura
+   └─ Redação
+   ↓
+4. Adicionar Tópicos por Bloco
+   └─ Gramática
+      ├─ Verbos
+      ├─ Pontuação
+      └─ Concordância
+   ↓
+5. Adicionar Recursos por Tópico
+   └─ Verbos
+      ├─ Vídeo: "Conjugação verbal" (YouTube)
+      ├─ Artigo: "Guia de verbos" (blog)
+      └─ Exercícios: "1000 questões" (PDF)
+   ↓
+6. Marcar Progresso
+   └─ Verbos (100% completo ✓)
+   ↓
+7. Acompanhar Dashboard
+   └─ 3 roadmaps | 15 blocos | 50 tópicos | 40% progresso geral
 ```
 
 ---
 
-## 🔁 Regra de Ouro
+## 🛠️ Stack Técnico
 
-> Sempre que assistir uma aula teórica, **resolver ao menos 10 questões do mesmo assunto logo depois**.
-> Sem isso, a aula evapora em 48h.
+### Frontend
+- **Vue 3** — Framework reativo
+- **TypeScript** — Type safety
+- **Pinia** — State management
+- **Tailwind CSS** — Styling utilities
+- **Vite** — Build tool rápido
+- **Heroicons** — Icons
+
+### Backend
+- **Node.js + Express** — Server
+- **TypeScript** — Type safety
+- **Prisma ORM** — Database layer
+- **PostgreSQL** — Database
+- **JWT** — Autenticação
+- **Bcrypt** — Password hashing
+
+### Infraestrutura
+- **GitHub Pages** — Frontend hosting
+- **Railway** — Backend hosting
+- **Neon.tech** — PostgreSQL hosting
+- **GitHub Actions** — CI/CD
 
 ---
 
-*Última atualização: abril de 2026*
+## 📱 Compatibilidade
+
+| Navegador | Suporte |
+|-----------|---------|
+| Chrome/Edge | ✅ Completo |
+| Firefox | ✅ Completo |
+| Safari | ✅ Completo |
+| Mobile (iOS/Android) | ✅ Completo |
+
+**PWA**: Instale como app no seu celular ou desktop (Chrome/Edge)
+
+---
+
+## 🎥 Tutoriais & Docs
+
+### Começar
+- [Guia Rápido](CLAUDE.md#-autenticação) — Primeiros passos
+- [Vídeo Tutorial](#) — 5 min mostrando features
+
+### Documentação
+- [CLAUDE.md](CLAUDE.md) — Guidelines de código (frontend + backend)
+- [FRONTEND_PLAN.md](FRONTEND_PLAN.md) — Roadmap de features
+- [MAINTENANCE.md](MAINTENANCE.md) — Manutenção e próximos passos
+- [CHANGELOG.md](CHANGELOG.md) — Histórico de releases
+
+---
+
+## 🚀 Deploy
+
+### Frontend (GitHub Pages)
+
+Automático via GitHub Actions. A cada push em `main`:
+
+```
+Push → GitHub Actions → Build → Deploy → Live em 1 minuto
+```
+
+URL: `https://maisondev.github.io/roadmap-web/`
+
+### Backend (Railway)
+
+```bash
+# Railway detecta automaticamente Node.js
+# Variáveis de ambiente:
+DATABASE_URL=postgresql://...
+JWT_SECRET=sua-chave-secreta
+NODE_ENV=production
+```
+
+---
+
+## 🔐 Segurança
+
+✅ **Autenticação Segura**
+- JWT com expiração (30 dias)
+- Refresh token automático
+- Logout limpa dados locais
+
+✅ **Criptografia**
+- Senhas: bcrypt (10 rounds)
+- Transmissão: HTTPS em produção
+- Tokens: Bearer em Authorization header
+
+✅ **Privacidade**
+- Dados apenas do usuário autenticado
+- Sem tracking de terceiros
+- Sem compartilhamento de dados
+
+---
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas!
+
+### Passos
+
+1. **Fork** o repositório
+2. **Clone** seu fork
+3. **Crie branch** (`git checkout -b feature/xyz`)
+4. **Commit** suas mudanças (`git commit -m "feat: descrição"`)
+5. **Push** para seu fork (`git push origin feature/xyz`)
+6. **Abra PR** com descrição clara
+
+### Diretrizes
+
+- Seguir padrão de código em [CLAUDE.md](CLAUDE.md)
+- Adicionar/atualizar testes se relevante
+- Dark mode deve funcionar
+- TypeScript sem erros
+- Componentes maximamente reutilizáveis
+
+---
+
+## 📊 Roadmap (2026)
+
+### ✅ v1.0.0 (Maio 2026)
+- [x] MVP completo
+- [x] Autenticação JWT
+- [x] CRUD de roadmaps
+- [x] Offline-first
+- [x] Dark mode
+- [x] Landing page
+
+### ⏳ v1.1.0 (Junho 2026)
+- [ ] Sync completo (dailyLog + teacher)
+- [ ] Vídeo tutorial
+- [ ] Otimizações de performance
+- [ ] WebSocket para real-time
+
+### 🔮 v1.2.0+ (Futuro)
+- [ ] Testes automatizados
+- [ ] Compartilhamento de roadmaps
+- [ ] Colaboração em tempo real
+- [ ] Mobile app (React Native)
+- [ ] API pública para integrações
+
+Veja [FRONTEND_PLAN.md](FRONTEND_PLAN.md) para detalhes completos.
+
+---
+
+## 🐛 Issues & Bugs
+
+Encontrou um bug? [Abra uma issue!](https://github.com/maisondev/roadmap-web/issues)
+
+**Template:**
+```markdown
+## Descrição
+[Descreva o problema]
+
+## Passos para reproduzir
+1. ...
+2. ...
+
+## Comportamento esperado
+[O que deveria acontecer]
+
+## Comportamento atual
+[O que está acontecendo]
+
+## Ambiente
+- Browser: Chrome 120
+- OS: Windows 11
+- App version: v1.0.0
+```
+
+---
+
+## 💬 Feedback & Sugestões
+
+Tem uma sugestão? [Abre uma discussão!](https://github.com/maisondev/roadmap-web/discussions)
+
+---
+
+## 📄 Licença
+
+MIT © 2026 Maison Galvão
+
+Veja [LICENSE](LICENSE) para detalhes.
+
+---
+
+## 📞 Contato
+
+- **Email**: maisongalvao@outlook.com
+- **GitHub**: [@maisondev](https://github.com/maisondev)
+- **Issues**: [GitHub Issues](https://github.com/maisondev/roadmap-web/issues)
+
+---
+
+## 🙏 Agradecimentos
+
+Inspirado por plataformas como:
+- Khan Academy
+- Coursera
+- Notion
+- Linear
+
+Construído com ❤️ para estudantes e educadores.
+
+---
+
+<div align="center">
+
+**[Acesse o app](https://maisondev.github.io/roadmap-web/)** • **[Veja o código](https://github.com/maisondev/roadmap-web)** • **[Reporte um bug](https://github.com/maisondev/roadmap-web/issues)**
+
+Feito com Vue 3 + TypeScript + Tailwind CSS
+
+</div>
