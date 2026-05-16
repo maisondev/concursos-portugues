@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useRoadmapStore } from '@/stores/roadmap'
 import { useDailyLogStore } from '@/stores/dailyLog'
+import { api } from '@/services/api'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppIcon from '@/components/atoms/AppIcon.vue'
 
@@ -15,39 +16,60 @@ const dailyLogStore = useDailyLogStore()
 const newPassword = ref('')
 const confirmPassword = ref('')
 const currentPassword = ref('')
+const isChangingPassword = ref(false)
+const passwordError = ref<string | null>(null)
+const passwordSuccess = ref(false)
 
-function updatePassword() {
+async function updatePassword() {
+  passwordError.value = null
+  passwordSuccess.value = false
+
   if (!currentPassword.value) {
-    alert('Digite a senha atual')
-    return
-  }
-
-  if (currentPassword.value !== settingsStore.settings.deletePassword) {
-    alert('Senha atual incorreta')
-    currentPassword.value = ''
+    passwordError.value = 'Digite a senha atual'
     return
   }
 
   if (!newPassword.value || !confirmPassword.value) {
-    alert('Digite a nova senha')
+    passwordError.value = 'Digite a nova senha'
     return
   }
 
   if (newPassword.value !== confirmPassword.value) {
-    alert('As senhas não coincidem')
+    passwordError.value = 'As senhas não coincidem'
     return
   }
 
   if (newPassword.value === currentPassword.value) {
-    alert('A nova senha deve ser diferente da senha atual')
+    passwordError.value = 'A nova senha deve ser diferente da senha atual'
     return
   }
 
-  settingsStore.updateSettings({ deletePassword: newPassword.value })
-  alert('Senha alterada com sucesso!')
-  currentPassword.value = ''
-  newPassword.value = ''
-  confirmPassword.value = ''
+  if (newPassword.value.length < 6) {
+    passwordError.value = 'A nova senha deve ter no mínimo 6 caracteres'
+    return
+  }
+
+  isChangingPassword.value = true
+
+  try {
+    await api.post('/auth/change-password', {
+      currentPassword: currentPassword.value,
+      newPassword: newPassword.value
+    })
+
+    passwordSuccess.value = true
+    currentPassword.value = ''
+    newPassword.value = ''
+    confirmPassword.value = ''
+
+    setTimeout(() => {
+      passwordSuccess.value = false
+    }, 3000)
+  } catch (error) {
+    passwordError.value = error instanceof Error ? error.message : 'Erro ao alterar senha'
+  } finally {
+    isChangingPassword.value = false
+  }
 }
 
 function exportJSON() {
@@ -146,13 +168,17 @@ function importJSON(event: Event) {
             <AppButton
               variant="primary"
               @click="updatePassword"
+              :disabled="isChangingPassword"
               class="w-full"
             >
-              Alterar Senha
+              {{ isChangingPassword ? 'Alterando...' : 'Alterar Senha' }}
             </AppButton>
-            <p class="text-xs text-gray-600 dark:text-gray-400">
-              Senha atual: <strong>{{ settingsStore.settings.deletePassword }}</strong> (apenas para referência)
-            </p>
+            <div v-if="passwordError" class="text-sm text-red-600 dark:text-red-400 p-2 bg-red-50 dark:bg-red-900/20 rounded">
+              {{ passwordError }}
+            </div>
+            <div v-if="passwordSuccess" class="text-sm text-green-600 dark:text-green-400 p-2 bg-green-50 dark:bg-green-900/20 rounded">
+              ✓ Senha alterada com sucesso!
+            </div>
           </div>
         </div>
 

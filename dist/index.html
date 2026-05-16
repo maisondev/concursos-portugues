@@ -1,14 +1,25 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/concursos-portugues/favicon.ico" />
+    <link rel="icon" href="/roadmap-web/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Concursos Português — Roadmap de Estudo</title>
-    <script type="module" crossorigin src="/concursos-portugues/assets/index-83a131a9.js"></script>
-    <link rel="stylesheet" href="/concursos-portugues/assets/index-4769fd67.css">
+    <meta name="description" content="Crie e acompanhe roadmaps de estudo com sincronização offline-first. Organize seus recursos, acompanhe progresso e mantenha a disciplina." />
+    <meta name="theme-color" content="#1F2937" />
+    <title>Roadmap — Organize Seus Estudos</title>
+    <script>
+      // Dark mode como padrão - executar antes do render para evitar flash
+      if (!('theme' in localStorage)) {
+        localStorage.setItem('theme', 'dark')
+        document.documentElement.classList.add('dark')
+      } else if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark')
+      }
+    </script>
+    <script type="module" crossorigin src="/roadmap-web/assets/index-5d7e6aa3.js"></script>
+    <link rel="stylesheet" href="/roadmap-web/assets/index-0c767ca5.css">
   </head>
-  <body>
+  <body class="bg-gray-900 dark:bg-gray-900 text-white dark:text-white">
     <div id="app"></div>
     
   </body>

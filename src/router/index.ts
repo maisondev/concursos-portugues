@@ -5,6 +5,7 @@ import BlockDetailPage from '@/pages/BlockDetailPage.vue'
 import TopicResourcesPage from '@/pages/TopicResourcesPage.vue'
 import DashboardPage from '@/pages/DashboardPage.vue'
 import SettingsPage from '@/pages/SettingsPage.vue'
+import AdminPage from '@/pages/AdminPage.vue'
 import ChangelogPage from '@/pages/ChangelogPage.vue'
 import HelpPage from '@/pages/HelpPage.vue'
 
@@ -41,6 +42,11 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: SettingsPage
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: AdminPage
   },
   {
     path: '/changelog',
