@@ -185,10 +185,13 @@ function updateResource(resourceId: string, updates: { [key: string]: unknown })
   roadmapStore.updateResource(props.blockId, topic.value.id, resourceId, updates)
 }
 
-const statusMap = {
-  nao_iniciado: { color: 'gray' as const, label: 'Não iniciado' },
-  em_andamento: { color: 'yellow' as const, label: 'Em andamento' },
-  concluido: { color: 'green' as const, label: 'Concluído' }
+const statusMap: Record<string, { color: 'gray' | 'yellow' | 'green', label: string }> = {
+  nao_iniciado: { color: 'gray', label: 'Não iniciado' },
+  not_started: { color: 'gray', label: 'Não iniciado' },
+  em_andamento: { color: 'yellow', label: 'Em andamento' },
+  in_progress: { color: 'yellow', label: 'Em andamento' },
+  concluido: { color: 'green', label: 'Concluído' },
+  completed: { color: 'green', label: 'Concluído' }
 }
 </script>
 

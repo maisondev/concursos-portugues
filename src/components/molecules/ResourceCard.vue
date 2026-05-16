@@ -172,85 +172,112 @@ function saveResourceEdit() {
 <template>
   <div
     :class="[
-      'p-4 border rounded-lg transition-all min-h-[14rem]',
+      'border rounded-lg transition-all overflow-hidden flex flex-col',
       resource.viewed
         ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700 opacity-60'
         : 'bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700'
     ]"
   >
-    <div v-if="youtubeThumbnail" class="mb-3 overflow-hidden rounded-md border border-gray-200 dark:border-gray-600">
+    <!-- YouTube Thumbnail with Title Overlay -->
+    <div v-if="youtubeThumbnail" class="relative w-full aspect-video overflow-hidden bg-gray-800 group">
       <img
         :src="youtubeThumbnail"
         :alt="`Preview do vídeo ${resource.label}`"
-        class="h-32 w-full object-cover"
+        class="w-full h-full object-contain"
         loading="lazy"
       />
-    </div>
-
-    <!-- Header: Type and metadata -->
-    <div class="flex items-center gap-2 mb-2">
-      <AppIcon :name="getIcon(resource.type)" size="sm" class="text-gray-600 dark:text-gray-400" />
-      <span class="text-xs font-medium" :class="resource.viewed ? 'text-green-700 dark:text-green-300' : 'text-gray-600 dark:text-gray-400'">
-        {{ getTypeLabel(resource.type) }}
-      </span>
-      <span v-if="resource.duration" class="text-xs text-gray-500 dark:text-gray-500">{{ resource.duration }}</span>
-      <span v-if="resource.viewed" class="text-xs font-semibold text-green-700 dark:text-green-300">✓ Visto</span>
-    </div>
-
-    <!-- Resource Label/Link -->
-    <div class="mb-2">
-      <!-- Local resource (clickable to open) -->
-      <button
-        v-if="resource.localPath"
-        @click="handleClick"
-        :disabled="isOpeningLocal"
-        class="text-sm break-words text-blue-600 dark:text-blue-400 hover:underline transition-colors disabled:opacity-50 text-left"
-        :class="resource.viewed ? 'opacity-70' : ''"
-      >
-        {{ resource.label }}
-        <AppIcon v-if="!isOpeningLocal" name="download" size="xs" class="inline ml-1" />
-        <span v-else class="ml-1 text-xs">⏳</span>
-      </button>
-
-      <!-- External resource (link) -->
-      <AppLink
-        v-else
-        :href="resource.url || '#'"
-        external
-        class="text-sm break-words"
-        :class="resource.viewed ? 'opacity-70' : ''"
-        @click="handleExternalOpen"
-      >
-        {{ resource.label }}
-      </AppLink>
-    </div>
-
-    <!-- Rating Stars -->
-    <div class="mb-2 flex items-center gap-1">
-      <div
-        class="flex gap-0.5 cursor-pointer select-none"
-        @mouseleave="hoverRating = 0"
-      >
-        <button
-          v-for="star in 5"
-          :key="star"
-          @click="setRating(star)"
-          @mouseenter="hoverRating = star"
-          :class="[
-            'text-xs transition-colors',
-            star <= (hoverRating || resource.rating)
-              ? 'text-yellow-400 dark:text-yellow-300'
-              : 'text-gray-300 dark:text-gray-600'
-          ]"
-          :title="`${star} estrela${star !== 1 ? 's' : ''}`"
-        >
-          ★
-        </button>
+      <!-- Title overlay on hover -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
+        <p class="text-white text-sm font-medium p-3 line-clamp-2">{{ resource.label }}</p>
+      </div>
+      <!-- Play icon -->
+      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
+        <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+          <span class="text-white text-lg">▶</span>
+        </div>
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="flex items-center justify-between gap-1">
+    <!-- Card content -->
+    <div class="p-4 flex-1 flex flex-col"
+
+      <!-- Header: Type and metadata -->
+      <div class="flex items-center gap-2 mb-2">
+        <AppIcon :name="getIcon(resource.type)" size="sm" class="text-gray-600 dark:text-gray-400" />
+        <span class="text-xs font-medium" :class="resource.viewed ? 'text-green-700 dark:text-green-300' : 'text-gray-600 dark:text-gray-400'">
+          {{ getTypeLabel(resource.type) }}
+        </span>
+        <span v-if="resource.duration" class="text-xs text-gray-500 dark:text-gray-500">{{ resource.duration }}</span>
+        <span v-if="resource.viewed" class="text-xs font-semibold text-green-700 dark:text-green-300">✓ Visto</span>
+      </div>
+
+      <!-- Resource Label/Link (hide for YouTube as title is on thumbnail) -->
+      <div v-if="resource.type !== 'youtube'" class="mb-2">
+        <!-- Local resource (clickable to open) -->
+        <button
+          v-if="resource.localPath"
+          @click="handleClick"
+          :disabled="isOpeningLocal"
+          class="text-sm break-words text-blue-600 dark:text-blue-400 hover:underline transition-colors disabled:opacity-50 text-left"
+          :class="resource.viewed ? 'opacity-70' : ''"
+        >
+          {{ resource.label }}
+          <AppIcon v-if="!isOpeningLocal" name="download" size="xs" class="inline ml-1" />
+          <span v-else class="ml-1 text-xs">⏳</span>
+        </button>
+
+        <!-- External resource (link) -->
+        <AppLink
+          v-else
+          :href="resource.url || '#'"
+          external
+          class="text-sm break-words"
+          :class="resource.viewed ? 'opacity-70' : ''"
+          @click="handleExternalOpen"
+        >
+          {{ resource.label }}
+        </AppLink>
+      </div>
+
+      <!-- For YouTube: show title below thumbnail if no thumbnail -->
+      <div v-if="resource.type === 'youtube' && !youtubeThumbnail" class="mb-2">
+        <AppLink
+          :href="resource.url || '#'"
+          external
+          class="text-sm break-words font-medium"
+          :class="resource.viewed ? 'opacity-70' : ''"
+          @click="handleExternalOpen"
+        >
+          {{ resource.label }}
+        </AppLink>
+      </div>
+
+      <!-- Rating Stars -->
+      <div class="mb-2 flex items-center gap-1">
+        <div
+          class="flex gap-0.5 cursor-pointer select-none"
+          @mouseleave="hoverRating = 0"
+        >
+          <button
+            v-for="star in 5"
+            :key="star"
+            @click="setRating(star)"
+            @mouseenter="hoverRating = star"
+            :class="[
+              'text-xs transition-colors',
+              star <= (hoverRating || resource.rating)
+                ? 'text-yellow-400 dark:text-yellow-300'
+                : 'text-gray-300 dark:text-gray-600'
+            ]"
+            :title="`${star} estrela${star !== 1 ? 's' : ''}`"
+          >
+            ★
+          </button>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-between gap-1 mt-auto">
       <div class="flex gap-1">
         <AppButton
           variant="ghost"
@@ -291,15 +318,16 @@ function saveResourceEdit() {
           <AppIcon name="chevron-down" size="sm" />
         </AppButton>
       </div>
-      <AppButton
-        v-if="removable"
-        variant="danger"
-        size="sm"
-        @click="emit('remove')"
-        title="Remover recurso"
-      >
-        <AppIcon name="trash" size="sm" />
-      </AppButton>
+        <AppButton
+          v-if="removable"
+          variant="danger"
+          size="sm"
+          @click="emit('remove')"
+          title="Remover recurso"
+        >
+          <AppIcon name="trash" size="sm" />
+        </AppButton>
+      </div>
     </div>
   </div>
 

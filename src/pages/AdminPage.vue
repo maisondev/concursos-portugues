@@ -15,6 +15,7 @@ const activity = ref<any>(null)
 const isLoading = ref(true)
 const error = ref<string | null>(null)
 const activeTab = ref<'stats' | 'users' | 'activity'>('stats')
+const togglingUserId = ref<string | null>(null)
 
 onMounted(async () => {
   // Verificar se é admin (para futuro, agora só admin consegue acessar)
@@ -51,6 +52,23 @@ function formatDate(dateString: string): string {
     hour: '2-digit',
     minute: '2-digit'
   })
+}
+
+async function toggleAdmin(user: any) {
+  togglingUserId.value = user.id
+  try {
+    const updated = await api.patch(`/api/admin/users/${user.id}/admin`, {
+      isAdmin: !user.isAdmin
+    })
+    const idx = users.value.findIndex(u => u.id === user.id)
+    if (idx !== -1) {
+      users.value[idx].isAdmin = updated.isAdmin
+    }
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Erro ao alterar permissão'
+  } finally {
+    togglingUserId.value = null
+  }
 }
 </script>
 
@@ -183,17 +201,45 @@ function formatDate(dateString: string): string {
             <thead class="bg-gray-50 dark:bg-gray-800 border-b border-slate-200 dark:border-slate-700">
               <tr>
                 <th class="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Email</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Status</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Roadmaps</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Logs</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Cadastro</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Ação</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
               <tr v-for="user in users" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-800">
                 <td class="px-4 py-3 text-gray-900 dark:text-white">{{ user.email }}</td>
+                <td class="px-4 py-3">
+                  <span v-if="user.isAdmin" class="px-2 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded">
+                    Admin
+                  </span>
+                  <span v-else class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded">
+                    Usuário
+                  </span>
+                </td>
                 <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ user._count.roadmaps }}</td>
                 <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ user._count.logs }}</td>
                 <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ formatDate(user.createdAt) }}</td>
+                <td class="px-4 py-3">
+                  <button
+                    @click="toggleAdmin(user)"
+                    :disabled="togglingUserId === user.id || authStore.user?.id === user.id"
+                    :class="[
+                      'px-3 py-1 text-xs font-medium rounded transition-colors',
+                      togglingUserId === user.id
+                        ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'
+                        : authStore.user?.id === user.id
+                          ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'
+                          : user.isAdmin
+                            ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
+                            : 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
+                    ]"
+                  >
+                    {{ togglingUserId === user.id ? '...' : (user.isAdmin ? 'Remover' : 'Promover') }}
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>

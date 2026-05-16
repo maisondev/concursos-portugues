@@ -35,10 +35,13 @@ const showEditModal = ref(false)
 const showDeleteConfirm = ref(false)
 const editTitle = ref(props.topic.title)
 
-const statusMap = {
-  nao_iniciado: { color: 'gray' as const, label: 'Não iniciado' },
-  em_andamento: { color: 'yellow' as const, label: 'Em andamento' },
-  concluido: { color: 'green' as const, label: 'Concluído' }
+const statusMap: Record<string, { color: 'gray' | 'yellow' | 'green', label: string }> = {
+  nao_iniciado: { color: 'gray', label: 'Não iniciado' },
+  not_started: { color: 'gray', label: 'Não iniciado' },
+  em_andamento: { color: 'yellow', label: 'Em andamento' },
+  in_progress: { color: 'yellow', label: 'Em andamento' },
+  concluido: { color: 'green', label: 'Concluído' },
+  completed: { color: 'green', label: 'Concluído' }
 }
 
 const resourceCounts = computed<Record<'youtube' | 'drive' | 'document' | 'link' | 'local', number>>(() => {
@@ -74,11 +77,11 @@ const canMoveUp = computed(() => props.index > 0)
 const canMoveDown = computed(() => props.index < (props.total ?? 0) - 1)
 
 function handleStatusChange(newStatus: boolean | 'indeterminate') {
-  let status = 'nao_iniciado'
+  let status = 'not_started'
   if (newStatus === true) {
-    status = 'concluido'
+    status = 'completed'
   } else if (newStatus === 'indeterminate') {
-    status = 'em_andamento'
+    status = 'in_progress'
   }
   emit('update:status', status)
 }
@@ -111,7 +114,7 @@ function handleDeleteConfirm() {
   >
     <div class="flex items-start gap-3">
       <AppCheckbox
-        :model-value="topic.status === 'concluido' ? true : topic.status === 'em_andamento' ? 'indeterminate' : false"
+        :model-value="topic.status === 'completed' || topic.status === 'concluido' ? true : topic.status === 'in_progress' || topic.status === 'em_andamento' ? 'indeterminate' : false"
         @update:model-value="handleStatusChange"
         @click.stop
       />
