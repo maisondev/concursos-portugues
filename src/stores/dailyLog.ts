@@ -1,12 +1,8 @@
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import type { DailyLogEntry } from '@/types'
-
-const STORAGE_KEY = 'concursos-portugues-daily-logs-v1'
-
-function generateId() {
-  return Math.random().toString(36).substring(2, 11)
-}
+import { api } from '@/services/api'
+import { useAuthStore } from '@/stores/auth'
 
 function formatDate(date: Date): string {
   const year = date.getFullYear()
@@ -17,17 +13,8 @@ function formatDate(date: Date): string {
 
 export const useDailyLogStore = defineStore('dailyLog', () => {
   const logs = ref<DailyLogEntry[]>([])
-
-  function initLogs() {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) {
-      try {
-        logs.value = JSON.parse(stored)
-      } catch {
-        logs.value = []
-      }
-    }
-  }
+  const isLoading = ref(false)
+  const error = ref<string | null>(null)
 
   const today = computed(() => formatDate(new Date()))
 
@@ -63,6 +50,37 @@ export const useDailyLogStore = defineStore('dailyLog', () => {
     return streak
   })
 
+  async function initLogs() {
+    const authStore = useAuthStore()
+    if (!authStore.isLoggedIn) {
+      logs.value = []
+      return
+    }
+
+    isLoading.value = true
+    error.value = null
+
+    try {
+      const data = await api.get('/api/logs')
+      logs.value = (data || []).map((log: any) => ({
+        id: log.id,
+        date: log.date,
+        fiz: log.text || '',
+        fareiAmanha: '',
+        topicsWorkedOn: [],
+        minutosEstudados: log.minutes || 0,
+        questoesFeitas: log.questions || 0,
+        mood: log.mood || 3
+      }))
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Erro ao carregar logs'
+      console.error('Erro ao inicializar logs:', err)
+      logs.value = []
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   function saveLog(entry: DailyLogEntry) {
     const existingIndex = logs.value.findIndex(log => log.date === entry.date)
     if (existingIndex >= 0) {
@@ -78,7 +96,7 @@ export const useDailyLogStore = defineStore('dailyLog', () => {
       Object.assign(existing, partial)
     } else {
       const newLog: DailyLogEntry = {
-        id: generateId(),
+        id: `log-${Date.now()}`,
         date: today.value,
         fiz: '',
         fareiAmanha: '',
@@ -92,15 +110,25 @@ export const useDailyLogStore = defineStore('dailyLog', () => {
     }
   }
 
-  function deleteLog(id: string) {
-    logs.value = logs.value.filter(log => log.id !== id)
+  async function deleteLog(id: string) {
+    const authStore = useAuthStore()
+    if (!authStore.isLoggedIn) {
+      logs.value = logs.value.filter(log => log.id !== id)
+      return
+    }
+
+    try {
+      await api.delete(`/api/logs/${id}`)
+      logs.value = logs.value.filter(log => log.id !== id)
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Erro ao deletar log'
+      console.error('Erro ao deletar log:', err)
+    }
   }
 
-  function persistToStorage() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(logs.value))
+  function clearLogs() {
+    logs.value = []
   }
-
-  watch(() => logs.value, persistToStorage, { deep: true })
 
   return {
     logs,
@@ -108,10 +136,12 @@ export const useDailyLogStore = defineStore('dailyLog', () => {
     todayLog,
     last7Days,
     streakDays,
+    isLoading,
+    error,
     initLogs,
     saveLog,
     updateTodayLog,
     deleteLog,
-    persistToStorage
+    clearLogs
   }
 })

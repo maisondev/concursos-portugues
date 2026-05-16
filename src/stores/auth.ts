@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useRoadmapStore } from './roadmap'
+import { useDailyLogStore } from './dailyLog'
+import { useTeacherRankingStore } from './teacherRanking'
 
 type User = {
   id: string
@@ -139,8 +141,14 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem(USER_STORAGE_KEY)
 
+    // Limpar todos os stores ao logout
     const roadmapStore = useRoadmapStore()
+    const dailyLogStore = useDailyLogStore()
+    const teacherRankingStore = useTeacherRankingStore()
+
     roadmapStore.clearRoadmaps()
+    dailyLogStore.clearLogs()
+    teacherRankingStore.clearTeachers()
   }
 
   function getAuthHeaders() {

@@ -1,44 +1,63 @@
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
+import { api } from '@/services/api'
+import { useAuthStore } from '@/stores/auth'
 
 export interface TeacherRankingEntry {
   id: string
   teacherName: string
   discipline: string
-  score: number // 1-5
+  score: number
   notes?: string
   createdAt: string
   updatedAt: string
 }
 
-const STORAGE_KEY = 'concursos-portugues-teacher-ranking-v1'
-
-function generateId() {
-  return Math.random().toString(36).substring(2, 11)
-}
-
 export const useTeacherRankingStore = defineStore('teacherRanking', () => {
   const entries = ref<TeacherRankingEntry[]>([])
-
-  function init() {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) {
-      try {
-        entries.value = JSON.parse(stored)
-      } catch {
-        entries.value = []
-      }
-    }
-  }
+  const isLoading = ref(false)
+  const error = ref<string | null>(null)
 
   const disciplines = computed(() => {
-    return Array.from(new Set(entries.value.map(e => e.discipline.trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b))
+    return Array.from(
+      new Set(entries.value.map(e => e.discipline.trim()).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b))
   })
+
+  async function init() {
+    const authStore = useAuthStore()
+    if (!authStore.isLoggedIn) {
+      entries.value = []
+      return
+    }
+
+    isLoading.value = true
+    error.value = null
+
+    try {
+      const data = await api.get('/api/teachers')
+      entries.value = (data || []).map((teacher: any) => ({
+        id: teacher.id,
+        teacherName: teacher.name,
+        discipline: teacher.subject,
+        score: teacher.rating,
+        notes: teacher.notes,
+        createdAt: teacher.createdAt,
+        updatedAt: teacher.updatedAt
+      }))
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Erro ao carregar professores'
+      console.error('Erro ao inicializar teacher ranking:', err)
+      entries.value = []
+    } finally {
+      isLoading.value = false
+    }
+  }
 
   function addEntry(input: Omit<TeacherRankingEntry, 'id' | 'createdAt' | 'updatedAt'>) {
     const now = new Date().toISOString()
     entries.value.push({
-      id: generateId(),
+      id: `teacher-${Date.now()}`,
       ...input,
       score: Math.max(1, Math.min(5, Math.round(input.score))),
       createdAt: now,
@@ -53,23 +72,35 @@ export const useTeacherRankingStore = defineStore('teacherRanking', () => {
     entry.updatedAt = new Date().toISOString()
   }
 
-  function deleteEntry(id: string) {
-    entries.value = entries.value.filter(e => e.id !== id)
+  async function deleteEntry(id: string) {
+    const authStore = useAuthStore()
+    if (!authStore.isLoggedIn) {
+      entries.value = entries.value.filter(e => e.id !== id)
+      return
+    }
+
+    try {
+      await api.delete(`/api/teachers/${id}`)
+      entries.value = entries.value.filter(e => e.id !== id)
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Erro ao deletar professor'
+      console.error('Erro ao deletar teacher:', err)
+    }
   }
 
-  function persist() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries.value))
+  function clearTeachers() {
+    entries.value = []
   }
-
-  watch(() => entries.value, persist, { deep: true })
 
   return {
     entries,
     disciplines,
+    isLoading,
+    error,
     init,
     addEntry,
     updateEntry,
-    deleteEntry
+    deleteEntry,
+    clearTeachers
   }
 })
-

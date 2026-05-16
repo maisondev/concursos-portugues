@@ -1,40 +1,82 @@
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import type { Roadmap, Block, Topic, Resource, TopicStatus, RoadmapColor, RoadmapStatus } from '@/types'
 import { roadmapInterpretacaoTextos } from '@/data/roadmaps/interpretacao-textos'
 import { useAuthStore } from '@/stores/auth'
-
-const STORAGE_KEY_PREFIX = 'roadmap-roadmaps-v1'
-
-function getStorageKey(email?: string): string {
-  if (!email) {
-    return `${STORAGE_KEY_PREFIX}-guest`
-  }
-  return `${STORAGE_KEY_PREFIX}-${email}`
-}
+import { api } from '@/services/api'
 
 export const useRoadmapStore = defineStore('roadmap', () => {
   const roadmaps = ref<Record<string, Roadmap>>({})
   const activeRoadmapId = ref<string>('interpretacao-textos')
-
-  function initRoadmap() {
-    const authStore = useAuthStore()
-    const storageKey = getStorageKey(authStore.username || undefined)
-    const stored = localStorage.getItem(storageKey)
-    if (stored) {
-      try {
-        roadmaps.value = JSON.parse(stored)
-      } catch {
-        roadmaps.value = { [roadmapInterpretacaoTextos.id]: roadmapInterpretacaoTextos }
-      }
-    } else {
-      roadmaps.value = { [roadmapInterpretacaoTextos.id]: roadmapInterpretacaoTextos }
-    }
-  }
+  const isLoading = ref(false)
+  const error = ref<string | null>(null)
 
   const activeRoadmap = computed(() => {
     return roadmaps.value[activeRoadmapId.value] || roadmapInterpretacaoTextos
   })
+
+  async function initRoadmap() {
+    const authStore = useAuthStore()
+    isLoading.value = true
+    error.value = null
+
+    try {
+      if (!authStore.isLoggedIn) {
+        roadmaps.value = { [roadmapInterpretacaoTextos.id]: roadmapInterpretacaoTextos }
+        return
+      }
+
+      const data = await api.get('/api/roadmaps')
+      const roadmapMap: Record<string, Roadmap> = {}
+
+      data.forEach((rm: any) => {
+        roadmapMap[rm.id] = {
+          id: rm.id,
+          title: rm.title,
+          description: rm.description,
+          blocks: (rm.blocks || []).map((block: any) => ({
+            id: block.id,
+            order: block.order,
+            title: block.title,
+            priority: block.priority || 'normal',
+            topics: (block.topics || []).map((topic: any) => ({
+              id: topic.id,
+              order: topic.order,
+              title: topic.title,
+              description: topic.description,
+              status: topic.status || 'nao_iniciado',
+              resources: topic.resources || [],
+              notes: topic.notes,
+              questoesSolvidas: topic.questoesSolvidas || 0,
+              acertoPercent: topic.acertoPercent || 0
+            }))
+          })),
+          status: rm.status || 'ativo',
+          createdAt: rm.createdAt,
+          updatedAt: rm.updatedAt,
+          category: rm.category || '',
+          tags: rm.tags || [],
+          visibility: rm.visibility || 'private',
+          color: rm.color,
+          rating: rm.rating,
+          order: rm.order
+        }
+      })
+
+      roadmaps.value = Object.keys(roadmapMap).length > 0
+        ? roadmapMap
+        : { [roadmapInterpretacaoTextos.id]: roadmapInterpretacaoTextos }
+
+      if (!roadmaps.value[activeRoadmapId.value]) {
+        activeRoadmapId.value = Object.keys(roadmaps.value)[0] || 'interpretacao-textos'
+      }
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Erro ao carregar roadmaps'
+      console.error('Erro ao inicializar roadmap:', err)
+    } finally {
+      isLoading.value = false
+    }
+  }
 
   function blockById(blockId: string): Block | undefined {
     return activeRoadmap.value.blocks.find(b => b.id === blockId)
@@ -142,7 +184,7 @@ export const useRoadmapStore = defineStore('roadmap', () => {
   }
 
   function addBlock(title: string, priority: 'normal' | 'alta' | 'maxima' = 'normal') {
-    const newBlockId = `bloco-${activeRoadmap.value.blocks.length + 1}`
+    const newBlockId = `bloco-${Date.now()}`
     const newBlock: Block = {
       id: newBlockId,
       order: activeRoadmap.value.blocks.length + 1,
@@ -165,33 +207,26 @@ export const useRoadmapStore = defineStore('roadmap', () => {
   }
 
   function removeBlock(blockId: string) {
-    const index = activeRoadmap.value.blocks.findIndex(b => b.id === blockId)
-    if (index >= 0) {
-      activeRoadmap.value.blocks.splice(index, 1)
-      // Reordenar os blocos restantes
-      activeRoadmap.value.blocks.forEach((block, idx) => {
-        block.order = idx + 1
-      })
-      activeRoadmap.value.updatedAt = new Date().toISOString()
-    }
+    activeRoadmap.value.blocks = activeRoadmap.value.blocks.filter(b => b.id !== blockId)
+    activeRoadmap.value.updatedAt = new Date().toISOString()
   }
 
   function addTopic(blockId: string, title: string) {
     const block = blockById(blockId)
     if (block) {
-      const topicNumber = block.topics.length + 1
+      const newTopicId = `topico-${Date.now()}`
       const newTopic: Topic = {
-        id: `${block.order}.${topicNumber}`,
+        id: newTopicId,
+        order: block.topics.length + 1,
         title,
         status: 'nao_iniciado',
         resources: [],
-        notes: '',
         questoesSolvidas: 0,
-        acertoPercent: null
+        acertoPercent: 0
       }
       block.topics.push(newTopic)
       activeRoadmap.value.updatedAt = new Date().toISOString()
-      return newTopic.id
+      return newTopicId
     }
     return null
   }
@@ -199,40 +234,26 @@ export const useRoadmapStore = defineStore('roadmap', () => {
   function removeTopic(blockId: string, topicId: string) {
     const block = blockById(blockId)
     if (block) {
-      const index = block.topics.findIndex(t => t.id === topicId)
-      if (index >= 0) {
-        block.topics.splice(index, 1)
-        activeRoadmap.value.updatedAt = new Date().toISOString()
-      }
+      block.topics = block.topics.filter(t => t.id !== topicId)
+      activeRoadmap.value.updatedAt = new Date().toISOString()
     }
   }
 
-  // Reordenação
   function moveBlockUp(blockId: string) {
     const index = activeRoadmap.value.blocks.findIndex(b => b.id === blockId)
     if (index > 0) {
-      const temp = activeRoadmap.value.blocks[index]
-      activeRoadmap.value.blocks[index] = activeRoadmap.value.blocks[index - 1]
-      activeRoadmap.value.blocks[index - 1] = temp
-      // Atualizar números de ordem
-      activeRoadmap.value.blocks.forEach((block, idx) => {
-        block.order = idx + 1
-      })
-      activeRoadmap.value.updatedAt = new Date().toISOString()
+      const temp = activeRoadmap.value.blocks[index - 1]
+      activeRoadmap.value.blocks[index - 1] = activeRoadmap.value.blocks[index]
+      activeRoadmap.value.blocks[index] = temp
     }
   }
 
   function moveBlockDown(blockId: string) {
     const index = activeRoadmap.value.blocks.findIndex(b => b.id === blockId)
     if (index < activeRoadmap.value.blocks.length - 1) {
-      const temp = activeRoadmap.value.blocks[index]
-      activeRoadmap.value.blocks[index] = activeRoadmap.value.blocks[index + 1]
-      activeRoadmap.value.blocks[index + 1] = temp
-      // Atualizar números de ordem
-      activeRoadmap.value.blocks.forEach((block, idx) => {
-        block.order = idx + 1
-      })
-      activeRoadmap.value.updatedAt = new Date().toISOString()
+      const temp = activeRoadmap.value.blocks[index + 1]
+      activeRoadmap.value.blocks[index + 1] = activeRoadmap.value.blocks[index]
+      activeRoadmap.value.blocks[index] = temp
     }
   }
 
@@ -241,10 +262,9 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     if (block) {
       const index = block.topics.findIndex(t => t.id === topicId)
       if (index > 0) {
-        const temp = block.topics[index]
-        block.topics[index] = block.topics[index - 1]
-        block.topics[index - 1] = temp
-        activeRoadmap.value.updatedAt = new Date().toISOString()
+        const temp = block.topics[index - 1]
+        block.topics[index - 1] = block.topics[index]
+        block.topics[index] = temp
       }
     }
   }
@@ -254,56 +274,43 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     if (block) {
       const index = block.topics.findIndex(t => t.id === topicId)
       if (index < block.topics.length - 1) {
-        const temp = block.topics[index]
-        block.topics[index] = block.topics[index + 1]
-        block.topics[index + 1] = temp
-        activeRoadmap.value.updatedAt = new Date().toISOString()
+        const temp = block.topics[index + 1]
+        block.topics[index + 1] = block.topics[index]
+        block.topics[index] = temp
       }
     }
   }
 
   function moveResourceUp(blockId: string, topicId: string, resourceId: string) {
-    const block = blockById(blockId)
-    if (block) {
-      const topic = block.topics.find(t => t.id === topicId)
-      if (topic) {
-        const index = topic.resources.findIndex(r => r.id === resourceId)
-        if (index > 0) {
-          const temp = topic.resources[index]
-          topic.resources[index] = topic.resources[index - 1]
-          topic.resources[index - 1] = temp
-          activeRoadmap.value.updatedAt = new Date().toISOString()
-        }
+    const topic = topicById(blockId, topicId)
+    if (topic) {
+      const index = topic.resources.findIndex(r => r.id === resourceId)
+      if (index > 0) {
+        const temp = topic.resources[index - 1]
+        topic.resources[index - 1] = topic.resources[index]
+        topic.resources[index] = temp
       }
     }
   }
 
   function moveResourceDown(blockId: string, topicId: string, resourceId: string) {
-    const block = blockById(blockId)
-    if (block) {
-      const topic = block.topics.find(t => t.id === topicId)
-      if (topic) {
-        const index = topic.resources.findIndex(r => r.id === resourceId)
-        if (index < topic.resources.length - 1) {
-          const temp = topic.resources[index]
-          topic.resources[index] = topic.resources[index + 1]
-          topic.resources[index + 1] = temp
-          activeRoadmap.value.updatedAt = new Date().toISOString()
-        }
+    const topic = topicById(blockId, topicId)
+    if (topic) {
+      const index = topic.resources.findIndex(r => r.id === resourceId)
+      if (index < topic.resources.length - 1) {
+        const temp = topic.resources[index + 1]
+        topic.resources[index + 1] = topic.resources[index]
+        topic.resources[index] = temp
       }
     }
   }
 
   function updateResourceRating(blockId: string, topicId: string, resourceId: string, rating: number) {
-    const block = blockById(blockId)
-    if (block) {
-      const topic = block.topics.find(t => t.id === topicId)
-      if (topic) {
-        const resource = topic.resources.find(r => r.id === resourceId)
-        if (resource) {
-          resource.rating = Math.max(0, Math.min(5, rating))
-          activeRoadmap.value.updatedAt = new Date().toISOString()
-        }
+    const topic = topicById(blockId, topicId)
+    if (topic) {
+      const resource = topic.resources.find(r => r.id === resourceId)
+      if (resource) {
+        resource.rating = Math.max(1, Math.min(5, rating))
       }
     }
   }
@@ -311,34 +318,39 @@ export const useRoadmapStore = defineStore('roadmap', () => {
   function markBlockComplete(blockId: string) {
     const block = blockById(blockId)
     if (block) {
-      block.topics.forEach(t => {
-        t.status = 'concluido'
+      block.topics.forEach(topic => {
+        topic.status = 'concluido'
       })
-      activeRoadmap.value.updatedAt = new Date().toISOString()
     }
   }
 
   function markBlockIncomplete(blockId: string) {
     const block = blockById(blockId)
     if (block) {
-      block.topics.forEach(t => {
-        t.status = 'nao_iniciado'
+      block.topics.forEach(topic => {
+        topic.status = 'nao_iniciado'
       })
-      activeRoadmap.value.updatedAt = new Date().toISOString()
     }
   }
 
-  function setActiveRoadmap(id: string) {
-    if (roadmaps.value[id]) {
-      activeRoadmapId.value = id
+  function setActiveRoadmap(roadmapId: string) {
+    if (roadmaps.value[roadmapId]) {
+      activeRoadmapId.value = roadmapId
     }
   }
 
-  function addRoadmap(title: string, description: string, category?: string, tags?: string[], visibility: 'public' | 'private' = 'private'): string | null {
+  function addRoadmap(
+    title: string,
+    description: string,
+    category?: string,
+    tags?: string[],
+    visibility: 'public' | 'private' = 'private'
+  ): string | null {
     const authStore = useAuthStore()
     if (!authStore.isLoggedIn && Object.keys(roadmaps.value).length >= 7) {
       return null
     }
+
     const newId = `roadmap-${Date.now()}`
     const newRoadmap: Roadmap = {
       id: newId,
@@ -352,9 +364,10 @@ export const useRoadmapStore = defineStore('roadmap', () => {
       tags: tags || [],
       visibility
     }
+
     roadmaps.value[newId] = newRoadmap
     activeRoadmapId.value = newId
-    activeRoadmap.value.updatedAt = new Date().toISOString()
+
     return newId
   }
 
@@ -369,11 +382,19 @@ export const useRoadmapStore = defineStore('roadmap', () => {
         activeRoadmapId.value = remaining
       }
     }
-    activeRoadmap.value.updatedAt = new Date().toISOString()
     return true
   }
 
-  function updateRoadmap(id: string, title: string, description: string, rating?: number, status?: RoadmapStatus, category?: string, tags?: string[], visibility?: 'public' | 'private') {
+  function updateRoadmap(
+    id: string,
+    title: string,
+    description: string,
+    rating?: number,
+    status?: RoadmapStatus,
+    category?: string,
+    tags?: string[],
+    visibility?: 'public' | 'private'
+  ) {
     const roadmap = roadmaps.value[id]
     if (roadmap) {
       roadmap.title = title
@@ -413,7 +434,6 @@ export const useRoadmapStore = defineStore('roadmap', () => {
       ids[currentIndex - 1] = ids[currentIndex]
       ids[currentIndex] = temp
 
-      // Reorder roadmaps based on new order
       const ordered: Record<string, Roadmap> = {}
       ids.forEach(key => {
         ordered[key] = roadmaps.value[key]
@@ -431,7 +451,6 @@ export const useRoadmapStore = defineStore('roadmap', () => {
       ids[currentIndex + 1] = ids[currentIndex]
       ids[currentIndex] = temp
 
-      // Reorder roadmaps based on new order
       const ordered: Record<string, Roadmap> = {}
       ids.forEach(key => {
         ordered[key] = roadmaps.value[key]
@@ -441,10 +460,25 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     }
   }
 
-  function persistToStorage() {
-    const authStore = useAuthStore()
-    const storageKey = getStorageKey(authStore.username || undefined)
-    localStorage.setItem(storageKey, JSON.stringify(roadmaps.value))
+  function exportRoadmap(id: string): string | null {
+    const roadmap = roadmaps.value[id]
+    if (!roadmap) return null
+    return JSON.stringify(roadmap)
+  }
+
+  function importRoadmap(jsonData: string): string | null {
+    try {
+      const imported = JSON.parse(jsonData)
+      const newId = `roadmap-${Date.now()}`
+      imported.id = newId
+      imported.createdAt = new Date().toISOString()
+      imported.updatedAt = new Date().toISOString()
+      roadmaps.value[newId] = imported
+      activeRoadmapId.value = newId
+      return newId
+    } catch {
+      return null
+    }
   }
 
   function clearRoadmaps() {
@@ -452,12 +486,12 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     activeRoadmapId.value = 'interpretacao-textos'
   }
 
-  watch(() => roadmaps.value, persistToStorage, { deep: true })
-
   return {
     roadmaps,
     activeRoadmapId,
     activeRoadmap,
+    isLoading,
+    error,
     initRoadmap,
     blockById,
     topicById,
@@ -490,48 +524,8 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     updateRoadmapColor,
     moveRoadmapUp,
     moveRoadmapDown,
-    persistToStorage,
     clearRoadmaps,
     exportRoadmap,
     importRoadmap
-  }
-
-  function exportRoadmap(id: string): string {
-    const roadmap = roadmaps.value[id]
-    if (!roadmap) return ''
-    
-    const exportData = {
-      title: roadmap.title,
-      description: roadmap.description,
-      category: roadmap.category || '',
-      tags: roadmap.tags || [],
-      visibility: roadmap.visibility || 'private',
-      blocks: roadmap.blocks,
-      exportedAt: new Date().toISOString()
-    }
-    
-    return JSON.stringify(exportData, null, 2)
-  }
-
-  function importRoadmap(jsonData: string): string | null {
-    try {
-      const importData = JSON.parse(jsonData)
-      
-      // Validar estrutura básica
-      if (!importData.title || !importData.description) {
-        throw new Error('Dados inválidos: título e descrição são obrigatórios')
-      }
-      
-      return addRoadmap(
-        importData.title,
-        importData.description,
-        importData.category,
-        importData.tags,
-        importData.visibility || 'private'
-      )
-    } catch (error) {
-      console.error('Erro ao importar roadmap:', error)
-      return null
-    }
   }
 })
