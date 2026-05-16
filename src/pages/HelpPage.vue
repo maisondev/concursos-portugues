@@ -53,6 +53,14 @@ const sections: HelpSection[] = [
     content: 'No Dashboard, você pode registrar diariamente o que estudou, o tempo investido, quantas questões resolveu e como se sentiu. Esses registros ajudam a manter o controle do seu progresso e motivação.'
   },
   {
+    title: 'O que é o Ranking de Professores?',
+    content: 'O Ranking de Professores é uma funcionalidade que permite criar listas personalizadas dos melhores professores para cada matéria ou assunto que você estuda. Serve para identificar e organizar qual é o melhor professor em cada área de conhecimento.'
+  },
+  {
+    title: 'Como funciona o Ranking de Professores?',
+    content: 'Você cria um ranking com um nome específico (ex: "Melhores Professores de Matemática"). Depois, você adiciona os professores que você encontrar e gosta para aquela matéria, avaliando cada um com uma nota de 1 a 5 estrelas. Assim, quando você precisa estudar aquele assunto, sabe exatamente quais são os melhores professores para aprender com eles. Por exemplo: em um ranking de "Python", você pode adicionar Guido van Rossum (5⭐), David Beazley (5⭐), e Nate Ritter (4⭐), e sempre que precisar aprender Python, você consulta seu ranking para escolher com quem estudar.'
+  },
+  {
     title: 'Como editar um Roadmap?',
     content: 'Na página inicial, passe o mouse sobre um Roadmap e clique no ícone de lápis. Uma modal aparecerá permitindo que você edite o título, descrição, avaliação e cor do roadmap.'
   },
