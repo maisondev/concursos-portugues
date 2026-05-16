@@ -23,19 +23,10 @@ const password = ref('')
 const authError = ref<string | null>(null)
 const serverOnline = ref(false)
 
-async function checkServerStatus() {
-  try {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-    const response = await fetch(`${apiUrl}/api/health`, { signal: AbortSignal.timeout(2000) })
-    serverOnline.value = response.ok
-  } catch {
-    serverOnline.value = false
-  }
-}
-
+// Desativado para reduzir requisições desnecessárias
+// Será implementado com WebSocket ou SSE no futuro
 onMounted(() => {
-  checkServerStatus()
-  setInterval(checkServerStatus, 10000)
+  serverOnline.value = true
 })
 
 function openLogin() {
