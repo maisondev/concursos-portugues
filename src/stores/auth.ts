@@ -1,25 +1,21 @@
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 
-type AuthStorage = {
-  version: 1
-  user?: {
-    username: string
-    saltB64: string
-    hashB64: string
-    iterations: number
-    createdAt: string
-  }
-  session?: {
-    username: string
-    token: string
-    createdAt: string
-  }
+type User = {
+  id: string
+  email: string
 }
 
-const STORAGE_KEY = 'concursos-portugues-auth-v1'
-const SESSION_KEY = 'concursos-portugues-auth-session-v1'
+type ApiResponse = {
+  user: User
+  token: string
+}
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const STORAGE_KEY = 'roadmap-auth-token-v1'
+const USER_STORAGE_KEY = 'roadmap-auth-user-v1'
+
+// Funções locais (mantidas para uso offline futuro)
 function randomToken(): string {
   return Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)
 }
@@ -49,94 +45,116 @@ async function pbkdf2Hash(password: string, salt: Uint8Array, iterations: number
 }
 
 export const useAuthStore = defineStore('auth', () => {
-  const storage = ref<AuthStorage>({ version: 1 })
-  const session = ref<AuthStorage['session'] | null>(null)
+  const user = ref<User | null>(null)
+  const token = ref<string | null>(null)
 
-  const hasAccount = computed(() => Boolean(storage.value.user))
-  const isLoggedIn = computed(() => Boolean(session.value?.token))
-  const username = computed(() => session.value?.username || storage.value.user?.username || null)
+  const hasAccount = computed(() => Boolean(token.value))
+  const isLoggedIn = computed(() => Boolean(token.value))
+  const username = computed(() => user.value?.email || null)
 
   function init() {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) {
-      try {
-        storage.value = JSON.parse(stored)
-      } catch {
-        storage.value = { version: 1 }
-      }
-    }
+    const storedToken = localStorage.getItem(STORAGE_KEY)
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY)
 
-    const sessionStored = sessionStorage.getItem(SESSION_KEY)
-    if (sessionStored) {
+    if (storedToken) {
+      token.value = storedToken
+    }
+    if (storedUser) {
       try {
-        session.value = JSON.parse(sessionStored)
+        user.value = JSON.parse(storedUser)
       } catch {
-        session.value = null
+        user.value = null
       }
     }
   }
 
-  async function register(usernameInput: string, password: string) {
-    const usernameClean = usernameInput.trim()
-    if (!usernameClean) throw new Error('Digite um nome de usuário')
+  async function register(email: string, password: string) {
+    const emailClean = email.trim()
+    if (!emailClean) throw new Error('Digite um e-mail')
+    if (!emailClean.includes('@')) throw new Error('E-mail inválido')
     if (password.length < 6) throw new Error('A senha deve ter no mínimo 6 caracteres')
 
-    const salt = crypto.getRandomValues(new Uint8Array(16))
-    const iterations = 150_000
-    const hash = await pbkdf2Hash(password, salt, iterations)
+    try {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailClean, password })
+      })
 
-    storage.value.user = {
-      username: usernameClean,
-      saltB64: toB64(salt.buffer),
-      hashB64: toB64(hash),
-      iterations,
-      createdAt: new Date().toISOString()
-    }
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Erro ao registrar')
+      }
 
-    // login automático após cadastro
-    session.value = {
-      username: usernameClean,
-      token: randomToken(),
-      createdAt: new Date().toISOString()
+      const data: ApiResponse = await response.json()
+      user.value = data.user
+      token.value = data.token
+
+      localStorage.setItem(STORAGE_KEY, token.value)
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user.value))
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('Failed to fetch')) {
+        throw new Error('Erro de conexão com o servidor')
+      }
+      throw error
     }
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(session.value))
   }
 
-  async function login(password: string) {
-    const user = storage.value.user
-    if (!user) throw new Error('Nenhuma conta cadastrada neste dispositivo')
-    const salt = fromB64(user.saltB64)
-    const hash = await pbkdf2Hash(password, salt, user.iterations)
-    const hashB64 = toB64(hash)
-    if (hashB64 !== user.hashB64) throw new Error('Senha incorreta')
+  async function login(email: string, password: string) {
+    const emailClean = email.trim()
+    if (!emailClean) throw new Error('Digite um e-mail')
+    if (!emailClean.includes('@')) throw new Error('E-mail inválido')
+    if (!password) throw new Error('Digite a senha')
 
-    session.value = {
-      username: user.username,
-      token: randomToken(),
-      createdAt: new Date().toISOString()
+    try {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailClean, password })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Erro ao fazer login')
+      }
+
+      const data: ApiResponse = await response.json()
+      user.value = data.user
+      token.value = data.token
+
+      localStorage.setItem(STORAGE_KEY, token.value)
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user.value))
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('Failed to fetch')) {
+        throw new Error('Erro de conexão com o servidor')
+      }
+      throw error
     }
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(session.value))
   }
 
   function logout() {
-    session.value = null
-    sessionStorage.removeItem(SESSION_KEY)
+    user.value = null
+    token.value = null
+    localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(USER_STORAGE_KEY)
   }
 
-  function persist() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(storage.value))
+  function getAuthHeaders() {
+    if (!token.value) return {}
+    return { Authorization: `Bearer ${token.value}` }
   }
-
-  watch(() => storage.value, persist, { deep: true })
 
   return {
     hasAccount,
     isLoggedIn,
     username,
+    user,
+    token,
     init,
     register,
     login,
-    logout
+    logout,
+    getAuthHeaders
   }
 })
 

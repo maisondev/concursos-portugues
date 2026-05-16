@@ -16,13 +16,13 @@ const authStore = useAuthStore()
 
 const showAuthModal = ref(false)
 const authMode = ref<'login' | 'register'>('login')
-const username = ref('')
+const email = ref('')
 const password = ref('')
 const authError = ref<string | null>(null)
 
 function openLogin() {
-  authMode.value = authStore.hasAccount ? 'login' : 'register'
-  username.value = ''
+  authMode.value = 'login'
+  email.value = ''
   password.value = ''
   authError.value = null
   showAuthModal.value = true
@@ -32,9 +32,9 @@ async function submitAuth() {
   authError.value = null
   try {
     if (authMode.value === 'register') {
-      await authStore.register(username.value, password.value)
+      await authStore.register(email.value, password.value)
     } else {
-      await authStore.login(password.value)
+      await authStore.login(email.value, password.value)
     }
     showAuthModal.value = false
   } catch (e) {
@@ -201,22 +201,22 @@ const isActive = (name: string) => route.name === name
 
     <AppModal
       :open="showAuthModal"
-      :title="authMode === 'register' ? 'Criar conta (neste dispositivo)' : 'Entrar'"
+      :title="authMode === 'register' ? 'Criar conta' : 'Entrar'"
       submit-label="Continuar"
       cancel-label="Cancelar"
       @submit="submitAuth"
       @cancel="showAuthModal = false"
     >
       <div class="space-y-4">
-        <div v-if="authMode === 'register'">
+        <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Usuário
+            E-mail
           </label>
           <input
-            v-model="username"
-            type="text"
+            v-model="email"
+            type="email"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            placeholder="Ex: Maison"
+            :placeholder="authMode === 'register' ? 'seu@email.com' : 'seu@email.com'"
           />
         </div>
 
@@ -228,7 +228,7 @@ const isActive = (name: string) => route.name === name
             v-model="password"
             type="password"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            placeholder="Mínimo 6 caracteres"
+            :placeholder="authMode === 'register' ? 'Mínimo 6 caracteres' : 'Sua senha'"
           />
         </div>
 
