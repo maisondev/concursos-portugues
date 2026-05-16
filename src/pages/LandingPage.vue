@@ -248,13 +248,6 @@ async function submitAuth() {
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 dark:bg-black text-gray-400 py-8">
-      <div class="max-w-6xl mx-auto px-4 text-center">
-        <p>© 2026 Roadmap. Todos os direitos reservados.</p>
-      </div>
-    </footer>
-
     <!-- Auth Modal -->
     <div
       v-if="showAuthModal"
