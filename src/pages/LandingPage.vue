@@ -85,75 +85,40 @@ async function submitAuth() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-indigo-950">
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
-      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-          Roadmap
-        </div>
-        <div class="flex gap-2">
-          <AppButton
-            variant="ghost"
-            size="sm"
-            @click="openLogin"
-          >
-            Entrar
-          </AppButton>
-          <AppButton
-            variant="primary"
-            size="sm"
-            @click="openRegister"
-          >
-            Cadastro
-          </AppButton>
-        </div>
-      </div>
-    </nav>
-
+  <div class="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
     <!-- Hero Section -->
-    <section class="max-w-6xl mx-auto px-4 py-20">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+    <section class="max-w-6xl mx-auto px-4 py-32">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <!-- Left side - Content -->
-        <div class="space-y-6">
-          <div class="space-y-3">
-            <h1 class="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white">
-              Organize seus <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">estudos</span> de forma inteligente
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <h1 class="text-6xl md:text-7xl font-bold text-slate-900 dark:text-white leading-tight">
+              Organize seus <span class="text-emerald-600 dark:text-emerald-500">estudos</span> com propósito
             </h1>
-            <p class="text-xl text-gray-600 dark:text-gray-300">
-              Crie roadmaps de aprendizado, organize recursos de estudo e acompanhe seu progresso em tempo real
+            <p class="text-xl text-slate-600 dark:text-slate-300">
+              Crie roadmaps de aprendizado estruturados, organize recursos e acompanhe seu progresso com precisão
             </p>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-4">
-            <AppButton
-              variant="primary"
-              size="lg"
-              @click="openRegister"
-              class="flex items-center justify-center gap-2"
-            >
-              Começar Agora
-              <span>→</span>
-            </AppButton>
-            <AppButton
-              variant="secondary"
-              size="lg"
-              @click="openLogin"
-              class="flex items-center justify-center gap-2"
-            >
-              Já tenho conta
-            </AppButton>
-          </div>
-
           <!-- Trust badges -->
-          <div class="flex gap-4 pt-4 text-sm text-gray-600 dark:text-gray-400">
-            <div class="flex items-center gap-2">
-              <span class="text-green-600 dark:text-green-400">✓</span>
-              Grátis para começar
+          <div class="flex flex-col gap-3 text-slate-600 dark:text-slate-400">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+                <span class="text-emerald-700 dark:text-emerald-400 text-xs font-bold">✓</span>
+              </span>
+              Grátis para começar, sem cartão de crédito
             </div>
-            <div class="flex items-center gap-2">
-              <span class="text-green-600 dark:text-green-400">✓</span>
-              Sem cartão de crédito
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+                <span class="text-emerald-700 dark:text-emerald-400 text-xs font-bold">✓</span>
+              </span>
+              Funciona offline, sincroniza automaticamente
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+                <span class="text-emerald-700 dark:text-emerald-400 text-xs font-bold">✓</span>
+              </span>
+              Acesso ao seu progresso em qualquer dispositivo
             </div>
           </div>
         </div>
@@ -161,25 +126,21 @@ async function submitAuth() {
         <!-- Right side - Visual -->
         <div class="hidden md:block">
           <div class="relative">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-lg blur-3xl opacity-20"></div>
-            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-8 space-y-4">
-              <div class="space-y-2">
-                <div class="h-3 bg-gradient-to-r from-blue-400 to-indigo-400 rounded w-2/3"></div>
-                <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div class="absolute -inset-8 bg-gradient-to-br from-emerald-100 to-blue-100 dark:from-emerald-900/20 dark:to-blue-900/20 rounded-2xl blur-2xl opacity-40"></div>
+            <div class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl p-12 space-y-6">
+              <div class="space-y-3">
+                <div class="h-4 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-lg w-3/4"></div>
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-5/6"></div>
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-4/6"></div>
               </div>
-              <div class="space-y-2">
-                <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
-                <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded w-4/6"></div>
-                <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded w-3/6"></div>
-              </div>
-              <div class="pt-4 space-y-3 border-t border-gray-200 dark:border-gray-700">
-                <div class="flex gap-2">
-                  <div class="h-8 w-8 bg-blue-100 dark:bg-blue-900 rounded"></div>
-                  <div class="flex-1 h-8 bg-gray-100 dark:bg-gray-700 rounded"></div>
+              <div class="pt-6 space-y-4 border-t border-slate-200 dark:border-slate-700">
+                <div class="flex gap-3">
+                  <div class="w-10 h-10 bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-900/30 dark:to-emerald-800/20 rounded-lg flex-shrink-0"></div>
+                  <div class="flex-1 h-10 bg-slate-100 dark:bg-slate-700 rounded-lg"></div>
                 </div>
-                <div class="flex gap-2">
-                  <div class="h-8 w-8 bg-green-100 dark:bg-green-900 rounded"></div>
-                  <div class="flex-1 h-8 bg-gray-100 dark:bg-gray-700 rounded"></div>
+                <div class="flex gap-3">
+                  <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/30 dark:to-blue-800/20 rounded-lg flex-shrink-0"></div>
+                  <div class="flex-1 h-10 bg-slate-100 dark:bg-slate-700 rounded-lg"></div>
                 </div>
               </div>
             </div>
@@ -189,28 +150,28 @@ async function submitAuth() {
     </section>
 
     <!-- Benefits Section -->
-    <section class="bg-white dark:bg-gray-800 py-20">
+    <section class="border-y border-slate-200 dark:border-slate-800 py-24 bg-white/50 dark:bg-slate-800/30">
       <div class="max-w-6xl mx-auto px-4">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Por que usar Roadmap?
+        <div class="text-center mb-20">
+          <h2 class="text-5xl font-bold text-slate-900 dark:text-white mb-4">
+            Tudo que você precisa para aprender melhor
           </h2>
-          <p class="text-xl text-gray-600 dark:text-gray-300">
-            Tudo que você precisa para organizar e acompanhar seus estudos
+          <p class="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            Uma plataforma completa para organizar seu aprendizado, acompanhar progresso e manter o foco
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
             v-for="(benefit, idx) in benefits"
             :key="idx"
-            class="p-6 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
+            class="p-8 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-300 hover:shadow-lg"
           >
-            <div class="text-4xl mb-3">{{ benefit.icon }}</div>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <div class="text-5xl mb-4">{{ benefit.icon }}</div>
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
               {{ benefit.title }}
             </h3>
-            <p class="text-gray-600 dark:text-gray-400">
+            <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
               {{ benefit.description }}
             </p>
           </div>
@@ -219,32 +180,29 @@ async function submitAuth() {
     </section>
 
     <!-- CTA Section -->
-    <section class="bg-gradient-to-r from-blue-600 to-indigo-600 py-20">
-      <div class="max-w-6xl mx-auto px-4 text-center">
-        <h2 class="text-4xl font-bold text-white mb-6">
-          Pronto para começar?
-        </h2>
-        <p class="text-xl text-blue-100 mb-8">
-          Crie sua conta em segundos e organize seus estudos agora mesmo
-        </p>
+    <section class="max-w-6xl mx-auto px-4 py-32 text-center">
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h2 class="text-5xl font-bold text-slate-900 dark:text-white">
+            Comece sua jornada de aprendizado
+          </h2>
+          <p class="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            Junte-se a milhares de estudantes que organizam seus roadmaps com Roadmap
+          </p>
+        </div>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <AppButton
-            variant="primary"
-            size="lg"
+          <button
             @click="openRegister"
-            class="bg-white text-blue-600 hover:bg-gray-100 flex items-center justify-center gap-2"
+            class="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
           >
-            Cadastre-se
-            <span>→</span>
-          </AppButton>
-          <AppButton
-            variant="secondary"
-            size="lg"
+            Começar agora →
+          </button>
+          <button
             @click="openLogin"
-            class="border-white text-white hover:bg-white/10 flex items-center justify-center gap-2"
+            class="px-8 py-4 border-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 dark:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 font-semibold rounded-lg transition-colors duration-200"
           >
             Já tenho conta
-          </AppButton>
+          </button>
         </div>
       </div>
     </section>

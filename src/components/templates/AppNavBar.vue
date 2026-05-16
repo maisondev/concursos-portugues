@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
@@ -21,13 +21,6 @@ const authMode = ref<'login' | 'register'>('login')
 const email = ref('')
 const password = ref('')
 const authError = ref<string | null>(null)
-const serverOnline = ref(false)
-
-// Desativado para reduzir requisições desnecessárias
-// Será implementado com WebSocket ou SSE no futuro
-onMounted(() => {
-  serverOnline.value = true
-})
 
 function openLogin() {
   authMode.value = 'login'
@@ -164,27 +157,6 @@ const isActive = (name: string) => route.name === name
               }"
             >
               {{ syncStatus.text }}
-            </span>
-          </div>
-
-          <!-- Server status indicator -->
-          <div
-            class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
-            :class="serverOnline
-              ? 'bg-green-100 dark:bg-green-900/30'
-              : 'bg-red-100 dark:bg-red-900/30'"
-            :title="serverOnline ? 'Servidor online' : 'Servidor offline'"
-          >
-            <div
-              class="w-2 h-2 rounded-full"
-              :class="serverOnline ? 'bg-green-500' : 'bg-red-500'"
-            />
-            <span class="text-xs font-medium"
-              :class="serverOnline
-                ? 'text-green-700 dark:text-green-300'
-                : 'text-red-700 dark:text-red-300'"
-            >
-              {{ serverOnline ? 'Online' : 'Offline' }}
             </span>
           </div>
 
