@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoadmapStore } from './roadmap'
 import { useDailyLogStore } from './dailyLog'
 import { useTeacherRankingStore } from './teacherRanking'
+import { syncManager } from '@/services/sync'
 
 type User = {
   id: string
@@ -135,7 +136,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function logout() {
+  async function logout() {
+    // Se houver mudanças pendentes, sincronizar antes de deslogar
+    if (syncManager.hasPendingChanges()) {
+      await syncManager.sync()
+    }
+
     user.value = null
     token.value = null
     localStorage.removeItem(STORAGE_KEY)
@@ -149,6 +155,11 @@ export const useAuthStore = defineStore('auth', () => {
     roadmapStore.clearRoadmaps()
     dailyLogStore.clearLogs()
     teacherRankingStore.clearTeachers()
+    syncManager.clearQueue()
+  }
+
+  function hasPendingChanges(): boolean {
+    return syncManager.hasPendingChanges()
   }
 
   function getAuthHeaders() {
@@ -166,7 +177,8 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     login,
     logout,
-    getAuthHeaders
+    getAuthHeaders,
+    hasPendingChanges
   }
 })
 

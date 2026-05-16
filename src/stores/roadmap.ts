@@ -4,6 +4,7 @@ import type { Roadmap, Block, Topic, Resource, TopicStatus, RoadmapColor, Roadma
 import { roadmapInterpretacaoTextos } from '@/data/roadmaps/interpretacao-textos'
 import { useAuthStore } from '@/stores/auth'
 import { api } from '@/services/api'
+import { syncManager } from '@/services/sync'
 
 export const useRoadmapStore = defineStore('roadmap', () => {
   const roadmaps = ref<Record<string, Roadmap>>({})
@@ -365,16 +366,37 @@ export const useRoadmapStore = defineStore('roadmap', () => {
       visibility
     }
 
+    // Salvar localmente (instantâneo)
     roadmaps.value[newId] = newRoadmap
     activeRoadmapId.value = newId
+
+    // Agendar sincronização com API se autenticado
+    if (authStore.isLoggedIn) {
+      syncManager.addAction({
+        type: 'create',
+        resource: 'roadmap',
+        resourceId: newId,
+        data: {
+          title,
+          description,
+          category: category || '',
+          tags: tags || [],
+          visibility
+        },
+        maxAttempts: 3
+      })
+    }
 
     return newId
   }
 
   function removeRoadmap(id: string) {
+    const authStore = useAuthStore()
     if (Object.keys(roadmaps.value).length <= 1) {
       return false
     }
+
+    // Remover localmente
     delete roadmaps.value[id]
     if (activeRoadmapId.value === id) {
       const remaining = Object.keys(roadmaps.value)[0]
@@ -382,6 +404,18 @@ export const useRoadmapStore = defineStore('roadmap', () => {
         activeRoadmapId.value = remaining
       }
     }
+
+    // Agendar sincronização se autenticado
+    if (authStore.isLoggedIn) {
+      syncManager.addAction({
+        type: 'delete',
+        resource: 'roadmap',
+        resourceId: id,
+        data: {},
+        maxAttempts: 3
+      })
+    }
+
     return true
   }
 
@@ -395,6 +429,7 @@ export const useRoadmapStore = defineStore('roadmap', () => {
     tags?: string[],
     visibility?: 'public' | 'private'
   ) {
+    const authStore = useAuthStore()
     const roadmap = roadmaps.value[id]
     if (roadmap) {
       roadmap.title = title
@@ -415,6 +450,25 @@ export const useRoadmapStore = defineStore('roadmap', () => {
         roadmap.visibility = visibility
       }
       roadmap.updatedAt = new Date().toISOString()
+
+      // Agendar sincronização se autenticado
+      if (authStore.isLoggedIn) {
+        syncManager.addAction({
+          type: 'update',
+          resource: 'roadmap',
+          resourceId: id,
+          data: {
+            title,
+            description,
+            rating,
+            status,
+            category,
+            tags,
+            visibility
+          },
+          maxAttempts: 3
+        })
+      }
     }
   }
 
