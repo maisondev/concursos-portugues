@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { ChevronDownIcon } from '@heroicons/vue/24/outline'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { ChevronDownIcon, LinkIcon } from '@heroicons/vue/24/outline'
 
 interface HelpSection {
   title: string
   content: string
+  id?: string
 }
+
+const route = useRoute()
 
 const sections: HelpSection[] = [
   {
@@ -79,10 +83,49 @@ const sections: HelpSection[] = [
 ]
 
 const expandedIndex = ref<number | null>(null)
+const copiedId = ref<string | null>(null)
+
+// Gerar ID para cada seção baseado no título
+const processedSections = computed(() => {
+  return sections.map(section => ({
+    ...section,
+    id: section.title
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+  }))
+})
 
 const toggleSection = (index: number) => {
   expandedIndex.value = expandedIndex.value === index ? null : index
 }
+
+const copyLink = (sectionId: string) => {
+  const url = `${window.location.origin}${window.location.pathname}#${sectionId}`
+  navigator.clipboard.writeText(url)
+  copiedId.value = sectionId
+  setTimeout(() => {
+    copiedId.value = null
+  }, 2000)
+}
+
+// Expandir seção se houver hash na URL
+onMounted(() => {
+  const hash = route.hash.slice(1) // Remove o #
+  if (hash) {
+    const index = processedSections.value.findIndex(s => s.id === hash)
+    if (index !== -1) {
+      expandedIndex.value = index
+      // Scroll para a seção
+      setTimeout(() => {
+        const element = document.getElementById(hash)
+        element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 100)
+    }
+  }
+})
 </script>
 
 <template>
@@ -101,23 +144,36 @@ const toggleSection = (index: number) => {
       <!-- Help Sections -->
       <div class="space-y-3">
         <div
-          v-for="(section, idx) in sections"
+          v-for="(section, idx) in processedSections"
           :key="idx"
-          class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden"
+          :id="section.id"
+          class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden scroll-mt-20"
         >
           <button
             @click="toggleSection(idx)"
-            class="w-full p-4 flex items-center justify-between bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            class="w-full p-4 flex items-center justify-between bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
           >
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white text-left">
               {{ section.title }}
             </h3>
-            <ChevronDownIcon
-              :class="[
-                'w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform',
-                expandedIndex === idx ? 'rotate-180' : ''
-              ]"
-            />
+            <div class="flex items-center gap-2">
+              <button
+                @click.stop="copyLink(section.id)"
+                :title="`Copiar link: #${section.id}`"
+                class="p-1 opacity-0 group-hover:opacity-100 transition-opacity rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              >
+                <LinkIcon class="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              </button>
+              <div v-if="copiedId === section.id" class="text-xs text-green-600 dark:text-green-400 w-12 text-right">
+                Copiado!
+              </div>
+              <ChevronDownIcon
+                :class="[
+                  'w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform',
+                  expandedIndex === idx ? 'rotate-180' : ''
+                ]"
+              />
+            </div>
           </button>
 
           <Transition
