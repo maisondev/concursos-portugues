@@ -93,7 +93,7 @@ const submitFeedback = async () => {
   isSubmitting.value = true
 
   try {
-    await api.post('/api/feedback', {
+    await api.post('/api/feedbacks', {
       name: formData.value.name,
       email: formData.value.email,
       message: formData.value.message
