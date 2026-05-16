@@ -110,8 +110,8 @@ const isActive = (name: string) => route.name === name
           </Transition>
         </div>
 
-        <!-- Center section: desktop navigation -->
-        <div class="hidden md:flex items-center gap-1">
+        <!-- Center section: desktop navigation (only when logged in) -->
+        <div v-if="authStore.isLoggedIn" class="hidden md:flex items-center gap-1">
           <button
             v-for="item in navItems"
             :key="item.name"
@@ -119,7 +119,7 @@ const isActive = (name: string) => route.name === name
             :class="[
               'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
               isActive(item.name)
-                ? 'bg-blue-500 text-white'
+                ? 'bg-primary text-white'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
             ]"
           >
@@ -225,8 +225,9 @@ const isActive = (name: string) => route.name === name
         </div>
       </div>
 
-      <!-- Mobile navigation -->
+      <!-- Mobile navigation (only when logged in) -->
       <div
+        v-if="authStore.isLoggedIn"
         v-show="route.name !== 'home' && route.name !== 'block-detail' && route.name !== 'roadmap'"
         class="md:hidden border-t border-gray-200 dark:border-gray-700 px-2 py-2 flex gap-1 overflow-x-auto"
       >
@@ -237,7 +238,7 @@ const isActive = (name: string) => route.name === name
           :class="[
             'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap',
             isActive(item.name)
-              ? 'bg-blue-500 text-white'
+              ? 'bg-primary text-white'
               : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
           ]"
         >

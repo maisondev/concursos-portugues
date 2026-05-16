@@ -44,6 +44,108 @@ Backend API (Railway)
 PostgreSQL Database
 ```
 
+### Princípios de Componentização
+
+**CRÍTICO**: O sistema deve ser **maximamente componentizado**. Cada nova feature deve seguir rigorosamente:
+
+1. **Atomic Design** (obrigatório)
+   - **atoms/**: elementos base (AppButton, AppIcon, AppInput, AppModal)
+   - **molecules/**: combinações de atoms (AppCard, AppBadge, StatCounter)
+   - **organisms/**: componentes complexos (AppNavBar, AppForm, RoadmapCard)
+   - **templates/**: layouts (AppLayout, AppNavBar)
+   - **pages/**: rotas/páginas
+
+2. **Props & Emits Tipados**
+   ```typescript
+   // ✅ CORRETO
+   interface Props {
+     title: string
+     size?: 'sm' | 'md' | 'lg'
+     disabled?: boolean
+   }
+   const props = withDefaults(defineProps<Props>(), { size: 'md' })
+   
+   // ❌ ERRADO
+   const props = defineProps(['title', 'size'])
+   ```
+
+3. **Reutilização Máxima**
+   - Nunca duplicar código HTML entre componentes
+   - Se aparece em 2+ lugares, é um componente novo
+   - Usar `<slot>` para variações
+
+4. **Composables para Lógica**
+   - Lógica complexa vai em composables, não em componentes
+   - Exemplo: `useSync()`, `useFormValidation()`
+   - Facilita testes e reutilização
+
+5. **Exemplo: Feature Nova (Comentários)**
+   ```
+   ✅ Estrutura correta:
+   
+   components/
+   ├── atoms/
+   │   ├── CommentBadge.vue (status, autor, data)
+   │   └── CommentInput.vue (textarea com validação)
+   ├── molecules/
+   │   ├── CommentCard.vue (comment + actions)
+   │   └── CommentList.vue (lista de comments)
+   ├── organisms/
+   │   └── CommentSection.vue (gerencia state, integra lista + input)
+   
+   composables/
+   └── useComments.ts (lógica de CRUD)
+   
+   stores/
+   └── comments.ts (estado global de comentários)
+   ```
+
+6. **Checklist ao Criar Feature**
+   - [ ] Dividi em atoms/molecules/organisms?
+   - [ ] Props e emits estão tipados?
+   - [ ] Componentizei lógica em composables?
+   - [ ] Reutilizei componentes existentes?
+   - [ ] Slot para variações?
+   - [ ] Dark mode funciona?
+   - [ ] TypeScript sem erros?
+
+---
+
+## 🎨 Tema e Dark Mode
+
+### Dark Mode Padrão
+
+- **Padrão**: Dark mode ativado por padrão em `index.html`
+- **Detecção**: Script no `<head>` garante dark mode antes do render (sem flash)
+- **Fallback**: Se localStorage vazio, aplicar dark mode
+- **Toggle**: AppNavBar tem botão para alternar tema
+- **Armazenamento**: `settings.store.theme` (localStorage)
+
+**Importante**: Sempre testar componentes em ambos os modos!
+
+```html
+<!-- index.html inicia com dark mode -->
+<html class="dark">
+```
+
+---
+
+## 🎥 Recursos e Tutoriais
+
+### Vídeo Tutorial (TODO - Fase 2)
+
+- [ ] Criar vídeo de 5-10 minutos mostrando:
+  1. Como se cadastrar
+  2. Como criar um roadmap
+  3. Como organizar blocos, tópicos e recursos
+  4. Como usar offline-first
+  5. Dashboard de progresso
+
+- [ ] Exemplo: Usar roadmap "Interpretação de Textos" como case
+- [ ] Plataforma: Loom ou YouTube
+- [ ] Embedar na landing page (botão "Ver Tutorial")
+- [ ] Adicionar link na navbar para visitantes
+
 ---
 
 ## 🔐 Autenticação
