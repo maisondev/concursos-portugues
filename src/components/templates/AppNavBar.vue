@@ -5,7 +5,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
 import { useAuthStore } from '@/stores/auth'
 import { useSync } from '@/composables/useSync'
-import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon, ShieldCheckIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/24/outline'
+import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon, ShieldCheckIcon, ChatBubbleLeftEllipsisIcon, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
 import FeedbackModal from '@/components/molecules/FeedbackModal.vue'
@@ -24,12 +24,14 @@ const password = ref('')
 const authError = ref<string | null>(null)
 const showFeedbackModal = ref(false)
 const showMobileMenu = ref(false)
+const showPassword = ref(false)
 
 function openLogin() {
   authMode.value = 'login'
   email.value = ''
   password.value = ''
   authError.value = null
+  showPassword.value = false
   showAuthModal.value = true
 }
 
@@ -38,6 +40,7 @@ function openRegister() {
   email.value = ''
   password.value = ''
   authError.value = null
+  showPassword.value = false
   showAuthModal.value = true
 }
 
@@ -280,29 +283,39 @@ const isActive = (name: string) => route.name === name
       @submit="submitAuth"
       @cancel="showAuthModal = false"
     >
-      <div class="space-y-4">
+      <div class="space-y-5 sm:space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label class="block text-sm sm:text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
             E-mail
           </label>
           <input
             v-model="email"
             type="email"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            class="w-full px-4 py-3 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
             :placeholder="authMode === 'register' ? 'seu@email.com' : 'seu@email.com'"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label class="block text-sm sm:text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
             Senha
           </label>
-          <input
-            v-model="password"
-            type="password"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            :placeholder="authMode === 'register' ? 'Mínimo 6 caracteres' : 'Sua senha'"
-          />
+          <div class="relative">
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              class="w-full px-4 py-3 sm:px-3 sm:py-2 pr-12 sm:pr-10 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
+              :placeholder="authMode === 'register' ? 'Mínimo 6 caracteres' : 'Sua senha'"
+            />
+            <button
+              type="button"
+              @click="showPassword = !showPassword"
+              class="absolute right-4 sm:right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            >
+              <EyeIcon v-if="showPassword" class="w-5 h-5" />
+              <EyeSlashIcon v-else class="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <p v-if="authError" class="text-sm text-red-600 dark:text-red-400">
