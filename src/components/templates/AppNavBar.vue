@@ -23,6 +23,7 @@ const email = ref('')
 const password = ref('')
 const authError = ref<string | null>(null)
 const showFeedbackModal = ref(false)
+const showMobileMenu = ref(false)
 
 function openLogin() {
   authMode.value = 'login'
@@ -77,6 +78,7 @@ function navigateTo(path: string, name: string) {
     name,
     params: path === '/roadmap' ? { roadmapId: 'interpretacao-textos' } : undefined
   })
+  showMobileMenu.value = false
 }
 
 function toggleTheme() {
@@ -239,8 +241,9 @@ const isActive = (name: string) => route.name === name
 
           <!-- Mobile menu button -->
           <button
+            v-if="authStore.isLoggedIn"
             class="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            @click="router.push('/')"
+            @click="showMobileMenu = !showMobileMenu"
           >
             <Bars3Icon class="w-5 h-5" />
           </button>
@@ -249,9 +252,8 @@ const isActive = (name: string) => route.name === name
 
       <!-- Mobile navigation (only when logged in) -->
       <div
-        v-if="authStore.isLoggedIn"
-        v-show="route.name !== 'home' && route.name !== 'block-detail' && route.name !== 'roadmap'"
-        class="md:hidden border-t border-gray-200 dark:border-gray-700 px-2 py-2 flex gap-1 overflow-x-auto"
+        v-if="authStore.isLoggedIn && showMobileMenu"
+        class="md:hidden border-t border-gray-200 dark:border-gray-700 px-2 py-2 flex flex-col gap-1"
       >
         <button
           v-for="item in navItems"
