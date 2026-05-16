@@ -8,6 +8,7 @@ import SettingsPage from '@/pages/SettingsPage.vue'
 import AdminPage from '@/pages/AdminPage.vue'
 import ChangelogPage from '@/pages/ChangelogPage.vue'
 import HelpPage from '@/pages/HelpPage.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const routes = [
   {
@@ -67,6 +68,20 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes
+})
+
+// Guard para proteger rota /admin
+router.beforeEach((to, from, next) => {
+  if (to.name === 'admin') {
+    const authStore = useAuthStore()
+    if (!authStore.isAdmin) {
+      next('/')
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

@@ -57,18 +57,18 @@ function formatDate(dateString: string): string {
   })
 }
 
-async function toggleAdmin(user: any) {
+async function changeRole(user: any, newRole: string) {
   togglingUserId.value = user.id
   try {
-    const updated = await api.patch(`/api/admin/users/${user.id}/admin`, {
-      isAdmin: !user.isAdmin
+    const updated = await api.patch(`/api/admin/users/${user.id}/role`, {
+      role: newRole
     })
     const idx = users.value.findIndex(u => u.id === user.id)
     if (idx !== -1) {
-      users.value[idx].isAdmin = updated.isAdmin
+      users.value[idx].role = updated.role
     }
   } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Erro ao alterar permissão'
+    error.value = err instanceof Error ? err.message : 'Erro ao alterar role'
   } finally {
     togglingUserId.value = null
   }
@@ -238,7 +238,10 @@ async function confirmDeleteUser() {
               <tr v-for="user in users" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-800">
                 <td class="px-4 py-3 text-gray-900 dark:text-white">{{ user.email }}</td>
                 <td class="px-4 py-3">
-                  <span v-if="user.isAdmin" class="px-2 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded">
+                  <span v-if="user.role === 'OWNER'" class="px-2 py-1 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs font-semibold rounded">
+                    👑 Owner
+                  </span>
+                  <span v-else-if="user.role === 'ADMIN'" class="px-2 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded">
                     Admin
                   </span>
                   <span v-else class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded">
@@ -249,29 +252,23 @@ async function confirmDeleteUser() {
                 <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ user._count.logs }}</td>
                 <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ formatDate(user.createdAt) }}</td>
                 <td class="px-4 py-3">
-                  <div class="flex gap-2">
-                    <button
-                      @click="toggleAdmin(user)"
-                      :disabled="togglingUserId === user.id || deletingUserId === user.id || authStore.user?.id === user.id"
-                      :class="[
-                        'px-3 py-1 text-xs font-medium rounded transition-colors',
-                        togglingUserId === user.id || deletingUserId === user.id
-                          ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'
-                          : authStore.user?.id === user.id
-                            ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'
-                            : user.isAdmin
-                              ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
-                              : 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
-                      ]"
+                  <div class="flex gap-2 items-center">
+                    <select
+                      :value="user.role"
+                      @change="(e) => changeRole(user, (e.target as HTMLSelectElement).value)"
+                      :disabled="togglingUserId === user.id || deletingUserId === user.id || authStore.user?.id === user.id || !authStore.isOwner"
+                      class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {{ togglingUserId === user.id ? '...' : (user.isAdmin ? 'Remover' : 'Promover') }}
-                    </button>
+                      <option value="USER">Usuário</option>
+                      <option value="ADMIN">Admin</option>
+                      <option value="OWNER">Owner</option>
+                    </select>
                     <button
                       @click="confirmDelete(user)"
-                      :disabled="deletingUserId === user.id || togglingUserId === user.id || authStore.user?.id === user.id"
+                      :disabled="deletingUserId === user.id || togglingUserId === user.id || authStore.user?.id === user.id || !authStore.isOwner"
                       :class="[
                         'px-3 py-1 text-xs font-medium rounded transition-colors',
-                        deletingUserId === user.id || togglingUserId === user.id
+                        deletingUserId === user.id || togglingUserId === user.id || !authStore.isOwner
                           ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'
                           : authStore.user?.id === user.id
                             ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'

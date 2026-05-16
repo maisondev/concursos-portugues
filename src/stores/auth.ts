@@ -8,7 +8,7 @@ import { syncManager } from '@/services/sync'
 type User = {
   id: string
   email: string
-  isAdmin?: boolean
+  role?: 'USER' | 'ADMIN' | 'OWNER'
 }
 
 type ApiResponse = {
@@ -56,7 +56,8 @@ export const useAuthStore = defineStore('auth', () => {
   const hasAccount = computed(() => Boolean(token.value))
   const isLoggedIn = computed(() => Boolean(token.value))
   const username = computed(() => user.value?.email || null)
-  const isAdmin = computed(() => user.value?.isAdmin === true)
+  const isAdmin = computed(() => user.value?.role === 'ADMIN' || user.value?.role === 'OWNER')
+  const isOwner = computed(() => user.value?.role === 'OWNER')
 
   async function init() {
     const storedToken = localStorage.getItem(STORAGE_KEY)
@@ -189,6 +190,7 @@ export const useAuthStore = defineStore('auth', () => {
     hasAccount,
     isLoggedIn,
     isAdmin,
+    isOwner,
     username,
     user,
     token,
