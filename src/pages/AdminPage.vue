@@ -16,6 +16,7 @@ const isLoading = ref(true)
 const error = ref<string | null>(null)
 const activeTab = ref<'stats' | 'users' | 'activity'>('stats')
 const togglingUserId = ref<string | null>(null)
+const deletingUserId = ref<string | null>(null)
 
 onMounted(async () => {
   // Verificar se é admin (para futuro, agora só admin consegue acessar)
@@ -68,6 +69,23 @@ async function toggleAdmin(user: any) {
     error.value = err instanceof Error ? err.message : 'Erro ao alterar permissão'
   } finally {
     togglingUserId.value = null
+  }
+}
+
+async function deleteUser(user: any) {
+  if (!confirm(`Tem certeza que deseja deletar o usuário ${user.email}? Esta ação não pode ser desfeita.`)) {
+    return
+  }
+
+  deletingUserId.value = user.id
+  try {
+    await api.delete(`/api/admin/users/${user.id}`)
+    users.value = users.value.filter(u => u.id !== user.id)
+    error.value = null
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Erro ao deletar usuário'
+  } finally {
+    deletingUserId.value = null
   }
 }
 </script>
@@ -223,22 +241,38 @@ async function toggleAdmin(user: any) {
                 <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ user._count.logs }}</td>
                 <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ formatDate(user.createdAt) }}</td>
                 <td class="px-4 py-3">
-                  <button
-                    @click="toggleAdmin(user)"
-                    :disabled="togglingUserId === user.id || authStore.user?.id === user.id"
-                    :class="[
-                      'px-3 py-1 text-xs font-medium rounded transition-colors',
-                      togglingUserId === user.id
-                        ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'
-                        : authStore.user?.id === user.id
+                  <div class="flex gap-2">
+                    <button
+                      @click="toggleAdmin(user)"
+                      :disabled="togglingUserId === user.id || deletingUserId === user.id || authStore.user?.id === user.id"
+                      :class="[
+                        'px-3 py-1 text-xs font-medium rounded transition-colors',
+                        togglingUserId === user.id || deletingUserId === user.id
                           ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'
-                          : user.isAdmin
-                            ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
-                            : 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
-                    ]"
-                  >
-                    {{ togglingUserId === user.id ? '...' : (user.isAdmin ? 'Remover' : 'Promover') }}
-                  </button>
+                          : authStore.user?.id === user.id
+                            ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'
+                            : user.isAdmin
+                              ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
+                              : 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
+                      ]"
+                    >
+                      {{ togglingUserId === user.id ? '...' : (user.isAdmin ? 'Remover' : 'Promover') }}
+                    </button>
+                    <button
+                      @click="deleteUser(user)"
+                      :disabled="deletingUserId === user.id || togglingUserId === user.id || authStore.user?.id === user.id"
+                      :class="[
+                        'px-3 py-1 text-xs font-medium rounded transition-colors',
+                        deletingUserId === user.id || togglingUserId === user.id
+                          ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'
+                          : authStore.user?.id === user.id
+                            ? 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed'
+                            : 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 hover:bg-orange-200 dark:hover:bg-orange-900/60'
+                      ]"
+                    >
+                      {{ deletingUserId === user.id ? '...' : 'Deletar' }}
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>

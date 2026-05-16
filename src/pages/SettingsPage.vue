@@ -7,11 +7,23 @@ import { useDailyLogStore } from '@/stores/dailyLog'
 import { api } from '@/services/api'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppIcon from '@/components/atoms/AppIcon.vue'
+import AppCheckbox from '@/components/atoms/AppCheckbox.vue'
 
 const router = useRouter()
 const settingsStore = useSettingsStore()
 const roadmapStore = useRoadmapStore()
 const dailyLogStore = useDailyLogStore()
+
+const activeSection = ref<'conta' | 'aparencia' | 'preferencias' | 'metas' | 'dados' | 'sobre'>('conta')
+
+const sections = [
+  { id: 'conta', label: 'Conta', icon: 'lock' },
+  { id: 'aparencia', label: 'Aparência', icon: 'sun' },
+  { id: 'preferencias', label: 'Preferências', icon: 'sliders-horizontal' },
+  { id: 'metas', label: 'Metas Diárias', icon: 'target' },
+  { id: 'dados', label: 'Dados', icon: 'database' },
+  { id: 'sobre', label: 'Sobre', icon: 'info' }
+]
 
 const newPassword = ref('')
 const confirmPassword = ref('')
@@ -110,172 +122,208 @@ function importJSON(event: Event) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-900 p-4">
-    <div class="max-w-2xl mx-auto space-y-6">
-      <!-- Breadcrumb -->
-      <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-        <button
-          @click="router.push('/')"
-          class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-        >
+  <div class="min-h-screen bg-white dark:bg-gray-900">
+    <!-- Header com breadcrumb -->
+    <div class="border-b border-gray-200 dark:border-gray-800 p-4">
+      <div class="max-w-7xl mx-auto flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <button @click="router.push('/')" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
           <AppIcon name="home" size="sm" />
           Início
         </button>
-        <span class="text-gray-400">•</span>
+        <span>•</span>
         <span class="font-medium text-gray-900 dark:text-white">Configurações</span>
       </div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white max-w-7xl mx-auto">Configurações</h1>
+    </div>
 
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Configurações</h1>
+    <!-- Main content: Sidebar + Content -->
+    <div class="max-w-7xl mx-auto p-4 grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[240px_1fr] gap-6">
+      <!-- Sidebar Navigation (Desktop) -->
+      <nav class="hidden md:flex flex-col gap-1">
+        <button
+          v-for="section in sections"
+          :key="section.id"
+          @click="activeSection = section.id as typeof activeSection"
+          :class="[
+            'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors border-l-4 text-left',
+            activeSection === section.id
+              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-600'
+              : 'text-gray-700 dark:text-gray-300 border-transparent hover:bg-gray-50 dark:hover:bg-gray-800/50'
+          ]"
+        >
+          <AppIcon :name="section.icon" size="sm" />
+          {{ section.label }}
+        </button>
+      </nav>
 
+      <!-- Tabs Navigation (Mobile) -->
+      <div class="md:hidden -mx-4 px-4 mb-4">
+        <div class="flex gap-2 overflow-x-auto pb-2">
+          <button
+            v-for="section in sections"
+            :key="section.id"
+            @click="activeSection = section.id as typeof activeSection"
+            :class="[
+              'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors',
+              activeSection === section.id
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+            ]"
+          >
+            {{ section.label }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Content Area -->
       <div class="space-y-6">
-        <!-- Segurança -->
-        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Segurança</h3>
-          <div class="space-y-3">
+        <!-- Seção: Conta -->
+        <div v-if="activeSection === 'conta'" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-700">
+            <div class="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+              <AppIcon name="lock" size="sm" class="text-blue-600 dark:text-blue-400" />
+            </div>
             <div>
-              <label class="block">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Senha Atual</span>
-                <input
-                  v-model="currentPassword"
-                  type="password"
-                  placeholder="Digite sua senha atual"
-                  class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-                />
+              <h2 class="font-semibold text-gray-900 dark:text-white">Conta</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Gerenciar segurança da sua conta</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label class="block"><span class="text-sm font-medium text-gray-700 dark:text-gray-300">Senha Atual</span>
+                <input v-model="currentPassword" type="password" placeholder="Digite sua senha atual"
+                  class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
               </label>
             </div>
             <div>
-              <label class="block">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Nova Senha</span>
-                <input
-                  v-model="newPassword"
-                  type="password"
-                  placeholder="Digite a nova senha"
-                  class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-                />
+              <label class="block"><span class="text-sm font-medium text-gray-700 dark:text-gray-300">Nova Senha</span>
+                <input v-model="newPassword" type="password" placeholder="Digite a nova senha"
+                  class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
               </label>
             </div>
             <div>
-              <label class="block">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Confirmar Nova Senha</span>
-                <input
-                  v-model="confirmPassword"
-                  type="password"
-                  placeholder="Confirme a nova senha"
-                  class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-                />
+              <label class="block"><span class="text-sm font-medium text-gray-700 dark:text-gray-300">Confirmar Nova Senha</span>
+                <input v-model="confirmPassword" type="password" placeholder="Confirme a nova senha"
+                  class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
               </label>
             </div>
-            <AppButton
-              variant="primary"
-              @click="updatePassword"
-              :disabled="isChangingPassword"
-              class="w-full"
-            >
+            <AppButton variant="primary" @click="updatePassword" :disabled="isChangingPassword" class="w-full">
               {{ isChangingPassword ? 'Alterando...' : 'Alterar Senha' }}
             </AppButton>
-            <div v-if="passwordError" class="text-sm text-red-600 dark:text-red-400 p-2 bg-red-50 dark:bg-red-900/20 rounded">
+            <div v-if="passwordError" class="text-sm text-red-600 dark:text-red-400 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
               {{ passwordError }}
             </div>
-            <div v-if="passwordSuccess" class="text-sm text-green-600 dark:text-green-400 p-2 bg-green-50 dark:bg-green-900/20 rounded">
+            <div v-if="passwordSuccess" class="text-sm text-green-600 dark:text-green-400 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
               ✓ Senha alterada com sucesso!
             </div>
           </div>
         </div>
 
-        <!-- Tema -->
-        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Tema</h3>
-          <AppButton
-            variant="primary"
-            @click="settingsStore.toggleTheme"
-          >
-            Atual: {{ settingsStore.settings.theme }} (Alternar)
-          </AppButton>
+        <!-- Seção: Aparência -->
+        <div v-if="activeSection === 'aparencia'" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-700">
+            <div class="p-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
+              <AppIcon name="sun" size="sm" class="text-yellow-600 dark:text-yellow-400" />
+            </div>
+            <div>
+              <h2 class="font-semibold text-gray-900 dark:text-white">Aparência</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Personalize a aparência da aplicação</p>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div>
+                <p class="font-medium text-gray-900 dark:text-white">Tema</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Tema atual: <span class="font-semibold capitalize">{{ settingsStore.settings.theme }}</span></p>
+              </div>
+              <AppButton variant="secondary" size="sm" @click="settingsStore.toggleTheme">Alternar</AppButton>
+            </div>
+          </div>
         </div>
 
-        <!-- Comportamento -->
-        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Comportamento</h3>
-          <label class="flex items-start gap-3 cursor-pointer select-none">
-            <input
-              v-model="settingsStore.settings.markViewedOnOpen"
-              type="checkbox"
-              class="mt-1"
-            />
+        <!-- Seção: Preferências -->
+        <div v-if="activeSection === 'preferencias'" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-700">
+            <div class="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20">
+              <AppIcon name="sliders-horizontal" size="sm" class="text-purple-600 dark:text-purple-400" />
+            </div>
             <div>
-              <p class="text-sm font-medium text-gray-900 dark:text-white">
-                Marcar recurso como visto ao abrir
-              </p>
-              <p class="text-xs text-gray-600 dark:text-gray-400">
-                Ao clicar no título/link do recurso, ele será marcado como visto automaticamente.
-              </p>
+              <h2 class="font-semibold text-gray-900 dark:text-white">Preferências</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Configure o comportamento da aplicação</p>
+            </div>
+          </div>
+          <label class="flex items-start gap-3 cursor-pointer select-none p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg">
+            <AppCheckbox v-model="settingsStore.settings.markViewedOnOpen" class="mt-1" />
+            <div>
+              <p class="text-sm font-medium text-gray-900 dark:text-white">Marcar recurso como visto ao abrir</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">Marca automaticamente como visto ao clicar no recurso</p>
             </div>
           </label>
         </div>
 
-        <!-- Metas -->
-        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Metas Diárias</h3>
+        <!-- Seção: Metas Diárias -->
+        <div v-if="activeSection === 'metas'" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-700">
+            <div class="p-2 rounded-lg bg-green-50 dark:bg-green-900/20">
+              <AppIcon name="target" size="sm" class="text-green-600 dark:text-green-400" />
+            </div>
+            <div>
+              <h2 class="font-semibold text-gray-900 dark:text-white">Metas Diárias</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Defina suas metas de aprendizado</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <label class="block">
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Minutos de estudo por dia</span>
+              <input v-model.number="settingsStore.settings.dailyGoalMinutes" type="number" min="0"
+                class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
+            </label>
+            <label class="block">
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Questões a resolver por dia</span>
+              <input v-model.number="settingsStore.settings.dailyGoalQuestoes" type="number" min="0"
+                class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
+            </label>
+          </div>
+        </div>
+
+        <!-- Seção: Dados -->
+        <div v-if="activeSection === 'dados'" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-700">
+            <div class="p-2 rounded-lg bg-orange-50 dark:bg-orange-900/20">
+              <AppIcon name="database" size="sm" class="text-orange-600 dark:text-orange-400" />
+            </div>
+            <div>
+              <h2 class="font-semibold text-gray-900 dark:text-white">Dados</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Exporte e importe seu backup</p>
+            </div>
+          </div>
           <div class="space-y-3">
+            <AppButton variant="secondary" @click="exportJSON" class="w-full">📥 Exportar JSON</AppButton>
             <label class="block">
-              <span class="text-gray-700 dark:text-gray-300">Minutos de estudo</span>
-              <input
-                v-model.number="settingsStore.settings.dailyGoalMinutes"
-                type="number"
-                class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-              />
+              <AppButton variant="secondary" class="w-full">📤 Importar JSON</AppButton>
+              <input type="file" accept=".json" @change="importJSON" class="hidden" />
             </label>
-            <label class="block">
-              <span class="text-gray-700 dark:text-gray-300">Questões a resolver</span>
-              <input
-                v-model.number="settingsStore.settings.dailyGoalQuestoes"
-                type="number"
-                class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-              />
-            </label>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Faça backup de todos seus roadmaps, logs e configurações</p>
           </div>
         </div>
 
-        <!-- Backup/Restauração -->
-        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Backup e Restauração</h3>
-          <div class="flex gap-2">
-            <AppButton
-              variant="secondary"
-              @click="exportJSON"
-              class="flex-1"
-            >
-              📥 Exportar JSON
-            </AppButton>
-            <label class="flex-1">
-              <AppButton
-                variant="secondary"
-                class="w-full"
-              >
-                📤 Importar JSON
-              </AppButton>
-              <input
-                type="file"
-                accept=".json"
-                @change="importJSON"
-                class="hidden"
-              />
-            </label>
+        <!-- Seção: Sobre -->
+        <div v-if="activeSection === 'sobre'" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-700">
+            <div class="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20">
+              <AppIcon name="info" size="sm" class="text-indigo-600 dark:text-indigo-400" />
+            </div>
+            <div>
+              <h2 class="font-semibold text-gray-900 dark:text-white">Sobre</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Informações sobre a aplicação</p>
+            </div>
           </div>
-        </div>
-
-        <!-- Sobre -->
-        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Sobre</h3>
-          <p class="text-sm text-gray-700 dark:text-gray-300">
-            Desenvolvedor: <span class="font-semibold">Maison</span>
-          </p>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Projeto pessoal para organização de estudos e evolução contínua do produto.
-          </p>
-          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">
-            Repositório: <a class="text-blue-600 dark:text-blue-400 hover:underline" href="https://github.com/maisondev/concursos-portugues" target="_blank" rel="noreferrer">GitHub</a>
-          </p>
+          <div class="space-y-3 text-sm">
+            <p><span class="font-medium text-gray-900 dark:text-white">Desenvolvedor:</span> <span class="text-gray-600 dark:text-gray-400">Maison</span></p>
+            <p><span class="font-medium text-gray-900 dark:text-white">Projeto:</span> <span class="text-gray-600 dark:text-gray-400">Organização de estudos com roadmaps e rastreamento de progresso</span></p>
+            <p><span class="font-medium text-gray-900 dark:text-white">Domínio:</span> <a href="https://sinapses.site" target="_blank" rel="noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">sinapses.site</a></p>
+            <p><span class="font-medium text-gray-900 dark:text-white">GitHub:</span> <a href="https://github.com/maisondev" target="_blank" rel="noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">@maisondev</a></p>
+          </div>
         </div>
       </div>
     </div>
