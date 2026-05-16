@@ -8,6 +8,7 @@ import { syncManager } from '@/services/sync'
 type User = {
   id: string
   email: string
+  isAdmin?: boolean
 }
 
 type ApiResponse = {
@@ -55,6 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
   const hasAccount = computed(() => Boolean(token.value))
   const isLoggedIn = computed(() => Boolean(token.value))
   const username = computed(() => user.value?.email || null)
+  const isAdmin = computed(() => user.value?.isAdmin === true)
 
   function init() {
     const storedToken = localStorage.getItem(STORAGE_KEY)

@@ -5,7 +5,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
 import { useAuthStore } from '@/stores/auth'
 import { useSync } from '@/composables/useSync'
-import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon } from '@heroicons/vue/24/outline'
+import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon, ShieldCheckIcon } from '@heroicons/vue/24/outline'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
 
@@ -81,11 +81,17 @@ function toggleTheme() {
   settingsStore.toggleTheme()
 }
 
-const navItems = [
-  { name: 'home', path: '/', label: 'Roadmaps', icon: HomeIcon },
-  { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
-  { name: 'settings', path: '/settings', label: 'Configurações', icon: Cog6ToothIcon }
-]
+const navItems = computed(() => {
+  const items = [
+    { name: 'home', path: '/', label: 'Roadmaps', icon: HomeIcon },
+    { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
+    { name: 'settings', path: '/settings', label: 'Configurações', icon: Cog6ToothIcon }
+  ]
+  if (authStore.isAdmin) {
+    items.push({ name: 'admin', path: '/admin', label: 'Admin', icon: ShieldCheckIcon })
+  }
+  return items
+})
 
 const isActive = (name: string) => route.name === name
 </script>
