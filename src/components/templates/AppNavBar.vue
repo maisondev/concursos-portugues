@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
@@ -19,9 +19,33 @@ const authMode = ref<'login' | 'register'>('login')
 const email = ref('')
 const password = ref('')
 const authError = ref<string | null>(null)
+const serverOnline = ref(false)
+
+async function checkServerStatus() {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+    const response = await fetch(`${apiUrl}/api/health`, { signal: AbortSignal.timeout(2000) })
+    serverOnline.value = response.ok
+  } catch {
+    serverOnline.value = false
+  }
+}
+
+onMounted(() => {
+  checkServerStatus()
+  setInterval(checkServerStatus, 10000)
+})
 
 function openLogin() {
   authMode.value = 'login'
+  email.value = ''
+  password.value = ''
+  authError.value = null
+  showAuthModal.value = true
+}
+
+function openRegister() {
+  authMode.value = 'register'
   email.value = ''
   password.value = ''
   authError.value = null
@@ -118,8 +142,29 @@ const isActive = (name: string) => route.name === name
           </button>
         </div>
 
-        <!-- Right section: streak + theme toggle -->
+        <!-- Right section: streak + server status + theme toggle -->
         <div class="flex items-center gap-3">
+          <!-- Server status indicator -->
+          <div
+            class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
+            :class="serverOnline
+              ? 'bg-green-100 dark:bg-green-900/30'
+              : 'bg-red-100 dark:bg-red-900/30'"
+            :title="serverOnline ? 'Servidor online' : 'Servidor offline'"
+          >
+            <div
+              class="w-2 h-2 rounded-full"
+              :class="serverOnline ? 'bg-green-500' : 'bg-red-500'"
+            />
+            <span class="text-xs font-medium"
+              :class="serverOnline
+                ? 'text-green-700 dark:text-green-300'
+                : 'text-red-700 dark:text-red-300'"
+            >
+              {{ serverOnline ? 'Online' : 'Offline' }}
+            </span>
+          </div>
+
           <!-- Streak counter -->
           <div
             v-if="dailyLogStore.streakDays > 0"
@@ -148,14 +193,22 @@ const isActive = (name: string) => route.name === name
             <div class="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/20 text-xs text-gray-700 dark:text-gray-200">
               <span class="font-semibold">{{ authStore.isLoggedIn ? authStore.username : 'Visitante' }}</span>
             </div>
-            <AppButton
-              v-if="!authStore.isLoggedIn"
-              variant="secondary"
-              size="sm"
-              @click="openLogin"
-            >
-              Entrar
-            </AppButton>
+            <div v-if="!authStore.isLoggedIn" class="flex gap-2">
+              <AppButton
+                variant="secondary"
+                size="sm"
+                @click="openLogin"
+              >
+                Entrar
+              </AppButton>
+              <AppButton
+                variant="primary"
+                size="sm"
+                @click="openRegister"
+              >
+                Cadastro
+              </AppButton>
+            </div>
             <AppButton
               v-else
               variant="ghost"
