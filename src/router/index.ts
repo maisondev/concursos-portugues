@@ -70,10 +70,11 @@ const router = createRouter({
   routes
 })
 
-// Guard para proteger rota /admin
+// Guard para proteger rotas /admin e /changelog (apenas para admins e owners)
 router.beforeEach((to, from, next) => {
-  if (to.name === 'admin') {
-    const authStore = useAuthStore()
+  const authStore = useAuthStore()
+
+  if (to.name === 'admin' || to.name === 'changelog') {
     if (!authStore.isAdmin) {
       next('/')
     } else {
