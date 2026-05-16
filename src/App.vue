@@ -28,7 +28,7 @@ onMounted(() => {
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #1F2937;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -38,11 +38,11 @@ onMounted(() => {
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #10B981;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #059669;
 }
 
 button {
@@ -57,7 +57,7 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #10B981;
 }
 button:focus,
 button:focus-visible {
@@ -66,14 +66,21 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: #1F2937;
+    background-color: #F8FAFC;
+  }
+  a {
+    color: #10B981;
   }
   a:hover {
-    color: #747bff;
+    color: #059669;
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #F1F5F9;
+    color: #1F2937;
+  }
+  button:hover {
+    border-color: #10B981;
   }
 }
 </style>

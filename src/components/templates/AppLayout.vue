@@ -10,7 +10,7 @@ dailyLogStore.initLogs()
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="flex flex-col min-h-screen bg-light dark:bg-gray-900">
     <!-- Navigation Bar -->
     <AppNavBar />
 
@@ -24,21 +24,21 @@ dailyLogStore.initLogs()
     <!-- Desktop Sidebar Navigation (optional, not used in this layout) -->
 
     <!-- Footer -->
-    <footer class="border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 mt-12 py-6">
+    <footer class="border-t border-slate-200 dark:border-gray-700 bg-light-secondary dark:bg-gray-800 mt-12 py-6">
       <div class="max-w-[120rem] mx-auto px-4 2xl:px-6 min-[2560px]:max-w-[140rem] min-[2560px]:px-8 min-[3840px]:max-w-[160rem] min-[3840px]:px-10 space-y-4">
         <div class="flex flex-wrap justify-center gap-6 text-sm">
-          <button @click="router.push('/help')" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <button @click="router.push('/help')" class="text-slate-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">
             Ajuda
           </button>
-          <button @click="router.push('/changelog')" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <button @click="router.push('/changelog')" class="text-slate-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">
             Changelog
           </button>
-          <a href="https://github.com/maisondev/concursos-portugues" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <a href="https://github.com/maisondev/roadmap-web" target="_blank" class="text-slate-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">
             GitHub
           </a>
         </div>
-        <div class="text-center text-xs text-gray-600 dark:text-gray-400">
-          <p>Roadmap de Estudo para Concursos — v1.4.0</p>
+        <div class="text-center text-xs text-slate-500 dark:text-gray-400">
+          <p>Roadmap de Estudo para Concursos — v1.0.0</p>
         </div>
       </div>
     </footer>

@@ -91,7 +91,7 @@ const isActive = (name: string) => route.name === name
 </script>
 
 <template>
-  <nav class="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+  <nav class="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700 shadow-sm">
     <div class="max-w-6xl mx-auto px-4">
       <!-- Main navbar -->
       <div class="flex items-center justify-between h-16">
