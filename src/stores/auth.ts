@@ -58,7 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
   const username = computed(() => user.value?.email || null)
   const isAdmin = computed(() => user.value?.isAdmin === true)
 
-  function init() {
+  async function init() {
     const storedToken = localStorage.getItem(STORAGE_KEY)
     const storedUser = localStorage.getItem(USER_STORAGE_KEY)
 
@@ -70,6 +70,22 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = JSON.parse(storedUser)
       } catch {
         user.value = null
+      }
+    }
+
+    // Atualizar dados do usuário do servidor se logado
+    if (storedToken && user.value) {
+      try {
+        const response = await fetch(`${API_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${storedToken}` }
+        })
+        if (response.ok) {
+          const updatedUser = await response.json()
+          user.value = updatedUser
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser))
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar dados do usuário:', error)
       }
     }
   }
