@@ -81,6 +81,11 @@ function toggleTheme() {
   settingsStore.toggleTheme()
 }
 
+function handleLogout() {
+  authStore.logout()
+  router.push('/')
+}
+
 const navItems = computed(() => {
   const items = [
     { name: 'home', path: '/', label: 'Roadmaps', icon: HomeIcon },
@@ -214,7 +219,7 @@ const isActive = (name: string) => route.name === name
               v-else
               variant="ghost"
               size="sm"
-              @click="authStore.logout()"
+              @click="handleLogout"
               title="Sair"
             >
               Sair
