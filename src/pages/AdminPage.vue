@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import { api } from '@/services/api'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppIcon from '@/components/atoms/AppIcon.vue'
+import AppModal from '@/components/atoms/AppModal.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
