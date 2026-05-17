@@ -5,6 +5,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
 import { useAuthStore } from '@/stores/auth'
 import { useSync } from '@/composables/useSync'
+import { useGlobalLoading } from '@/composables/useGlobalLoading'
 import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon, ShieldCheckIcon, ChatBubbleLeftEllipsisIcon, EyeIcon, EyeSlashIcon, ArrowRightOnRectangleIcon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
@@ -86,16 +87,23 @@ function openRegister() {
 async function submitAuth() {
   authError.value = null
   try {
-    if (authMode.value === 'register') {
-      await authStore.register(email.value, password.value, fullName.value)
-    } else {
-      await authStore.login(email.value, password.value)
-    }
+    await withLoading(
+      async () => {
+        if (authMode.value === 'register') {
+          await authStore.register(email.value, password.value, fullName.value)
+        } else {
+          await authStore.login(email.value, password.value)
+        }
+      },
+      authMode.value === 'register' ? 'Criando sua conta...' : 'Entrando...'
+    )
     showAuthModal.value = false
   } catch (e) {
     authError.value = e instanceof Error ? e.message : String(e)
   }
 }
+
+const { withLoading } = useGlobalLoading()
 
 const showBackButton = computed(() => {
   return route.name === 'block-detail'

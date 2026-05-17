@@ -1,3 +1,5 @@
+import { useLoadingStore } from '@/stores/loading'
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 const TOKEN_KEY = 'roadmap-auth-token-v1'
 
@@ -33,22 +35,29 @@ async function request(
   path: string,
   options: RequestInit = {}
 ): Promise<any> {
-  const token = getToken()
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...((options.headers as Record<string, string>) || {})
+  const loadingStore = useLoadingStore()
+  loadingStore.show()
+
+  try {
+    const token = getToken()
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...((options.headers as Record<string, string>) || {})
+    }
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
+    const response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers
+    })
+
+    return handleResponse(response)
+  } finally {
+    loadingStore.hide()
   }
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`
-  }
-
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers
-  })
-
-  return handleResponse(response)
 }
 
 export const api = {
