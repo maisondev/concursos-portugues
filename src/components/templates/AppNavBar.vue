@@ -164,20 +164,20 @@ const isActive = (name: string) => route.name === name
 </script>
 
 <template>
-  <nav class="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700 shadow-sm">
+  <nav :class="[`sticky top-0 z-50`, authStore.isLoggedIn ? `bg-white dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700 shadow-sm` : `bg-slate-950 border border-slate-800/60 rounded-2xl mx-4 mt-4`]">
     <div class="max-w-6xl mx-auto px-4">
       <!-- Main navbar -->
       <div class="flex items-center justify-between h-16">
         <!-- Left section: logo or back button -->
-        <div class="flex items-center gap-4 min-w-max">
-          <!-- Logo (shown when not logged in) -->
+        <div class="flex items-center gap-3 min-w-max">
+          <!-- Logo (always shown) -->
           <button
-            v-if="!authStore.isLoggedIn"
             @click="router.push('/')"
-            class="flex items-center gap-2 px-3 py-2 rounded-lg font-bold text-lg text-emerald-600 dark:text-emerald-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            class="flex items-center gap-2 py-1 px-2 rounded-lg hover:opacity-80 transition-opacity"
+            title="Voltar para home"
           >
-            <span>🧠</span>
-            <span class="hidden sm:inline">Sinapses</span>
+            <img src="@/assets/sinapses-logo.png" alt="Sinapses" class="h-9 w-9 object-cover" />
+            <span class="hidden sm:inline font-semibold text-slate-900 dark:text-white text-sm">sinapses</span>
           </button>
 
           <!-- Back button (shown when needed) -->
@@ -379,7 +379,7 @@ const isActive = (name: string) => route.name === name
               @click="openRegister"
               class="inline-flex"
             >
-              Começar
+              Criar conta grátis
             </AppButton>
           </div>
             <div v-else class="relative">
@@ -568,3 +568,7 @@ const isActive = (name: string) => route.name === name
   opacity: 0;
 }
 </style>
+
+
+
+
