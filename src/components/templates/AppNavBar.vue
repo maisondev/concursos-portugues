@@ -87,16 +87,17 @@ function openRegister() {
 async function submitAuth() {
   authError.value = null
   try {
-    await withLoading(
-      async () => {
-        if (authMode.value === 'register') {
-          await authStore.register(email.value, password.value, fullName.value)
-        } else {
-          await authStore.login(email.value, password.value)
-        }
-      },
-      authMode.value === 'register' ? 'Criando sua conta...' : 'Entrando...'
-    )
+    if (authMode.value === 'register') {
+      await withLoading(
+        authStore.register(email.value, password.value, fullName.value),
+        'Criando sua conta...'
+      )
+    } else {
+      await withLoading(
+        authStore.login(email.value, password.value),
+        'Entrando...'
+      )
+    }
     showAuthModal.value = false
   } catch (e) {
     authError.value = e instanceof Error ? e.message : String(e)
