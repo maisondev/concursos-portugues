@@ -411,18 +411,18 @@ const isActive = (name: string) => route.name === name
               >
                 <div
                   v-if="showProfileMenu"
-                  class="absolute -right-4 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                  class="absolute -right-2 sm:-right-4 mt-2 w-72 sm:w-80 max-h-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
                 >
                   <!-- Profile header -->
-                  <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4">
-                    <div class="flex items-start gap-3">
+                  <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-3 sm:p-4">
+                    <div class="flex items-start gap-2 sm:gap-3">
                       <img
                         :src="profileAvatarUrl"
                         :alt="authStore.user?.name || 'Usuário'"
-                        class="w-12 h-12 rounded-full border-2 border-white"
+                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white flex-shrink-0"
                       />
-                      <div class="flex-1">
-                        <p class="text-white font-semibold text-sm whitespace-normal break-words">
+                      <div class="flex-1 min-w-0">
+                        <p class="text-white font-semibold text-xs sm:text-sm whitespace-normal break-words">
                           {{ authStore.user?.name || 'Usuário' }}
                         </p>
                         <p class="text-blue-100 text-xs truncate">
@@ -436,9 +436,9 @@ const isActive = (name: string) => route.name === name
                   <div class="py-2 border-t border-gray-200 dark:border-gray-700">
                     <button
                       @click="handleLogout(); showProfileMenu = false"
-                      class="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2"
+                      class="w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2"
                     >
-                      <ArrowRightOnRectangleIcon class="w-4 h-4" />
+                      <ArrowRightOnRectangleIcon class="w-4 h-4 flex-shrink-0" />
                       Sair
                     </button>
                   </div>
