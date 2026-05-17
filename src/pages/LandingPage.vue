@@ -258,6 +258,9 @@ const footerLinks = [
             </h2>
             <p class="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
               "Neurons that fire together, wire together" — Lei de Hebb
+              <span class="block text-sm mt-1 text-slate-500 dark:text-slate-400 italic">
+                "Neurônios que disparam juntos, se conectam"
+              </span>
             </p>
           </div>
 
@@ -455,63 +458,5 @@ const footerLinks = [
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 mt-32">
-      <div class="max-w-6xl mx-auto px-4 py-16">
-        <!-- Footer Content -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <!-- Brand -->
-          <div class="space-y-4">
-            <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <span class="text-white text-sm font-bold">S</span>
-              </div>
-              <span class="text-lg font-bold text-slate-900 dark:text-white">Sinapses</span>
-            </div>
-            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Conecte seus conhecimentos em sinapses. Crie roadmaps de aprendizado e fortaleça suas redes neurais.
-            </p>
-          </div>
-
-          <!-- Footer Links -->
-          <div
-            v-for="(section, idx) in footerLinks"
-            :key="idx"
-            class="space-y-4"
-          >
-            <h4 class="text-sm font-semibold text-slate-900 dark:text-white">{{ section.title }}</h4>
-            <ul class="space-y-2">
-              <li v-for="link in section.links" :key="link.label">
-                <a
-                  :href="link.href"
-                  target="_blank"
-                  rel="noreferrer"
-                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-                >
-                  {{ link.label }}
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Bottom Section -->
-        <div class="border-t border-slate-200 dark:border-slate-700 pt-8">
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p class="text-sm text-slate-600 dark:text-slate-400">
-              © {{ new Date().getFullYear() }} Sinapses. Todos os direitos reservados.
-            </p>
-            <div class="flex gap-4">
-              <a href="#" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                Privacidade
-              </a>
-              <a href="#" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                Termos
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
   </div>
 </template>

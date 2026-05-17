@@ -1,19 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useSettingsStore } from '@/stores/settings'
 import SocialIcon from '@/components/atoms/SocialIcon.vue'
-import sinapsesLogoDark from '@/assets/sinapses-logo-dark.png'
-import sinapsesLogoLight from '@/assets/sinapses-logo-light.png'
+import sinapsesLogo from '@/assets/sinapses-logo.png'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const settingsStore = useSettingsStore()
-
-const sinapsesLogo = computed(() =>
-  settingsStore.settings.theme === 'dark' ? sinapsesLogoDark : sinapsesLogoLight
-)
 
 const socialLinks = [
   { icon: 'instagram', url: 'https://www.instagram.com/sinapses.site/', label: 'Instagram' },

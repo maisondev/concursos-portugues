@@ -1,3 +1,4 @@
+
 # 📊 BACKLOG PRIORITÁRIO - SINAPSES
 
 **Data**: 16/05/2026  
