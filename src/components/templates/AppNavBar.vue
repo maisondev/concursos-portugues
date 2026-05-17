@@ -342,8 +342,9 @@ const isActive = (name: string) => route.name === name
             />
           </div>
 
-          <!-- Feedback button -->
+          <!-- Feedback button (apenas logado) -->
           <button
+            v-if="authStore.isLoggedIn"
             @click="showFeedbackModal = true"
             class="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             title="Enviar Feedback"
@@ -351,8 +352,9 @@ const isActive = (name: string) => route.name === name
             <ChatBubbleLeftEllipsisIcon class="w-5 h-5" />
           </button>
 
-          <!-- Theme toggle -->
+          <!-- Theme toggle (apenas logado) -->
           <button
+            v-if="authStore.isLoggedIn"
             @click="toggleTheme"
             class="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             :title="settingsStore.settings.theme === 'dark' ? 'Modo claro' : 'Modo escuro'"
