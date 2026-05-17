@@ -6,7 +6,7 @@ import { useDailyLogStore } from '@/stores/dailyLog'
 import { useAuthStore } from '@/stores/auth'
 import { useSync } from '@/composables/useSync'
 import { useGlobalLoading } from '@/composables/useGlobalLoading'
-import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon, ShieldCheckIcon, ChatBubbleLeftEllipsisIcon, EyeIcon, EyeSlashIcon, ArrowRightOnRectangleIcon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon, ShieldCheckIcon, ChatBubbleLeftEllipsisIcon, EyeIcon, EyeSlashIcon, ArrowRightOnRectangleIcon, BellIcon, XMarkIcon, CalendarIcon } from '@heroicons/vue/24/outline'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
 import FeedbackModal from '@/components/molecules/FeedbackModal.vue'
@@ -152,6 +152,7 @@ const navItems = computed(() => {
   const items = [
     { name: 'home', path: '/', label: 'Roadmaps', icon: HomeIcon },
     { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
+    { name: 'daily-log', path: '/daily-log', label: 'Registros', icon: CalendarIcon },
     { name: 'settings', path: '/settings', label: 'Configurações', icon: Cog6ToothIcon }
   ]
   if (authStore.isAdmin) {
@@ -179,17 +180,6 @@ const isActive = (name: string) => route.name === name
             <img src="@/assets/sinapses-logo.png" alt="Sinapses" class="h-32 w-auto object-contain" />
           </button>
 
-          <!-- Back button (shown when needed) -->
-          <Transition name="fade">
-            <button
-              v-if="showBackButton"
-              @click="goBack"
-              class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
-              <ArrowLeftIcon class="w-4 h-4" />
-              {{ backLabel }}
-            </button>
-          </Transition>
         </div>
 
         <!-- Center section: public links (not logged in) -->
@@ -419,13 +409,22 @@ const isActive = (name: string) => route.name === name
                     <div class="flex items-start gap-3">
                       <img
                         :src="profileAvatarUrl"
-                        :alt="authStore.username"
+                        :alt="authStore.user?.name || 'Usuário'"
                         class="w-12 h-12 rounded-full border-2 border-white"
                       />
                       <div class="flex-1">
-                        <p class="text-white font-semibold text-sm whitespace-normal break-words">
-                          {{ authStore.username || 'Usuário' }}
-                        </p>
+                        <div class="flex items-center gap-2">
+                          <p class="text-white font-semibold text-sm whitespace-normal break-words">
+                            {{ authStore.user?.name || 'Usuário' }}
+                          </p>
+                          <button
+                            @click.stop="showProfileMenu = false; router.push('/settings')"
+                            class="text-blue-100 hover:text-white transition-colors"
+                            title="Configurações"
+                          >
+                            <Cog6ToothIcon class="w-4 h-4" />
+                          </button>
+                        </div>
                         <p class="text-blue-100 text-xs truncate">
                           {{ authStore.userEmail }}
                         </p>
