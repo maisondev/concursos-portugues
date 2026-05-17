@@ -152,8 +152,7 @@ const navItems = computed(() => {
   const items = [
     { name: 'home', path: '/', label: 'Roadmaps', icon: HomeIcon },
     { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
-    { name: 'daily-log', path: '/daily-log', label: 'Registros', icon: CalendarIcon },
-    { name: 'settings', path: '/settings', label: 'Configurações', icon: Cog6ToothIcon }
+    { name: 'daily-log', path: '/daily-log', label: 'Registros', icon: CalendarIcon }
   ]
   if (authStore.isAdmin) {
     items.push({ name: 'admin', path: '/admin', label: 'Admin', icon: ShieldCheckIcon })
@@ -359,6 +358,16 @@ const isActive = (name: string) => route.name === name
             <MoonIcon v-else class="w-5 h-5" />
           </button>
 
+          <!-- Settings button -->
+          <button
+            v-if="authStore.isLoggedIn"
+            @click="router.push('/settings')"
+            class="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            title="Configurações"
+          >
+            <Cog6ToothIcon class="w-5 h-5" />
+          </button>
+
           <!-- User area -->
           <div v-if="!authStore.isLoggedIn" class="flex items-center gap-3">
             <AppButton
@@ -413,18 +422,9 @@ const isActive = (name: string) => route.name === name
                         class="w-12 h-12 rounded-full border-2 border-white"
                       />
                       <div class="flex-1">
-                        <div class="flex items-center gap-2">
-                          <p class="text-white font-semibold text-sm whitespace-normal break-words">
-                            {{ authStore.user?.name || 'Usuário' }}
-                          </p>
-                          <button
-                            @click.stop="showProfileMenu = false; router.push('/settings')"
-                            class="text-blue-100 hover:text-white transition-colors"
-                            title="Configurações"
-                          >
-                            <Cog6ToothIcon class="w-4 h-4" />
-                          </button>
-                        </div>
+                        <p class="text-white font-semibold text-sm whitespace-normal break-words">
+                          {{ authStore.user?.name || 'Usuário' }}
+                        </p>
                         <p class="text-blue-100 text-xs truncate">
                           {{ authStore.userEmail }}
                         </p>
