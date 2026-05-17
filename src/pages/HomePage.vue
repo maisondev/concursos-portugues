@@ -393,24 +393,25 @@ function navigateToSearchResult(result: any) {
         </div>
         
         <!-- Import and Create Buttons -->
-        <div class="flex gap-2">
-          <AppButton
-            variant="secondary"
-            size="lg"
-            @click="showImportModal = true"
-            class="flex items-center gap-2"
-          >
-            <AppIcon name="upload" size="sm" />
-            Importar
-          </AppButton>
+        <div class="flex items-center gap-3">
           <AppButton
             variant="primary"
-            size="lg"
+            size="md"
             @click="showAddRoadmapModal = true"
-            class="flex items-center gap-2"
+            class="flex items-center gap-2 flex-shrink-0"
           >
             <AppIcon name="plus" size="sm" />
             Novo Roadmap
+          </AppButton>
+          <AppButton
+            variant="ghost"
+            size="sm"
+            @click="showImportModal = true"
+            class="flex items-center gap-2 px-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            title="Importar um roadmap"
+          >
+            <AppIcon name="upload" size="sm" />
+            <span class="hidden sm:inline">Importar</span>
           </AppButton>
         </div>
       </div>
