@@ -257,7 +257,7 @@ function handleImportRoadmap() {
     alert('Cole os dados do roadmap para importar')
     return
   }
-  
+
   const id = roadmapStore.importRoadmap(importData.value)
   if (id) {
     importData.value = ''
@@ -266,6 +266,21 @@ function handleImportRoadmap() {
   } else {
     alert('Erro ao importar roadmap. Verifique os dados e tente novamente.')
   }
+}
+
+function handleFileImport(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const content = e.target?.result as string
+    importData.value = content
+  }
+  reader.onerror = () => {
+    alert('Erro ao ler o arquivo. Tente novamente.')
+  }
+  reader.readAsText(file)
 }
 
 function performGlobalSearch() {
@@ -409,7 +424,7 @@ function navigateToSearchResult(result: any) {
           </div>
           <select
             v-model="filterStatus"
-            class="px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            class="px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
           >
             <option value="all">Todos os status</option>
             <option value="ativo">Ativos</option>
@@ -518,20 +533,6 @@ function navigateToSearchResult(result: any) {
         </AppButton>
       </div>
 
-      <!-- Today's Log -->
-      <div v-if="dailyLogStore.todayLog" class="p-6 border border-green-300 dark:border-green-700 rounded-lg bg-green-50 dark:bg-green-900/20">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">Você já registrou hoje!</h2>
-        <DailyLogEntry :entry="dailyLogStore.todayLog" />
-        <AppButton
-          variant="ghost"
-          size="sm"
-          @click="router.push('/dashboard')"
-          class="mt-3"
-        >
-          Editar registro →
-        </AppButton>
-      </div>
-
       <!-- Recent Activity -->
       <div v-if="dailyLogStore.last7Days.length > 0" class="space-y-4">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Atividade Recente</h2>
@@ -563,7 +564,7 @@ function navigateToSearchResult(result: any) {
               v-model="newRoadmapTitle"
               type="text"
               placeholder="Ex: Gramática, Redação, Análise Combinatória"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
               @keyup.enter="createNewRoadmap"
             />
           </div>
@@ -576,7 +577,7 @@ function navigateToSearchResult(result: any) {
               v-model="newRoadmapDescription"
               placeholder="Descreva o foco deste roadmap..."
               rows="3"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
             />
           </div>
           
@@ -586,7 +587,7 @@ function navigateToSearchResult(result: any) {
             </label>
             <select
               v-model="newRoadmapCategory"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
             >
               <option value="">Selecione uma categoria</option>
               <option value="Direito">Direito</option>
@@ -609,7 +610,7 @@ function navigateToSearchResult(result: any) {
               v-model="newRoadmapTags"
               type="text"
               placeholder="Ex: concursos, estudo, preparação"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
             />
           </div>
           
@@ -654,22 +655,33 @@ function navigateToSearchResult(result: any) {
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Dados do Roadmap (JSON)
+            Arquivo JSON
+          </label>
+          <input
+            type="file"
+            accept=".json"
+            @change="handleFileImport"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
+          />
+        </div>
+        <div class="text-center text-sm text-gray-600 dark:text-gray-400">ou</div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Cole os dados do Roadmap (JSON)
           </label>
           <textarea
             v-model="importData"
-            rows="10"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-sm"
+            rows="8"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-base"
             placeholder="Cole os dados JSON do roadmap aqui..."
           />
         </div>
         <div class="text-xs text-gray-600 dark:text-gray-400">
-          <p>Para importar um roadmap:</p>
-          <ol class="list-decimal list-inside mt-1 space-y-1">
-            <li>Peça o arquivo JSON para quem compartilhou o roadmap</li>
-            <li>Copie todo o conteúdo do arquivo</li>
-            <li>Cole aqui e clique em "Importar"</li>
-          </ol>
+          <p>Dicas:</p>
+          <ul class="list-disc list-inside mt-1 space-y-1">
+            <li>Selecione um arquivo .json ou cole os dados diretamente</li>
+            <li>Peça o arquivo para quem compartilhou o roadmap</li>
+          </ul>
         </div>
       </div>
     </AppModal>
@@ -691,7 +703,7 @@ function navigateToSearchResult(result: any) {
           <input
             v-model="globalSearchQuery"
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
             placeholder="Digite para buscar roadmaps, módulos, tópicos ou recursos..."
             @keyup.enter="performGlobalSearch"
           />

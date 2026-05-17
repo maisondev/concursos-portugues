@@ -59,24 +59,24 @@ onBeforeUnmount(() => {
 <template>
   <Teleport to="body">
     <div v-if="open" class="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 animate-in">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[85vh] overflow-y-auto p-6 animate-in">
         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ title }}</h2>
 
         <div class="mb-6">
           <slot />
         </div>
 
-        <div class="flex gap-3 justify-end">
+        <div class="flex gap-3 justify-end sticky bottom-0 bg-white dark:bg-gray-800 -m-6 mt-6 px-6 py-4">
           <button
             @click="$emit('cancel')"
-            class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            class="px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
           >
             {{ cancelLabel }}
           </button>
           <button
             @click="$emit('submit')"
             :class="[
-              'px-4 py-2 rounded-lg text-white transition-colors font-medium',
+              'px-4 py-3 rounded-lg text-white transition-colors font-medium',
               props.submitVariant === 'danger'
                 ? 'bg-red-500 hover:bg-red-600'
                 : 'bg-blue-500 hover:bg-blue-600'

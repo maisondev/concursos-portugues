@@ -248,7 +248,7 @@ const isActive = (name: string) => route.name === name
             >
               <div
                 v-if="showNotificationsMenu"
-                class="absolute -right-4 mt-2 w-96 max-h-[32rem] overflow-y-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+                class="absolute -right-4 mt-2 w-[28rem] max-h-[48rem] overflow-y-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
               >
                 <!-- Header -->
                 <div class="sticky top-0 flex items-center justify-between bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
@@ -502,7 +502,7 @@ const isActive = (name: string) => route.name === name
           <input
             v-model="fullName"
             type="text"
-            class="w-full px-4 py-3 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
             placeholder="Seu nome completo"
           />
         </div>
@@ -514,7 +514,7 @@ const isActive = (name: string) => route.name === name
           <input
             v-model="email"
             type="email"
-            class="w-full px-4 py-3 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
             :placeholder="authMode === 'register' ? 'seu@email.com' : 'seu@email.com'"
           />
         </div>
@@ -527,13 +527,13 @@ const isActive = (name: string) => route.name === name
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
-              class="w-full px-4 py-3 sm:px-3 sm:py-2 pr-12 sm:pr-10 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
+              class="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
               :placeholder="authMode === 'register' ? 'Mínimo 6 caracteres' : 'Sua senha'"
             />
             <button
               type="button"
               @click="showPassword = !showPassword"
-              class="absolute right-4 sm:right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             >
               <EyeIcon v-if="showPassword" class="w-5 h-5" />
               <EyeSlashIcon v-else class="w-5 h-5" />
