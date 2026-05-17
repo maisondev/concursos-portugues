@@ -222,18 +222,30 @@ const isActive = (name: string) => route.name === name
             >
               <div
                 v-if="showNotificationsMenu"
-                class="absolute -right-4 mt-2 w-96 max-h-96 overflow-y-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+                class="absolute -right-4 mt-2 w-96 max-h-[32rem] overflow-y-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
               >
                 <!-- Header -->
                 <div class="sticky top-0 flex items-center justify-between bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
-                  <h3 class="font-semibold text-gray-900 dark:text-white">Notificações</h3>
+                  <div class="flex items-center gap-2">
+                    <h3 class="font-semibold text-gray-900 dark:text-white">Notificações</h3>
+                    <span v-if="notificationsStore.unreadCount > 0" class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full">
+                      {{ notificationsStore.unreadCount }}
+                    </span>
+                  </div>
                   <div class="flex items-center gap-2">
                     <button
                       v-if="notificationsStore.unreadCount > 0"
                       @click="notificationsStore.markAllAsRead()"
                       class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
                     >
-                      Marcar tudo como lido
+                      Marcar tudo
+                    </button>
+                    <button
+                      @click="router.push('/notifications'); showNotificationsMenu = false"
+                      class="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                      title="Ver todas as notificações"
+                    >
+                      Ver todas →
                     </button>
                   </div>
                 </div>
@@ -244,32 +256,41 @@ const isActive = (name: string) => route.name === name
                     v-for="notif in notificationsStore.sortedNotifications"
                     :key="notif.id"
                     :class="[
-                      'border-l-4 p-4 cursor-pointer transition-colors',
+                      'border-l-4 p-4 transition-colors',
                       getNotificationBorderColor(notif.type),
                       notif.read
                         ? 'bg-white dark:bg-gray-800 opacity-75'
-                        : 'bg-blue-50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/20'
+                        : 'bg-blue-50 dark:bg-blue-900/10'
                     ]"
-                    @click="notificationsStore.markAsRead(notif.id)"
                   >
                     <div class="flex items-start justify-between gap-2">
-                      <div class="flex-1 min-w-0">
+                      <div class="flex-1 min-w-0 cursor-pointer" @click="notificationsStore.markAsRead(notif.id)">
                         <p class="font-semibold text-sm text-gray-900 dark:text-white">
                           {{ notif.title }}
                         </p>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 whitespace-pre-wrap break-words">
                           {{ notif.message }}
                         </p>
                         <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
                           {{ new Date(notif.timestamp).toLocaleString('pt-BR') }}
                         </p>
                       </div>
-                      <button
-                        @click.stop="notificationsStore.removeNotification(notif.id)"
-                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0"
-                      >
-                        <XMarkIcon class="w-4 h-4" />
-                      </button>
+                      <div class="flex items-center gap-1 flex-shrink-0">
+                        <button
+                          @click.stop="notificationsStore.toggleRead(notif.id)"
+                          class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                          :title="notif.read ? 'Marcar como não lido' : 'Marcar como lido'"
+                        >
+                          <span v-if="!notif.read" class="w-2 h-2 bg-blue-600 rounded-full inline-block"></span>
+                          <span v-else class="w-2 h-2 bg-gray-400 rounded-full inline-block"></span>
+                        </button>
+                        <button
+                          @click.stop="notificationsStore.removeNotification(notif.id)"
+                          class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        >
+                          <XMarkIcon class="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

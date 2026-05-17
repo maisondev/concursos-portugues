@@ -55,6 +55,13 @@ export const useNotificationsStore = defineStore('notifications', () => {
     }
   }
 
+  function toggleRead(id: string) {
+    const notif = notifications.value.find(n => n.id === id)
+    if (notif) {
+      notif.read = !notif.read
+    }
+  }
+
   function markAllAsRead() {
     notifications.value.forEach(n => {
       n.read = true
@@ -75,6 +82,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
     sortedNotifications,
     addNotification,
     markAsRead,
+    toggleRead,
     markAllAsRead,
     removeNotification,
     clearAll

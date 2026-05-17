@@ -247,15 +247,34 @@ function importJSON(event: Event) {
                   <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Email: {{ authStore.userEmail }}</p>
                 </div>
               </div>
+
+              <!-- Gravatar info -->
+              <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <p class="text-xs text-blue-900 dark:text-blue-300">
+                  <strong>Gravatar</strong> é um serviço gratuito que associa sua foto a seu email. Ao usar Gravatar, sua foto aparecerá automaticamente em muitos sites que usam este serviço.
+                </p>
+              </div>
+
               <div class="mt-4 space-y-3">
                 <label class="block">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">URL customizada da foto (opcional)</span>
                   <input v-model="profileAvatar" type="url" placeholder="https://exemplo.com/foto.jpg"
                     class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
                 </label>
-                <AppButton variant="ghost" size="sm" @click="resetAvatar" class="w-full">
-                  Usar Gravatar
-                </AppButton>
+                <div class="flex gap-2">
+                  <AppButton variant="ghost" size="sm" @click="resetAvatar" class="flex-1">
+                    Usar Gravatar
+                  </AppButton>
+                  <AppButton
+                    variant="secondary"
+                    size="sm"
+                    @click="window.open('https://gravatar.com', '_blank')"
+                    class="flex-1"
+                    title="Abre Gravatar em uma nova aba"
+                  >
+                    Configurar Gravatar ↗
+                  </AppButton>
+                </div>
               </div>
             </div>
 
