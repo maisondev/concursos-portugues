@@ -233,7 +233,7 @@ const isActive = (name: string) => route.name === name
               >
                 <div
                   v-if="showProfileMenu"
-                  class="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                  class="absolute -right-4 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
                 >
                   <!-- Profile header -->
                   <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4">
@@ -243,8 +243,8 @@ const isActive = (name: string) => route.name === name
                         :alt="authStore.username"
                         class="w-12 h-12 rounded-full border-2 border-white"
                       />
-                      <div class="flex-1 min-w-0">
-                        <p class="text-white font-semibold text-sm truncate">
+                      <div class="flex-1">
+                        <p class="text-white font-semibold text-sm whitespace-normal break-words">
                           {{ authStore.username || 'Usuário' }}
                         </p>
                         <p class="text-blue-100 text-xs truncate">
