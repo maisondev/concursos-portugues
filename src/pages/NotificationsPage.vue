@@ -120,23 +120,23 @@ function getNotificationTypeLabel(type: string) {
       </div>
 
       <!-- Notifications list -->
-      <div v-if="filteredNotifications.length > 0" class="space-y-3">
+      <div v-if="filteredNotifications.length > 0" class="space-y-4">
         <div
           v-for="notif in filteredNotifications"
           :key="notif.id"
           :class="[
-            'border-l-4 p-4 rounded-lg bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-all',
+            'border-l-4 p-6 rounded-lg bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-all hover:shadow-md',
             getNotificationBorderColor(notif.type),
             notif.read
-              ? 'opacity-75'
-              : 'ring-1 ring-blue-500 ring-opacity-50'
+              ? 'opacity-85'
+              : 'ring-1 ring-blue-500 ring-opacity-50 shadow-sm'
           ]"
         >
           <div class="flex items-start gap-4">
             <!-- Type badge -->
             <div
               :class="[
-                'px-2 py-1 rounded text-xs font-semibold whitespace-nowrap flex-shrink-0',
+                'px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap flex-shrink-0',
                 getNotificationColor(notif.type)
               ]"
             >
@@ -145,13 +145,13 @@ function getNotificationTypeLabel(type: string) {
 
             <!-- Content -->
             <div class="flex-1 min-w-0">
-              <h3 class="font-semibold text-gray-900 dark:text-white">
+              <h3 class="font-semibold text-lg text-gray-900 dark:text-white leading-snug">
                 {{ notif.title }}
               </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 whitespace-pre-wrap break-words">
+              <p class="text-base text-gray-700 dark:text-gray-300 mt-3 whitespace-pre-wrap break-words leading-relaxed">
                 {{ notif.message }}
               </p>
-              <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-3.5">
                 {{ new Date(notif.timestamp).toLocaleString('pt-BR') }}
               </p>
             </div>
@@ -161,9 +161,9 @@ function getNotificationTypeLabel(type: string) {
               <button
                 @click="notificationsStore.toggleReadSync(notif.id)"
                 :class="[
-                  'p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors',
+                  'p-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors',
                   notif.read
-                    ? 'text-gray-400 dark:text-gray-600'
+                    ? 'text-gray-400 dark:text-gray-500'
                     : 'text-blue-600 dark:text-blue-400'
                 ]"
                 :title="notif.read ? 'Marcar como não lido' : 'Marcar como lido'"
@@ -171,13 +171,13 @@ function getNotificationTypeLabel(type: string) {
                 <span
                   :class="[
                     'inline-block rounded-full',
-                    notif.read ? 'w-2 h-2 bg-gray-400' : 'w-2 h-2 bg-blue-600'
+                    notif.read ? 'w-2.5 h-2.5 bg-gray-400' : 'w-2.5 h-2.5 bg-blue-600'
                   ]"
                 />
               </button>
               <button
                 @click="notificationsStore.removeNotificationSync(notif.id)"
-                class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                class="p-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 title="Remover"
               >
                 <XMarkIcon class="w-4 h-4" />
