@@ -13,6 +13,7 @@ import StatBadge from '@/components/molecules/StatBadge.vue'
 import DailyLogEntry from '@/components/molecules/DailyLogEntry.vue'
 import RoadmapCard from '@/components/molecules/RoadmapCard.vue'
 import LandingPage from '@/pages/LandingPage.vue'
+import { roadmapInterpretacaoTextos } from '@/data/roadmaps/interpretacao-textos'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -93,12 +94,12 @@ function createNewRoadmap() {
     return
   }
 
-  const tags = newRoadmapTags.value.trim() 
+  const tags = newRoadmapTags.value.trim()
     ? newRoadmapTags.value.split(',').map(tag => tag.trim()).filter(tag => tag)
     : []
 
   const id = roadmapStore.addRoadmap(
-    newRoadmapTitle.value.trim(), 
+    newRoadmapTitle.value.trim(),
     newRoadmapDescription.value.trim(),
     newRoadmapCategory.value.trim() || '',
     tags,
@@ -114,6 +115,31 @@ function createNewRoadmap() {
   newRoadmapTags.value = ''
   newRoadmapVisibility.value = 'private'
   showAddRoadmapModal.value = false
+  navigateToRoadmap(id)
+}
+
+function useExampleRoadmap() {
+  // Copiar o roadmap de exemplo
+  const id = roadmapStore.addRoadmap(
+    roadmapInterpretacaoTextos.title,
+    roadmapInterpretacaoTextos.description,
+    'exemplo',
+    ['concursos', 'português'],
+    'private'
+  )
+
+  if (!id) {
+    alert('Sem login, você pode criar até 7 roadmaps. Faça login para liberar mais.')
+    return
+  }
+
+  // Copiar blocos e tópicos
+  const newRoadmap = roadmapStore.roadmaps[id]
+  if (newRoadmap && roadmapInterpretacaoTextos.blocks) {
+    newRoadmap.blocks = JSON.parse(JSON.stringify(roadmapInterpretacaoTextos.blocks))
+    roadmapStore.roadmaps[id] = newRoadmap
+  }
+
   navigateToRoadmap(id)
 }
 
@@ -413,6 +439,39 @@ function navigateToSearchResult(result: any) {
             <AppIcon name="upload" size="sm" />
             <span class="hidden sm:inline">Importar</span>
           </AppButton>
+        </div>
+      </div>
+
+      <!-- Example Roadmaps Section -->
+      <div v-if="filteredRoadmapIds.length === 0" class="space-y-4">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Roadmaps de Exemplo</h2>
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+          <div class="flex items-start justify-between">
+            <div class="space-y-2">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                {{ roadmapInterpretacaoTextos.title }}
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ roadmapInterpretacaoTextos.description }}
+              </p>
+              <div class="flex gap-2 pt-2">
+                <span class="text-xs bg-blue-200 dark:bg-blue-800 text-blue-900 dark:text-blue-100 px-2 py-1 rounded">
+                  {{ roadmapInterpretacaoTextos.blocks?.length || 0 }} módulos
+                </span>
+                <span class="text-xs bg-purple-200 dark:bg-purple-800 text-purple-900 dark:text-purple-100 px-2 py-1 rounded">
+                  Concursos
+                </span>
+              </div>
+            </div>
+            <AppButton
+              variant="primary"
+              size="sm"
+              @click="useExampleRoadmap()"
+              class="flex-shrink-0"
+            >
+              Usar como Template
+            </AppButton>
+          </div>
         </div>
       </div>
 
