@@ -54,7 +54,7 @@ async function updateProfile() {
   try {
     await authStore.updateProfile(
       profileName.value.trim() || undefined,
-      profileAvatar.value.trim() || undefined
+      profileAvatar.value.trim() === '' ? null : profileAvatar.value.trim()
     )
     profileSuccess.value = true
     setTimeout(() => {
