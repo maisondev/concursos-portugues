@@ -24,6 +24,7 @@ const showAuthModal = ref(false)
 const authMode = ref<'login' | 'register'>('login')
 const email = ref('')
 const password = ref('')
+const fullName = ref('')
 const authError = ref<string | null>(null)
 const showFeedbackModal = ref(false)
 const showMobileMenu = ref(false)
@@ -66,6 +67,7 @@ function openLogin() {
   authMode.value = 'login'
   email.value = ''
   password.value = ''
+  fullName.value = ''
   authError.value = null
   showPassword.value = false
   showAuthModal.value = true
@@ -75,6 +77,7 @@ function openRegister() {
   authMode.value = 'register'
   email.value = ''
   password.value = ''
+  fullName.value = ''
   authError.value = null
   showPassword.value = false
   showAuthModal.value = true
@@ -84,7 +87,7 @@ async function submitAuth() {
   authError.value = null
   try {
     if (authMode.value === 'register') {
-      await authStore.register(email.value, password.value)
+      await authStore.register(email.value, password.value, fullName.value)
     } else {
       await authStore.login(email.value, password.value)
     }
@@ -459,6 +462,18 @@ const isActive = (name: string) => route.name === name
       @cancel="showAuthModal = false"
     >
       <div class="space-y-5 sm:space-y-4">
+        <div v-if="authMode === 'register'">
+          <label class="block text-sm sm:text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Nome completo
+          </label>
+          <input
+            v-model="fullName"
+            type="text"
+            class="w-full px-4 py-3 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-base"
+            placeholder="Seu nome completo"
+          />
+        </div>
+
         <div>
           <label class="block text-sm sm:text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
             E-mail

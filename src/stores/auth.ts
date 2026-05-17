@@ -107,7 +107,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(email: string, password: string) {
+  async function register(email: string, password: string, name?: string) {
     const emailClean = email.trim()
     if (!emailClean) throw new Error('Digite um e-mail')
     if (!emailClean.includes('@')) throw new Error('E-mail inválido')
@@ -117,7 +117,7 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailClean, password })
+        body: JSON.stringify({ email: emailClean, password, name: name?.trim() || null })
       })
 
       if (!response.ok) {
