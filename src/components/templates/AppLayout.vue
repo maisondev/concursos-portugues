@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useDailyLogStore } from '@/stores/dailyLog'
+import { useAuthStore } from '@/stores/auth'
 import AppNavBar from '@/components/templates/AppNavBar.vue'
 
 const router = useRouter()
 const dailyLogStore = useDailyLogStore()
+const authStore = useAuthStore()
 
 dailyLogStore.initLogs()
 </script>
@@ -31,15 +33,17 @@ dailyLogStore.initLogs()
             Ajuda
           </button>
           <span class="text-slate-300 dark:text-gray-600">•</span>
-          <button @click="router.push('/changelog')" class="text-slate-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">
-            Changelog
-          </button>
-          <span class="text-slate-300 dark:text-gray-600">•</span>
+          <template v-if="authStore.isAdmin">
+            <button @click="router.push('/changelog')" class="text-slate-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">
+              Changelog
+            </button>
+            <span class="text-slate-300 dark:text-gray-600">•</span>
+          </template>
           <a href="https://github.com/maisondev/roadmap-web" target="_blank" class="text-slate-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">
             GitHub
           </a>
           <span class="text-slate-300 dark:text-gray-600">•</span>
-          <span class="text-xs text-slate-500 dark:text-gray-400">© 2026 Roadmap</span>
+          <span class="text-xs text-slate-500 dark:text-gray-400">© 2026 Sinapses</span>
         </div>
       </div>
     </footer>

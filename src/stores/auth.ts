@@ -9,6 +9,8 @@ type User = {
   id: string
   email: string
   role?: 'USER' | 'ADMIN' | 'OWNER'
+  name?: string | null
+  avatar?: string | null
 }
 
 type ApiResponse = {
@@ -55,7 +57,20 @@ export const useAuthStore = defineStore('auth', () => {
 
   const hasAccount = computed(() => Boolean(token.value))
   const isLoggedIn = computed(() => Boolean(token.value))
-  const username = computed(() => user.value?.email || null)
+  const username = computed(() => user.value?.name || user.value?.email || null)
+  const userEmail = computed(() => user.value?.email || null)
+  const userAvatar = computed(() => user.value?.avatar || null)
+  const userInitials = computed(() => {
+    if (user.value?.name) {
+      return user.value.name
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    }
+    return user.value?.email?.charAt(0).toUpperCase() || 'U'
+  })
   const isAdmin = computed(() => user.value?.role === 'ADMIN' || user.value?.role === 'OWNER')
   const isOwner = computed(() => user.value?.role === 'OWNER')
 
@@ -155,6 +170,36 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function updateProfile(name?: string, avatar?: string) {
+    if (!token.value) throw new Error('Não autenticado')
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/profile`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`
+        },
+        body: JSON.stringify({ name, avatar })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Erro ao atualizar perfil')
+      }
+
+      const updatedUser = await response.json()
+      user.value = updatedUser
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser))
+      return updatedUser
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('Failed to fetch')) {
+        throw new Error('Erro de conexão com o servidor')
+      }
+      throw error
+    }
+  }
+
   async function logout() {
     // Se houver mudanças pendentes, sincronizar antes de deslogar
     if (syncManager.hasPendingChanges()) {
@@ -192,12 +237,16 @@ export const useAuthStore = defineStore('auth', () => {
     isAdmin,
     isOwner,
     username,
+    userEmail,
+    userAvatar,
+    userInitials,
     user,
     token,
     init,
     register,
     login,
     logout,
+    updateProfile,
     getAuthHeaders,
     hasPendingChanges
   }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { useSettingsStore } from '@/stores/settings'
 import { useRoadmapStore } from '@/stores/roadmap'
 import { useDailyLogStore } from '@/stores/dailyLog'
@@ -10,13 +11,15 @@ import AppIcon from '@/components/atoms/AppIcon.vue'
 import AppCheckbox from '@/components/atoms/AppCheckbox.vue'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const settingsStore = useSettingsStore()
 const roadmapStore = useRoadmapStore()
 const dailyLogStore = useDailyLogStore()
 
-const activeSection = ref<'conta' | 'aparencia' | 'preferencias' | 'metas' | 'dados' | 'sobre'>('conta')
+const activeSection = ref<'perfil' | 'conta' | 'aparencia' | 'preferencias' | 'metas' | 'dados' | 'sobre'>('perfil')
 
 const sections = [
+  { id: 'perfil', label: 'Perfil', icon: 'user' },
   { id: 'conta', label: 'Conta', icon: 'lock' },
   { id: 'aparencia', label: 'Aparência', icon: 'sun' },
   { id: 'preferencias', label: 'Preferências', icon: 'sliders-horizontal' },
@@ -24,6 +27,64 @@ const sections = [
   { id: 'dados', label: 'Dados', icon: 'database' },
   { id: 'sobre', label: 'Sobre', icon: 'info' }
 ]
+
+function md5(str: string): string {
+  const crypto = window.crypto || (window as any).msCrypto
+  return Array.from(new Uint8Array(16), () => Math.floor(Math.random() * 256))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+    .slice(0, 32)
+}
+
+function getGravatarUrl(email: string): string {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(email.toLowerCase().trim())
+  let hash = ''
+
+  const chars = '0123456789abcdef'
+  for (let i = 0; i < data.length; i++) {
+    hash += chars[Math.floor(data[i] / 16)]
+    hash += chars[data[i] % 16]
+  }
+
+  return `https://www.gravatar.com/avatar/${hash}?s=128&d=identicon`
+}
+
+const profileName = ref(authStore.user?.name || '')
+const profileAvatar = ref(authStore.user?.avatar || '')
+const isEditingProfile = ref(false)
+const profileError = ref<string | null>(null)
+const profileSuccess = ref(false)
+
+const currentAvatarUrl = computed(() => {
+  if (profileAvatar.value) return profileAvatar.value
+  return getGravatarUrl(authStore.userEmail || '')
+})
+
+async function updateProfile() {
+  profileError.value = null
+  profileSuccess.value = false
+  isEditingProfile.value = true
+
+  try {
+    await authStore.updateProfile(
+      profileName.value || undefined,
+      profileAvatar.value || undefined
+    )
+    profileSuccess.value = true
+    setTimeout(() => {
+      profileSuccess.value = false
+    }, 3000)
+  } catch (error) {
+    profileError.value = error instanceof Error ? error.message : 'Erro ao atualizar perfil'
+  } finally {
+    isEditingProfile.value = false
+  }
+}
+
+function resetAvatar() {
+  profileAvatar.value = ''
+}
 
 const newPassword = ref('')
 const confirmPassword = ref('')
@@ -177,6 +238,64 @@ function importJSON(event: Event) {
 
       <!-- Content Area -->
       <div class="space-y-6">
+        <!-- Seção: Perfil -->
+        <div v-if="activeSection === 'perfil'" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-700">
+            <div class="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-900/20">
+              <AppIcon name="user" size="sm" class="text-cyan-600 dark:text-cyan-400" />
+            </div>
+            <div>
+              <h2 class="font-semibold text-gray-900 dark:text-white">Perfil</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Personalize seu perfil</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <!-- Avatar -->
+            <div>
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Foto de Perfil</p>
+              <div class="flex items-center gap-4">
+                <img :src="currentAvatarUrl" :alt="authStore.username || 'Avatar'" class="w-20 h-20 rounded-full border-2 border-gray-200 dark:border-gray-700" />
+                <div>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    {{ profileAvatar ? 'URL customizada' : 'Usando Gravatar' }}
+                  </p>
+                  <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Email: {{ authStore.userEmail }}</p>
+                </div>
+              </div>
+              <div class="mt-4 space-y-3">
+                <label class="block">
+                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">URL customizada da foto (opcional)</span>
+                  <input v-model="profileAvatar" type="url" placeholder="https://exemplo.com/foto.jpg"
+                    class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
+                </label>
+                <AppButton variant="ghost" size="sm" @click="resetAvatar" class="w-full">
+                  Usar Gravatar
+                </AppButton>
+              </div>
+            </div>
+
+            <!-- Name -->
+            <div>
+              <label class="block">
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Nome</span>
+                <input v-model="profileName" type="text" placeholder="Seu nome completo"
+                  class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
+              </label>
+            </div>
+
+            <AppButton variant="primary" @click="updateProfile" :disabled="isEditingProfile" class="w-full">
+              {{ isEditingProfile ? 'Salvando...' : 'Salvar Perfil' }}
+            </AppButton>
+
+            <div v-if="profileError" class="text-sm text-red-600 dark:text-red-400 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+              {{ profileError }}
+            </div>
+            <div v-if="profileSuccess" class="text-sm text-green-600 dark:text-green-400 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              ✓ Perfil atualizado com sucesso!
+            </div>
+          </div>
+        </div>
+
         <!-- Seção: Conta -->
         <div v-if="activeSection === 'conta'" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
           <div class="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-700">

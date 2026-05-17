@@ -101,7 +101,6 @@ const navItems = computed(() => {
   ]
   if (authStore.isAdmin) {
     items.push({ name: 'admin', path: '/admin', label: 'Admin', icon: ShieldCheckIcon })
-    items.push({ name: 'changelog', path: '/changelog', label: 'Changelog', icon: ChatBubbleLeftEllipsisIcon })
   }
   return items
 })
