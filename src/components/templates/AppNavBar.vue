@@ -144,38 +144,8 @@ const isActive = (name: string) => route.name === name
           </button>
         </div>
 
-        <!-- Right section: sync status + streak + server status + theme toggle -->
+        <!-- Right section: streak + theme toggle -->
         <div class="flex items-center gap-3">
-          <!-- Sync status indicator -->
-          <div
-            v-if="authStore.isLoggedIn"
-            class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
-            :class="{
-              'bg-blue-100 dark:bg-blue-900/30': isSyncing,
-              'bg-amber-100 dark:bg-amber-900/30': syncStatus.color === 'amber',
-              'bg-green-100 dark:bg-green-900/30': syncStatus.color === 'green'
-            }"
-            :title="syncStatus.text"
-          >
-            <div
-              class="w-2 h-2 rounded-full animate-pulse"
-              :class="{
-                'bg-blue-500': isSyncing,
-                'bg-amber-500': syncStatus.color === 'amber',
-                'bg-green-500': syncStatus.color === 'green'
-              }"
-            />
-            <span class="text-xs font-medium"
-              :class="{
-                'text-blue-700 dark:text-blue-300': isSyncing,
-                'text-amber-700 dark:text-amber-300': syncStatus.color === 'amber',
-                'text-green-700 dark:text-green-300': syncStatus.color === 'green'
-              }"
-            >
-              {{ syncStatus.text }}
-            </span>
-          </div>
-
           <!-- Streak counter -->
           <div
             v-if="dailyLogStore.streakDays > 0"
