@@ -52,7 +52,7 @@ const footerLinks = [
             @click="router.push('/')"
             class="hover:opacity-80 transition-opacity"
           >
-            <img :src="sinapsesLogo" alt="Sinapses" class="h-20 w-auto object-contain" />
+            <img :src="sinapsesLogo" alt="Sinapses" class="h-40 w-auto object-contain" />
           </button>
           <p class="text-sm text-slate-400 leading-relaxed">
             Organize seu aprendizado em roadmaps visuais. Fortaleça suas conexões de conhecimento.
