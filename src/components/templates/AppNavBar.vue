@@ -225,7 +225,7 @@ const isActive = (name: string) => route.name === name
           <div v-if="authStore.isLoggedIn" class="relative">
             <button
               @click="showNotificationsMenu = !showNotificationsMenu"
-              class="relative p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              class="relative p-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               title="Notificações"
             >
               <BellIcon class="w-5 h-5" />
@@ -282,37 +282,37 @@ const isActive = (name: string) => route.name === name
                     v-for="notif in notificationsStore.sortedNotifications"
                     :key="notif.id"
                     :class="[
-                      'border-l-4 p-4 transition-colors',
+                      'border-l-4 p-5 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50',
                       getNotificationBorderColor(notif.type),
                       notif.read
-                        ? 'bg-white dark:bg-gray-800 opacity-75'
-                        : 'bg-blue-50 dark:bg-blue-900/10'
+                        ? 'bg-white dark:bg-gray-800'
+                        : 'bg-blue-50 dark:bg-blue-900/20'
                     ]"
                   >
-                    <div class="flex items-start justify-between gap-2">
+                    <div class="flex items-start justify-between gap-3">
                       <div class="flex-1 min-w-0 cursor-pointer" @click="notificationsStore.markAsReadSync(notif.id)">
-                        <p class="font-semibold text-sm text-gray-900 dark:text-white">
+                        <p class="font-semibold text-sm text-gray-900 dark:text-white leading-snug">
                           {{ notif.title }}
                         </p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 whitespace-pre-wrap break-words">
+                        <p class="text-sm text-gray-700 dark:text-gray-300 mt-2 whitespace-pre-wrap break-words leading-relaxed">
                           {{ notif.message }}
                         </p>
-                        <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2.5">
                           {{ new Date(notif.timestamp).toLocaleString('pt-BR') }}
                         </p>
                       </div>
                       <div class="flex items-center gap-1 flex-shrink-0">
                         <button
                           @click.stop="notificationsStore.toggleReadSync(notif.id)"
-                          class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                          class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                           :title="notif.read ? 'Marcar como não lido' : 'Marcar como lido'"
                         >
-                          <span v-if="!notif.read" class="w-2 h-2 bg-blue-600 rounded-full inline-block"></span>
-                          <span v-else class="w-2 h-2 bg-gray-400 rounded-full inline-block"></span>
+                          <span v-if="!notif.read" class="w-2.5 h-2.5 bg-blue-600 rounded-full inline-block"></span>
+                          <span v-else class="w-2.5 h-2.5 bg-gray-400 rounded-full inline-block"></span>
                         </button>
                         <button
                           @click.stop="notificationsStore.removeNotificationSync(notif.id)"
-                          class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                          class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                         >
                           <XMarkIcon class="w-4 h-4" />
                         </button>
@@ -391,7 +391,7 @@ const isActive = (name: string) => route.name === name
               <!-- Profile button -->
               <button
                 @click="showProfileMenu = !showProfileMenu"
-                class="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                class="flex items-center gap-2 px-2.5 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <img
                   :src="profileAvatarUrl"
@@ -456,7 +456,7 @@ const isActive = (name: string) => route.name === name
           <!-- Mobile menu button -->
           <button
             v-if="authStore.isLoggedIn"
-            class="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            class="md:hidden p-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             @click="showMobileMenu = !showMobileMenu"
           >
             <Bars3Icon class="w-5 h-5" />
