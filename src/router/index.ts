@@ -9,6 +9,7 @@ import NotificationsPage from '@/pages/NotificationsPage.vue'
 import AdminPage from '@/pages/AdminPage.vue'
 import ChangelogPage from '@/pages/ChangelogPage.vue'
 import HelpPage from '@/pages/HelpPage.vue'
+import ContactPage from '@/pages/ContactPage.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const routes = [
@@ -64,6 +65,11 @@ const routes = [
     path: '/help',
     name: 'help',
     component: HelpPage
+  },
+  {
+    path: '/contatos',
+    name: 'contact',
+    component: ContactPage
   },
   {
     path: '/:pathMatch(.*)*',
