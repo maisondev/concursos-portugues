@@ -1,32 +1,29 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { EnvelopeIcon, LinkIcon } from '@heroicons/vue/24/outline'
+import { EnvelopeIcon } from '@heroicons/vue/24/outline'
+import SocialIcon from '@/components/atoms/SocialIcon.vue'
 
 interface ContactLink {
   name: string
-  icon: string
+  icon: 'instagram' | 'twitter' | 'email'
   url: string
-  color: string
 }
 
 const contactLinks: ContactLink[] = [
   {
     name: 'Instagram',
-    icon: '📷',
-    url: 'https://www.instagram.com/sinapses.site/',
-    color: 'from-pink-400 to-red-500'
+    icon: 'instagram',
+    url: 'https://www.instagram.com/sinapses.site/'
   },
   {
     name: 'Twitter',
-    icon: '𝕏',
-    url: 'https://x.com/sinapsesite',
-    color: 'from-gray-700 to-gray-900'
+    icon: 'twitter',
+    url: 'https://x.com/sinapsesite'
   },
   {
     name: 'Email',
-    icon: '✉️',
-    url: 'mailto:hello@sinapses.site',
-    color: 'from-blue-400 to-blue-600'
+    icon: 'email',
+    url: 'mailto:hello@sinapses.site'
   }
 ]
 
@@ -90,8 +87,8 @@ const handleSubmit = async () => {
           class="group p-6 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-transparent transition-all duration-300 bg-white dark:bg-gray-800 hover:shadow-lg"
         >
           <div class="flex flex-col items-center space-y-3">
-            <div class="text-4xl group-hover:scale-110 transition-transform duration-300">
-              {{ link.icon }}
+            <div class="group-hover:scale-110 transition-transform duration-300">
+              <SocialIcon :icon="link.icon" :size="48" />
             </div>
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
               {{ link.name }}
