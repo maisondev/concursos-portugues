@@ -419,7 +419,6 @@ const isActive = (name: string) => route.name === name
                 class="fixed inset-0 z-40"
               />
             </div>
-          </div>
 
           <!-- Mobile menu button -->
           <button
