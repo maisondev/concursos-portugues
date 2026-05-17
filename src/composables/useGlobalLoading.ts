@@ -1,36 +1,26 @@
-import { ref } from 'vue'
-
-const isLoading = ref(false)
-const loadingMessage = ref('')
+import { useLoadingStore } from '@/stores/loading'
+import { computed } from 'vue'
 
 export function useGlobalLoading() {
-  function show(message: string = '') {
-    isLoading.value = true
-    loadingMessage.value = message
-  }
-
-  function hide() {
-    isLoading.value = false
-    loadingMessage.value = ''
-  }
+  const loadingStore = useLoadingStore()
 
   async function withLoading<T>(
     promise: Promise<T>,
     message: string = ''
   ): Promise<T> {
-    show(message)
+    loadingStore.show(message)
     try {
       return await promise
     } finally {
-      hide()
+      loadingStore.hide()
     }
   }
 
   return {
-    isLoading,
-    loadingMessage,
-    show,
-    hide,
+    isLoading: computed(() => loadingStore.isLoading),
+    loadingMessage: computed(() => loadingStore.message),
+    show: (message?: string) => loadingStore.show(message),
+    hide: () => loadingStore.hide(),
     withLoading
   }
 }
