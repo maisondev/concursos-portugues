@@ -169,14 +169,14 @@ const isActive = (name: string) => route.name === name
       <!-- Main navbar -->
       <div class="flex items-center justify-between h-16">
         <!-- Left section: logo or back button -->
-        <div class="flex items-center gap-3 min-w-max">
+        <div class="flex items-center gap-3 min-w-0 flex-shrink-0">
           <!-- Logo (always shown) -->
           <button
             @click="router.push('/')"
-            class="py-2 px-2 rounded-lg hover:opacity-75 transition-opacity focus:outline-none"
+            class="py-1 px-1 rounded-lg hover:opacity-75 transition-opacity focus:outline-none flex-shrink-0"
             title="Voltar para home"
           >
-            <img src="@/assets/sinapses-logo.png" alt="Sinapses" class="h-32 w-auto object-contain" />
+            <img src="@/assets/sinapses-logo.png" alt="Sinapses" class="h-8 sm:h-10 w-auto object-contain" />
           </button>
 
         </div>
@@ -207,7 +207,7 @@ const isActive = (name: string) => route.name === name
         </div>
 
         <!-- Right section: streak + theme toggle -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 sm:gap-3 ml-auto flex-shrink-0">
           <!-- Streak counter -->
           <div
             v-if="dailyLogStore.streakDays > 0"
@@ -464,27 +464,88 @@ const isActive = (name: string) => route.name === name
         </div>
       </div>
 
-      <!-- Mobile navigation (only when logged in) -->
-      <div
-        v-if="authStore.isLoggedIn && showMobileMenu"
-        class="md:hidden border-t border-gray-200 dark:border-gray-700 px-2 py-2 flex flex-col gap-1"
-      >
-        <button
-          v-for="item in navItems"
-          :key="item.name"
-          @click="navigateTo(item.path, item.name)"
-          :class="[
-            'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap',
-            isActive(item.name)
-              ? 'bg-primary text-white'
-              : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-          ]"
-        >
-          <component :is="item.icon" class="w-4 h-4" />
-          {{ item.label }}
-        </button>
-      </div>
     </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <Teleport to="body">
+      <!-- Backdrop -->
+      <Transition name="fade">
+        <div
+          v-if="authStore.isLoggedIn && showMobileMenu"
+          @click="showMobileMenu = false"
+          class="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 md:hidden"
+        />
+      </Transition>
+
+      <!-- Drawer -->
+      <Transition
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="translate-x-full"
+        enter-to-class="translate-x-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="translate-x-0"
+        leave-to-class="translate-x-full"
+      >
+        <div
+          v-if="authStore.isLoggedIn && showMobileMenu"
+          class="fixed right-0 top-0 bottom-0 w-72 bg-white dark:bg-gray-800 shadow-lg z-50 md:hidden flex flex-col"
+        >
+          <!-- Drawer Header -->
+          <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Menu</h3>
+            <button
+              @click="showMobileMenu = false"
+              class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <XMarkIcon class="w-6 h-6 text-gray-500 dark:text-gray-400" />
+            </button>
+          </div>
+
+          <!-- Drawer Content -->
+          <div class="flex-1 overflow-y-auto px-3 py-4 space-y-2">
+            <!-- Navigation Items -->
+            <button
+              v-for="item in navItems"
+              :key="item.name"
+              @click="navigateTo(item.path, item.name)"
+              :class="[
+                'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors',
+                isActive(item.name)
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              ]"
+            >
+              <component :is="item.icon" class="w-5 h-5 flex-shrink-0" />
+              <span>{{ item.label }}</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="h-px bg-gray-200 dark:bg-gray-700 my-4" />
+
+            <!-- Theme Toggle in Drawer -->
+            <button
+              @click="toggleTheme; showMobileMenu = false"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <SunIcon v-if="settingsStore.settings.theme === 'dark'" class="w-5 h-5 flex-shrink-0" />
+              <MoonIcon v-else class="w-5 h-5 flex-shrink-0" />
+              <span>{{ settingsStore.settings.theme === 'dark' ? 'Modo claro' : 'Modo escuro' }}</span>
+            </button>
+          </div>
+
+          <!-- Drawer Footer -->
+          <div class="border-t border-gray-200 dark:border-gray-700 p-4">
+            <button
+              @click="handleLogout; showMobileMenu = false"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            >
+              <ArrowRightOnRectangleIcon class="w-5 h-5 flex-shrink-0" />
+              <span>Sair</span>
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
 
     <AppModal
       :open="showAuthModal"
