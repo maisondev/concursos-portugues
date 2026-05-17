@@ -15,11 +15,20 @@ const users = ref<any[]>([])
 const activity = ref<any>(null)
 const isLoading = ref(true)
 const error = ref<string | null>(null)
-const activeTab = ref<'stats' | 'users' | 'activity'>('stats')
+const activeTab = ref<'stats' | 'users' | 'activity' | 'notifications'>('stats')
 const togglingUserId = ref<string | null>(null)
 const deletingUserId = ref<string | null>(null)
 const showDeleteModal = ref(false)
 const userToDelete = ref<any>(null)
+
+// Notification form state
+const selectedUserId = ref<string>('')
+const notificationTitle = ref('')
+const notificationMessage = ref('')
+const notificationType = ref<'info' | 'success' | 'warning' | 'error'>('info')
+const isSendingNotification = ref(false)
+const notificationSendError = ref<string | null>(null)
+const notificationSendSuccess = ref(false)
 
 onMounted(async () => {
   // Verificar se é admin (para futuro, agora só admin consegue acessar)
@@ -97,6 +106,41 @@ async function confirmDeleteUser() {
     userToDelete.value = null
   }
 }
+
+async function sendNotification() {
+  notificationSendError.value = null
+  notificationSendSuccess.value = false
+
+  if (!selectedUserId.value || !notificationTitle.value || !notificationMessage.value) {
+    notificationSendError.value = 'Preencha todos os campos'
+    return
+  }
+
+  isSendingNotification.value = true
+
+  try {
+    await api.post('/api/admin/send-notification', {
+      userId: selectedUserId.value,
+      title: notificationTitle.value,
+      message: notificationMessage.value,
+      type: notificationType.value
+    })
+
+    notificationSendSuccess.value = true
+    selectedUserId.value = ''
+    notificationTitle.value = ''
+    notificationMessage.value = ''
+    notificationType.value = 'info'
+
+    setTimeout(() => {
+      notificationSendSuccess.value = false
+    }, 3000)
+  } catch (err) {
+    notificationSendError.value = err instanceof Error ? err.message : 'Erro ao enviar notificação'
+  } finally {
+    isSendingNotification.value = false
+  }
+}
 </script>
 
 <template>
@@ -152,6 +196,17 @@ async function confirmDeleteUser() {
           ]"
         >
           📝 Atividades
+        </button>
+        <button
+          @click="activeTab = 'notifications'"
+          :class="[
+            'px-4 py-2 font-medium transition-colors',
+            activeTab === 'notifications'
+              ? 'border-b-2 border-primary text-primary'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+          ]"
+        >
+          🔔 Notificações
         </button>
       </div>
 
@@ -300,6 +355,91 @@ async function confirmDeleteUser() {
               <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 Por: <strong>{{ roadmap.user.email }}</strong> em {{ formatDate(roadmap.createdAt) }}
               </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications Tab -->
+      <div v-else-if="activeTab === 'notifications' && users" class="space-y-6">
+        <div class="p-6 bg-white dark:bg-gray-800 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Enviar Notificação para Usuário</h3>
+
+          <div class="space-y-4">
+            <!-- Mensagem de sucesso -->
+            <div v-if="notificationSendSuccess" class="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+              <p class="text-sm text-green-600 dark:text-green-400">✓ Notificação enviada com sucesso!</p>
+            </div>
+
+            <!-- Mensagem de erro -->
+            <div v-if="notificationSendError" class="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-sm text-red-600 dark:text-red-400">{{ notificationSendError }}</p>
+            </div>
+
+            <!-- Formulário -->
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Selecione um usuário
+                </label>
+                <select
+                  v-model="selectedUserId"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                >
+                  <option value="">-- Selecione um usuário --</option>
+                  <option v-for="user in users" :key="user.id" :value="user.id">
+                    {{ user.email }} ({{ user.role }})
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Tipo de Notificação
+                </label>
+                <select
+                  v-model="notificationType"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                >
+                  <option value="info">ℹ️ Informação</option>
+                  <option value="success">✓ Sucesso</option>
+                  <option value="warning">⚠️ Aviso</option>
+                  <option value="error">❌ Erro</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Título
+                </label>
+                <input
+                  v-model="notificationTitle"
+                  type="text"
+                  placeholder="Título da notificação"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Mensagem
+                </label>
+                <textarea
+                  v-model="notificationMessage"
+                  placeholder="Mensagem da notificação"
+                  rows="4"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              <AppButton
+                variant="primary"
+                @click="sendNotification"
+                :disabled="isSendingNotification"
+                class="w-full"
+              >
+                {{ isSendingNotification ? 'Enviando...' : '🔔 Enviar Notificação' }}
+              </AppButton>
             </div>
           </div>
         </div>
