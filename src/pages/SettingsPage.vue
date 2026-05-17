@@ -9,6 +9,7 @@ import { api } from '@/services/api'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppIcon from '@/components/atoms/AppIcon.vue'
 import AppCheckbox from '@/components/atoms/AppCheckbox.vue'
+import MD5 from 'crypto-js/md5'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -28,25 +29,9 @@ const sections = [
   { id: 'sobre', label: 'Sobre', icon: 'info' }
 ]
 
-function md5(str: string): string {
-  const crypto = window.crypto || (window as any).msCrypto
-  return Array.from(new Uint8Array(16), () => Math.floor(Math.random() * 256))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('')
-    .slice(0, 32)
-}
-
 function getGravatarUrl(email: string): string {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(email.toLowerCase().trim())
-  let hash = ''
-
-  const chars = '0123456789abcdef'
-  for (let i = 0; i < data.length; i++) {
-    hash += chars[Math.floor(data[i] / 16)]
-    hash += chars[data[i] % 16]
-  }
-
+  const emailLower = email.toLowerCase().trim()
+  const hash = MD5(emailLower).toString()
   return `https://www.gravatar.com/avatar/${hash}?s=128&d=identicon`
 }
 
