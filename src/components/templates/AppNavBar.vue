@@ -176,7 +176,7 @@ const isActive = (name: string) => route.name === name
             class="py-1 px-1 rounded-lg hover:opacity-75 transition-opacity"
             title="Voltar para home"
           >
-            <img src="@/assets/sinapses-logosite.png" alt="Sinapses" class="h-7 w-auto object-contain" />
+            <img src="@/assets/sinapses-logosite.png" alt="Sinapses" class="h-16 w-auto max-w-[200px] object-contain" />
           </button>
 
           <!-- Back button (shown when needed) -->
