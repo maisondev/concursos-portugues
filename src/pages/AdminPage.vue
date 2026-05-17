@@ -163,11 +163,11 @@ async function sendNotification() {
       </div>
 
       <!-- Tabs -->
-      <div class="flex gap-2 border-b border-slate-200 dark:border-slate-700">
+      <div class="flex gap-2 border-b border-slate-200 dark:border-slate-700 overflow-x-auto pb-2">
         <button
           @click="activeTab = 'stats'"
           :class="[
-            'px-4 py-2 font-medium transition-colors',
+            'px-4 py-3 font-medium transition-colors whitespace-nowrap',
             activeTab === 'stats'
               ? 'border-b-2 border-primary text-primary'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
@@ -178,7 +178,7 @@ async function sendNotification() {
         <button
           @click="activeTab = 'users'"
           :class="[
-            'px-4 py-2 font-medium transition-colors',
+            'px-4 py-3 font-medium transition-colors whitespace-nowrap',
             activeTab === 'users'
               ? 'border-b-2 border-primary text-primary'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
@@ -189,7 +189,7 @@ async function sendNotification() {
         <button
           @click="activeTab = 'activity'"
           :class="[
-            'px-4 py-2 font-medium transition-colors',
+            'px-4 py-3 font-medium transition-colors whitespace-nowrap',
             activeTab === 'activity'
               ? 'border-b-2 border-primary text-primary'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
@@ -200,7 +200,7 @@ async function sendNotification() {
         <button
           @click="activeTab = 'notifications'"
           :class="[
-            'px-4 py-2 font-medium transition-colors',
+            'px-4 py-3 font-medium transition-colors whitespace-nowrap',
             activeTab === 'notifications'
               ? 'border-b-2 border-primary text-primary'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
