@@ -107,11 +107,16 @@ async function submitAuth() {
 const { withLoading } = useGlobalLoading()
 
 const showBackButton = computed(() => {
-  return route.name === 'block-detail'
+  // Mostrar em páginas detalhadas quando logado
+  if (route.name === 'block-detail') return true
+  // Mostrar em páginas públicas quando não logado
+  if (!authStore.isLoggedIn && ['contact', 'help'].includes(route.name as string)) return true
+  return false
 })
 
 const backLabel = computed(() => {
   if (route.name === 'block-detail') return 'Roadmap'
+  if (route.name === 'contact' || route.name === 'help') return 'Voltar'
   return ''
 })
 
@@ -121,6 +126,8 @@ function goBack() {
       name: 'roadmap',
       params: { roadmapId: route.params.roadmapId }
     })
+  } else if (route.name === 'contact' || route.name === 'help') {
+    router.push('/')
   }
 }
 
@@ -161,18 +168,30 @@ const isActive = (name: string) => route.name === name
     <div class="max-w-6xl mx-auto px-4">
       <!-- Main navbar -->
       <div class="flex items-center justify-between h-16">
-        <!-- Left section: back button (only shown when needed) -->
-        <Transition name="fade">
-          <div v-if="showBackButton" class="flex items-center gap-4">
+        <!-- Left section: logo or back button -->
+        <div class="flex items-center gap-4 min-w-max">
+          <!-- Logo (shown when not logged in) -->
+          <button
+            v-if="!authStore.isLoggedIn"
+            @click="router.push('/')"
+            class="flex items-center gap-2 px-3 py-2 rounded-lg font-bold text-lg text-emerald-600 dark:text-emerald-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            <span>🧠</span>
+            <span class="hidden sm:inline">Sinapses</span>
+          </button>
+
+          <!-- Back button (shown when needed) -->
+          <Transition name="fade">
             <button
+              v-if="showBackButton"
               @click="goBack"
               class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <ArrowLeftIcon class="w-4 h-4" />
               {{ backLabel }}
             </button>
-          </div>
-        </Transition>
+          </Transition>
+        </div>
 
         <!-- Center section: desktop navigation (only when logged in) -->
         <div v-if="authStore.isLoggedIn" class="hidden md:flex items-center gap-1 flex-1 justify-center">
