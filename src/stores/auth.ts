@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoadmapStore } from './roadmap'
 import { useDailyLogStore } from './dailyLog'
 import { useTeacherRankingStore } from './teacherRanking'
+import { useNotificationsStore } from './notifications'
 import { syncManager } from '@/services/sync'
 
 type User = {
@@ -130,6 +131,14 @@ export const useAuthStore = defineStore('auth', () => {
 
       localStorage.setItem(STORAGE_KEY, token.value)
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user.value))
+
+      // Notificação de boas-vindas
+      const notificationsStore = useNotificationsStore()
+      notificationsStore.addNotification(
+        'Bem-vindo ao Sinapses! 🎉',
+        'Sua conta foi criada com sucesso. Explore o roadmap "Como Aprender Qualquer Coisa" para aprender como usar a plataforma.',
+        'success'
+      )
     } catch (error) {
       if (error instanceof Error && error.message.includes('Failed to fetch')) {
         throw new Error('Erro de conexão com o servidor')

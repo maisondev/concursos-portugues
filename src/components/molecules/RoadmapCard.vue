@@ -167,6 +167,10 @@ const statusClasses = computed(() => {
   return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'
 })
 
+const isExample = computed(() => {
+  return props.roadmap.title === 'Como Aprender Qualquer Coisa'
+})
+
 const confirmDelete = () => {
   showDeleteConfirm.value = true
 }
@@ -193,9 +197,14 @@ const handleDeleteConfirm = (password: string) => {
           <h3 class="text-xl font-bold text-gray-900 dark:text-white break-words group-hover/content:text-blue-600 dark:group-hover/content:text-blue-400">
             {{ roadmap.title }}
           </h3>
-          <span class="text-xs px-2 py-1 rounded whitespace-nowrap" :class="statusClasses">
-            {{ statusLabel }}
-          </span>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <span v-if="isExample" class="text-xs px-2.5 py-1 rounded whitespace-nowrap bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200 font-semibold">
+              📚 Exemplo
+            </span>
+            <span class="text-xs px-2 py-1 rounded whitespace-nowrap" :class="statusClasses">
+              {{ statusLabel }}
+            </span>
+          </div>
         </div>
       </div>
 
