@@ -453,7 +453,6 @@ const isActive = (name: string) => route.name === name
         </button>
       </div>
     </div>
-    </div>
 
     <AppModal
       :open="showAuthModal"
