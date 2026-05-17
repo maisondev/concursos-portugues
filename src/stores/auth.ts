@@ -174,13 +174,17 @@ export const useAuthStore = defineStore('auth', () => {
     if (!token.value) throw new Error('Não autenticado')
 
     try {
+      const updateData: any = {}
+      if (name !== undefined) updateData.name = name
+      if (avatar !== undefined) updateData.avatar = avatar
+
       const response = await fetch(`${API_URL}/api/auth/profile`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token.value}`
         },
-        body: JSON.stringify({ name, avatar })
+        body: JSON.stringify(updateData)
       })
 
       if (!response.ok) {
