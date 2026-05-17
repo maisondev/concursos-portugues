@@ -164,7 +164,7 @@ const isActive = (name: string) => route.name === name
 </script>
 
 <template>
-  <nav :class="[`sticky top-0 z-50`, authStore.isLoggedIn ? `bg-white dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700 shadow-sm` : `bg-slate-950 border border-slate-800/60 rounded-2xl mx-4 mt-4`]">
+  <nav :class="[`sticky top-0 z-50`, authStore.isLoggedIn ? `bg-white dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700 shadow-sm` : `bg-slate-950 border-b border-slate-800/60`]">
     <div class="max-w-6xl mx-auto px-4">
       <!-- Main navbar -->
       <div class="flex items-center justify-between h-16">
@@ -173,11 +173,10 @@ const isActive = (name: string) => route.name === name
           <!-- Logo (always shown) -->
           <button
             @click="router.push('/')"
-            class="flex items-center gap-2 py-1 px-2 rounded-lg hover:opacity-80 transition-opacity"
+            class="py-1 px-1 rounded-lg hover:opacity-75 transition-opacity"
             title="Voltar para home"
           >
-            <img src="@/assets/sinapses-logo.png" alt="Sinapses" class="h-9 w-9 object-cover" />
-            <span class="hidden sm:inline font-semibold text-slate-900 dark:text-white text-sm">sinapses</span>
+            <img src="@/assets/sinapses-logosite.png" alt="Sinapses" class="h-7 w-auto object-contain" />
           </button>
 
           <!-- Back button (shown when needed) -->
@@ -191,6 +190,13 @@ const isActive = (name: string) => route.name === name
               {{ backLabel }}
             </button>
           </Transition>
+        </div>
+
+        <!-- Center section: public links (not logged in) -->
+        <div v-if="!authStore.isLoggedIn" class="hidden md:flex items-center gap-8">
+          <button @click="router.push('/')" class="text-slate-300 hover:text-white text-sm transition-colors">Início</button>
+          <button @click="router.push('/help')" class="text-slate-300 hover:text-white text-sm transition-colors">Ajuda</button>
+          <button @click="router.push('/contact')" class="text-slate-300 hover:text-white text-sm transition-colors">Contato</button>
         </div>
 
         <!-- Center section: desktop navigation (only when logged in) -->
@@ -568,6 +574,9 @@ const isActive = (name: string) => route.name === name
   opacity: 0;
 }
 </style>
+
+
+
 
 
 
