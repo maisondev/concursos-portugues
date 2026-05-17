@@ -455,8 +455,10 @@ const isActive = (name: string) => route.name === name
 
           <!-- Mobile menu button -->
           <button
-            v-if="authStore.isLoggedIn"
-            class="md:hidden p-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            class="md:hidden p-2.5 rounded-lg transition-colors"
+            :class="authStore.isLoggedIn
+              ? 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              : 'text-slate-300 hover:bg-slate-800'"
             @click="showMobileMenu = !showMobileMenu"
           >
             <Bars3Icon class="w-5 h-5" />
@@ -471,9 +473,12 @@ const isActive = (name: string) => route.name === name
       <!-- Backdrop -->
       <Transition name="fade">
         <div
-          v-if="authStore.isLoggedIn && showMobileMenu"
+          v-if="showMobileMenu"
           @click="showMobileMenu = false"
-          class="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 md:hidden"
+          :class="[
+            'fixed inset-0 z-40 md:hidden',
+            authStore.isLoggedIn ? 'bg-black/40 dark:bg-black/60' : 'bg-black/50'
+          ]"
         />
       </Transition>
 
@@ -487,11 +492,14 @@ const isActive = (name: string) => route.name === name
         leave-to-class="translate-x-full"
       >
         <div
-          v-if="authStore.isLoggedIn && showMobileMenu"
-          class="fixed right-0 top-0 bottom-0 w-72 bg-white dark:bg-gray-800 shadow-lg z-50 md:hidden flex flex-col"
+          v-if="showMobileMenu"
+          :class="[
+            'fixed right-0 top-0 bottom-0 w-72 shadow-lg z-50 md:hidden flex flex-col',
+            authStore.isLoggedIn ? 'bg-white dark:bg-gray-800' : 'bg-slate-900'
+          ]"
         >
-          <!-- Drawer Header -->
-          <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <!-- Drawer Header (Logado) -->
+          <div v-if="authStore.isLoggedIn" class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Menu</h3>
             <button
               @click="showMobileMenu = false"
@@ -501,8 +509,19 @@ const isActive = (name: string) => route.name === name
             </button>
           </div>
 
-          <!-- Drawer Content -->
-          <div class="flex-1 overflow-y-auto px-3 py-4 space-y-2">
+          <!-- Drawer Header (Não logado) -->
+          <div v-else class="flex items-center justify-between p-4 border-b border-slate-700">
+            <h3 class="text-lg font-semibold text-white">Menu</h3>
+            <button
+              @click="showMobileMenu = false"
+              class="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+            >
+              <XMarkIcon class="w-6 h-6 text-slate-300" />
+            </button>
+          </div>
+
+          <!-- Drawer Content (Logado) -->
+          <div v-if="authStore.isLoggedIn" class="flex-1 overflow-y-auto px-3 py-4 space-y-2">
             <!-- Navigation Items -->
             <button
               v-for="item in navItems"
@@ -533,8 +552,8 @@ const isActive = (name: string) => route.name === name
             </button>
           </div>
 
-          <!-- Drawer Footer -->
-          <div class="border-t border-gray-200 dark:border-gray-700 p-4">
+          <!-- Drawer Footer (Logado) -->
+          <div v-if="authStore.isLoggedIn" class="border-t border-gray-200 dark:border-gray-700 p-4">
             <button
               @click="handleLogout; showMobileMenu = false"
               class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
@@ -542,6 +561,65 @@ const isActive = (name: string) => route.name === name
               <ArrowRightOnRectangleIcon class="w-5 h-5 flex-shrink-0" />
               <span>Sair</span>
             </button>
+          </div>
+
+          <!-- Drawer Content (Não logado) -->
+          <div v-else class="flex-1 overflow-y-auto px-3 py-4 space-y-3">
+            <!-- Public Navigation Items -->
+            <button
+              @click="router.push('/'); showMobileMenu = false"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+            >
+              <HomeIcon class="w-5 h-5 flex-shrink-0" />
+              <span>Início</span>
+            </button>
+
+            <button
+              @click="router.push('/help'); showMobileMenu = false"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+            >
+              <ChatBubbleLeftEllipsisIcon class="w-5 h-5 flex-shrink-0" />
+              <span>Ajuda</span>
+            </button>
+
+            <button
+              @click="router.push('/contact'); showMobileMenu = false"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+            >
+              <MapIcon class="w-5 h-5 flex-shrink-0" />
+              <span>Contato</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="h-px bg-slate-700 my-4" />
+
+            <!-- Theme Toggle -->
+            <button
+              @click="toggleTheme"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+            >
+              <SunIcon v-if="settingsStore.settings.theme === 'dark'" class="w-5 h-5 flex-shrink-0" />
+              <MoonIcon v-else class="w-5 h-5 flex-shrink-0" />
+              <span>{{ settingsStore.settings.theme === 'dark' ? 'Modo claro' : 'Modo escuro' }}</span>
+            </button>
+          </div>
+
+          <!-- Drawer Footer (Não logado) -->
+          <div v-if="!authStore.isLoggedIn" class="border-t border-slate-700 p-4 space-y-3">
+            <AppButton
+              variant="secondary"
+              @click="openLogin(); showMobileMenu = false"
+              class="w-full"
+            >
+              Entrar
+            </AppButton>
+            <AppButton
+              variant="primary"
+              @click="openRegister(); showMobileMenu = false"
+              class="w-full"
+            >
+              Criar conta
+            </AppButton>
           </div>
         </div>
       </Transition>
