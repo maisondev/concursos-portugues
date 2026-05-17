@@ -7,8 +7,19 @@ function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY)
 }
 
-async function handleResponse(response: Response) {
+async function handleResponse(response: Response, path: string) {
   if (response.status === 401) {
+    // Login/register com credenciais inválidas - deixar erro ser tratado pelo componente
+    if (path.includes('/auth/login') || path.includes('/auth/register')) {
+      try {
+        const error = await response.json()
+        throw new Error(error.error || 'Credenciais inválidas')
+      } catch {
+        throw new Error('Credenciais inválidas')
+      }
+    }
+
+    // Outros 401 = sessão expirada
     localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem('roadmap-auth-user-v1')
     window.location.href = '/'
@@ -54,7 +65,7 @@ async function request(
       headers
     })
 
-    return handleResponse(response)
+    return handleResponse(response, path)
   } finally {
     loadingStore.hide()
   }
