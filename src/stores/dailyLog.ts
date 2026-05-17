@@ -81,12 +81,31 @@ export const useDailyLogStore = defineStore('dailyLog', () => {
     }
   }
 
-  function saveLog(entry: DailyLogEntry) {
+  async function saveLog(entry: DailyLogEntry) {
+    const authStore = useAuthStore()
+
+    // Salvar localmente
     const existingIndex = logs.value.findIndex(log => log.date === entry.date)
     if (existingIndex >= 0) {
       logs.value[existingIndex] = entry
     } else {
       logs.value.push(entry)
+    }
+
+    // Salvar no banco se logado
+    if (authStore.isLoggedIn) {
+      try {
+        await api.post('/api/logs', {
+          date: entry.date,
+          text: entry.fiz,
+          minutes: entry.minutosEstudados,
+          questions: entry.questoesFeitas,
+          mood: entry.mood
+        })
+      } catch (err) {
+        error.value = err instanceof Error ? err.message : 'Erro ao salvar log'
+        console.error('Erro ao salvar log:', err)
+      }
     }
   }
 

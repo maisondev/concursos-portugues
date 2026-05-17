@@ -5,23 +5,16 @@ import { useDailyLogStore } from '@/stores/dailyLog'
 import { useSettingsStore } from '@/stores/settings'
 import { useTeacherRankingStore } from '@/stores/teacherRanking'
 import ProgressDashboard from '@/components/organisms/ProgressDashboard.vue'
-import DailyLogEntry from '@/components/molecules/DailyLogEntry.vue'
 import AppButton from '@/components/atoms/AppButton.vue'
-import AppModal from '@/components/atoms/AppModal.vue'
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import AppIcon from '@/components/atoms/AppIcon.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const progressStore = useProgressStore()
 const dailyLogStore = useDailyLogStore()
 const settingsStore = useSettingsStore()
 const teacherRankingStore = useTeacherRankingStore()
-
-const fiz = ref('')
-const fareiAmanha = ref('')
-const minutosEstudados = ref(0)
-const questoesFeitas = ref(0)
-const mood = ref(3)
-const showLogModal = ref(false)
 
 const teacherName = ref('')
 const discipline = ref('')
@@ -37,35 +30,9 @@ const editScore = ref(5)
 const editRankingNotes = ref('')
 
 onMounted(() => {
-  dailyLogStore.initLogs()
   teacherRankingStore.init()
-  if (dailyLogStore.todayLog) {
-    fiz.value = dailyLogStore.todayLog.fiz
-    fareiAmanha.value = dailyLogStore.todayLog.fareiAmanha
-    minutosEstudados.value = dailyLogStore.todayLog.minutosEstudados
-    questoesFeitas.value = dailyLogStore.todayLog.questoesFeitas
-    mood.value = dailyLogStore.todayLog.mood
-  }
 })
 
-function saveLog() {
-  dailyLogStore.updateTodayLog({
-    fiz: fiz.value,
-    fareiAmanha: fareiAmanha.value,
-    minutosEstudados: minutosEstudados.value,
-    questoesFeitas: questoesFeitas.value,
-    mood: mood.value
-  })
-  showLogModal.value = false
-}
-
-const remainingMinutes = computed(() => {
-  return Math.max(0, settingsStore.settings.dailyGoalMinutes - minutosEstudados.value)
-})
-
-const remainingQuestoes = computed(() => {
-  return Math.max(0, settingsStore.settings.dailyGoalQuestoes - questoesFeitas.value)
-})
 
 const filteredRanking = computed(() => {
   const list = teacherRankingStore.entries
@@ -135,32 +102,6 @@ function cancelEdit() {
         :snapshot="progressStore.snapshotInterpretacao"
         :logs="dailyLogStore.logs"
       />
-
-      <!-- Daily Log -->
-      <div class="p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 flex items-start justify-between gap-4">
-        <div>
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Registro de Hoje</h2>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Preencha seu registro diário para acompanhar consistência e metas.
-          </p>
-        </div>
-        <AppButton variant="primary" size="sm" @click="showLogModal = true">
-          {{ dailyLogStore.todayLog ? 'Editar' : 'Criar' }}
-        </AppButton>
-      </div>
-
-      <!-- Recent Logs -->
-      <div v-if="dailyLogStore.logs.length > 0" class="p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Últimos Registros</h2>
-        <div class="space-y-2">
-          <DailyLogEntry
-            v-for="log in dailyLogStore.last7Days"
-            :key="log.id"
-            :entry="log"
-            :compact="true"
-          />
-        </div>
-      </div>
 
       <!-- Teacher ranking -->
       <div class="p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
@@ -309,85 +250,5 @@ function cancelEdit() {
       </div>
     </div>
 
-    <AppModal
-      :open="showLogModal"
-      title="Registro de Hoje"
-      submit-label="Salvar"
-      cancel-label="Cancelar"
-      @submit="saveLog"
-      @cancel="showLogModal = false"
-    >
-      <div class="space-y-4">
-        <!-- Mood Selector -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Como você se sente? {{ ['😢', '😟', '😐', '🙂', '😄'][mood - 1] }}
-          </label>
-          <div class="flex gap-3">
-            <button
-              v-for="m in [1, 2, 3, 4, 5]"
-              :key="m"
-              @click="mood = m"
-              :class="[
-                'text-3xl px-3 py-2 rounded transition-transform',
-                mood === m ? 'scale-125 ring-2 ring-blue-500' : 'opacity-50 hover:opacity-100'
-              ]"
-              type="button"
-            >
-              {{ ['😢', '😟', '😐', '🙂', '😄'][m - 1] }}
-            </button>
-          </div>
-        </div>
-
-        <label class="block">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">O que fiz hoje?</span>
-          <textarea
-            v-model="fiz"
-            rows="3"
-            class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            placeholder="Ex: Estudei coesão textual, fiz 15 questões de FGV..."
-          />
-        </label>
-
-        <label class="block">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Vou fazer amanhã?</span>
-          <textarea
-            v-model="fareiAmanha"
-            rows="3"
-            class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            placeholder="Ex: Funções da linguagem + 20 questões..."
-          />
-        </label>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="space-y-1">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Minutos estudados (meta: {{ settingsStore.settings.dailyGoalMinutes }}min)
-            </label>
-            <input
-              v-model.number="minutosEstudados"
-              type="number"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            />
-            <p class="text-xs text-gray-500 dark:text-gray-400">
-              Faltam: {{ remainingMinutes }}min
-            </p>
-          </div>
-          <div class="space-y-1">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Questões feitas (meta: {{ settingsStore.settings.dailyGoalQuestoes }})
-            </label>
-            <input
-              v-model.number="questoesFeitas"
-              type="number"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            />
-            <p class="text-xs text-gray-500 dark:text-gray-400">
-              Faltam: {{ remainingQuestoes }} questões
-            </p>
-          </div>
-        </div>
-      </div>
-    </AppModal>
   </div>
 </template>

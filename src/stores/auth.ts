@@ -12,6 +12,7 @@ type User = {
   role?: 'USER' | 'ADMIN' | 'OWNER'
   name?: string | null
   avatar?: string | null
+  consentGiven?: boolean
 }
 
 type ApiResponse = {
@@ -139,17 +140,18 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(email: string, password: string, name?: string) {
+  async function register(email: string, password: string, name?: string, consentGiven = false) {
     const emailClean = email.trim()
     if (!emailClean) throw new Error('Digite um e-mail')
     if (!emailClean.includes('@')) throw new Error('E-mail inválido')
     if (password.length < 6) throw new Error('A senha deve ter no mínimo 6 caracteres')
+    if (!consentGiven) throw new Error('É necessário aceitar a Política de Privacidade para criar uma conta')
 
     try {
       const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailClean, password, name: name?.trim() || null })
+        body: JSON.stringify({ email: emailClean, password, name: name?.trim() || null, consentGiven: true })
       })
 
       if (!response.ok) {
@@ -251,6 +253,56 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const needsConsent = computed(() =>
+    Boolean(token.value) && user.value?.consentGiven === false
+  )
+
+  async function giveConsent(): Promise<void> {
+    if (!token.value) return
+    const response = await fetch(`${API_URL}/api/auth/consent`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+    if (!response.ok) throw new Error('Erro ao registrar consentimento')
+    if (user.value) {
+      user.value = { ...user.value, consentGiven: true }
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user.value))
+    }
+  }
+
+  async function exportData(): Promise<void> {
+    if (!token.value) throw new Error('Não autenticado')
+    const response = await fetch(`${API_URL}/api/auth/export-data`, {
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+    if (!response.ok) {
+      const err = await response.json()
+      throw new Error(err.error || 'Erro ao exportar dados')
+    }
+    const data = await response.json()
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `sinapses-meus-dados-${new Date().toISOString().split('T')[0]}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  async function deleteAccount(password: string): Promise<void> {
+    if (!token.value) throw new Error('Não autenticado')
+    const response = await fetch(`${API_URL}/api/auth/account`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token.value}` },
+      body: JSON.stringify({ password })
+    })
+    if (!response.ok) {
+      const err = await response.json()
+      throw new Error(err.error || 'Erro ao excluir conta')
+    }
+    await logout()
+  }
+
   async function logout() {
     // Se houver mudanças pendentes, sincronizar antes de deslogar
     if (syncManager.hasPendingChanges()) {
@@ -293,11 +345,15 @@ export const useAuthStore = defineStore('auth', () => {
     userInitials,
     user,
     token,
+    needsConsent,
     init,
     register,
     login,
     logout,
     updateProfile,
+    giveConsent,
+    exportData,
+    deleteAccount,
     getAuthHeaders,
     hasPendingChanges
   }

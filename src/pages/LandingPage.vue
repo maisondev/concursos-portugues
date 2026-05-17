@@ -12,6 +12,7 @@ const showAuthModal = ref(false)
 const authMode = ref<'login' | 'register'>('register')
 const email = ref('')
 const password = ref('')
+const consentGiven = ref(false)
 const authError = ref<string | null>(null)
 const isSubmitting = ref(false)
 
@@ -43,8 +44,8 @@ const benefits = [
   },
   {
     icon: 'shield',
-    title: 'Seus Conhecimentos Protegidos',
-    description: 'Autenticação segura com JWT e criptografia de senhas com bcrypt'
+    title: 'Adequado à LGPD',
+    description: 'Seus dados protegidos por lei. Consentimento explícito, exportação de dados, exclusão de conta e Política de Privacidade completa — tudo conforme a Lei nº 13.709/2018.'
   }
 ]
 
@@ -52,6 +53,7 @@ function openRegister() {
   authMode.value = 'register'
   email.value = ''
   password.value = ''
+  consentGiven.value = false
   authError.value = null
   showAuthModal.value = true
 }
@@ -60,6 +62,7 @@ function openLogin() {
   authMode.value = 'login'
   email.value = ''
   password.value = ''
+  consentGiven.value = false
   authError.value = null
   showAuthModal.value = true
 }
@@ -70,7 +73,7 @@ async function submitAuth() {
 
   try {
     if (authMode.value === 'register') {
-      await authStore.register(email.value, password.value)
+      await authStore.register(email.value, password.value, undefined, consentGiven.value)
     } else {
       await authStore.login(email.value, password.value)
     }
@@ -427,6 +430,22 @@ const footerLinks = [
             />
           </div>
 
+          <div v-if="authMode === 'register'" class="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <input
+              id="landing-consent"
+              v-model="consentGiven"
+              type="checkbox"
+              class="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded cursor-pointer flex-shrink-0"
+            />
+            <label for="landing-consent" class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer leading-relaxed">
+              Li e aceito a
+              <a href="#/privacidade" class="text-blue-600 dark:text-blue-400 hover:underline" @click="showAuthModal = false">Política de Privacidade</a>
+              e os
+              <a href="#/termos" class="text-blue-600 dark:text-blue-400 hover:underline" @click="showAuthModal = false">Termos de Serviço</a>
+              do Sinapses.
+            </label>
+          </div>
+
           <p v-if="authError" class="text-sm text-red-600 dark:text-red-400">
             {{ authError }}
           </p>
@@ -435,8 +454,8 @@ const footerLinks = [
         <div class="flex gap-2 mb-4">
           <button
             @click="submitAuth"
-            :disabled="isSubmitting"
-            class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 rounded-lg transition-colors"
+            :disabled="isSubmitting || (authMode === 'register' && !consentGiven)"
+            class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-2 rounded-lg transition-colors"
           >
             {{ isSubmitting ? 'Carregando...' : 'Continuar' }}
           </button>
@@ -451,7 +470,7 @@ const footerLinks = [
         <button
           type="button"
           class="w-full text-sm text-blue-600 dark:text-blue-400 hover:underline"
-          @click="authMode = authMode === 'login' ? 'register' : 'login'; authError = null"
+          @click="authMode = authMode === 'login' ? 'register' : 'login'; authError = null; consentGiven = false"
         >
           {{ authMode === 'login' ? 'Criar conta' : 'Já tenho conta' }}
         </button>

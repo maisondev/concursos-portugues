@@ -26,6 +26,7 @@ roadmapStore.setActiveRoadmap(props.roadmapId)
 const block = computed(() => roadmapStore.blockById(props.blockId))
 const topic = computed(() => roadmapStore.topicById(props.blockId, props.topicId))
 
+
 const resourceLabel = ref('')
 const resourceUrl = ref('')
 const resourceType = ref<'youtube' | 'drive' | 'document' | 'link' | 'local'>('youtube')
@@ -198,32 +199,6 @@ const statusMap: Record<string, { color: 'gray' | 'yellow' | 'green', label: str
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900">
     <div class="max-w-[120rem] mx-auto p-4 2xl:px-8 min-[2560px]:px-12 min-[3840px]:max-w-[160rem] min-[3840px]:px-16 space-y-6">
-      <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-        <button
-          @click="router.push('/')"
-          class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-        >
-          <AppIcon name="home" size="sm" />
-          Início
-        </button>
-        <span class="text-gray-400">•</span>
-        <button
-          @click="router.push({ name: 'roadmap', params: { roadmapId } })"
-          class="text-blue-600 dark:text-blue-400 hover:underline"
-        >
-          {{ roadmapStore.activeRoadmap.title }}
-        </button>
-        <span class="text-gray-400">•</span>
-        <button
-          @click="router.push({ name: 'block-detail', params: { roadmapId, blockId } })"
-          class="text-blue-600 dark:text-blue-400 hover:underline"
-        >
-          {{ block?.title }}
-        </button>
-        <span class="text-gray-400">•</span>
-        <span class="font-medium text-gray-900 dark:text-white">{{ topic?.title }}</span>
-      </div>
-
       <div v-if="topic && block" class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.5fr)_minmax(22rem,28rem)] gap-6 items-start">
         <section class="space-y-4">
           <div class="flex items-start justify-between gap-4">

@@ -24,6 +24,8 @@ const progressStore = useProgressStore()
 roadmapStore.setActiveRoadmap(props.roadmapId)
 
 const block = computed(() => roadmapStore.blockById(props.blockId))
+
+
 const showAddTopicModal = ref(false)
 const newTopicTitle = ref('')
 
@@ -91,25 +93,6 @@ const priorityColor = computed(() => {
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900">
     <div class="max-w-[120rem] mx-auto p-4 2xl:px-8 min-[2560px]:px-12 min-[3840px]:max-w-[160rem] min-[3840px]:px-16 space-y-6">
-      <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
-        <button
-          @click="router.push('/')"
-          class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-        >
-          <AppIcon name="home" size="sm" />
-          Início
-        </button>
-        <span class="text-gray-400">•</span>
-        <button
-          @click="router.push({ name: 'roadmap', params: { roadmapId } })"
-          class="text-blue-600 dark:text-blue-400 hover:underline"
-        >
-          {{ roadmapStore.activeRoadmap.title }}
-        </button>
-        <span class="text-gray-400">•</span>
-        <span class="font-medium text-gray-900 dark:text-white">{{ block?.title }}</span>
-      </div>
-
       <div v-if="block">
         <div class="flex items-start justify-between gap-4">
           <div>

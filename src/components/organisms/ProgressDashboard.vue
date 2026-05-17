@@ -17,11 +17,6 @@ const getProgressColor = (percent: number): 'red' | 'yellow' | 'green' => {
   return 'green'
 }
 
-const getLast7Days = (logs: DailyLogEntry[]) => {
-  const sorted = [...logs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  return sorted.slice(0, 7).reverse()
-}
-
 const getTodayMinutes = (logs: DailyLogEntry[]): number => {
   const today = new Date().toISOString().split('T')[0]
   const todayLog = logs.find(log => log.date === today)
@@ -72,25 +67,5 @@ const getTodayMinutes = (logs: DailyLogEntry[]): number => {
       </p>
     </div>
 
-    <!-- Last 7 Days -->
-    <div v-if="logs.length > 0" class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-      <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Últimos 7 Dias</p>
-      <div class="flex items-end justify-around h-24 gap-1">
-        <div
-          v-for="log in getLast7Days(logs)"
-          :key="log.id"
-          class="flex-1 flex flex-col items-center"
-        >
-          <div
-            :style="{ height: `${Math.min((log.minutosEstudados / 120) * 100, 100)}%` }"
-            class="w-full bg-blue-500 rounded-t transition-all hover:bg-blue-600"
-            :title="`${log.minutosEstudados} min`"
-          />
-          <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
-            {{ new Date(log.date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit' }) }}
-          </p>
-        </div>
-      </div>
-    </div>
   </div>
 </template>

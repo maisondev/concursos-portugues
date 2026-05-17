@@ -99,12 +99,12 @@ const footerLinks = [
             © {{ new Date().getFullYear() }} Sinapses. Todos os direitos reservados.
           </p>
           <div class="flex gap-4 sm:gap-6">
-            <button class="text-xs sm:text-sm text-slate-500 hover:text-white transition-colors">
+            <router-link to="/privacidade" class="text-xs sm:text-sm text-slate-500 hover:text-white transition-colors">
               Privacidade
-            </button>
-            <button class="text-xs sm:text-sm text-slate-500 hover:text-white transition-colors">
+            </router-link>
+            <router-link to="/termos" class="text-xs sm:text-sm text-slate-500 hover:text-white transition-colors">
               Termos
-            </button>
+            </router-link>
           </div>
         </div>
       </div>

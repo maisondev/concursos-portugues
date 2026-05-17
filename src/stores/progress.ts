@@ -79,10 +79,17 @@ export const useProgressStore = defineStore('progress', () => {
     return Math.round((snapshot.completedTopics / snapshot.totalTopics) * 100)
   })
 
+  function roadmapProgressPercent(roadmapId: string): number {
+    const snapshot = recomputeSnapshot(roadmapId)
+    if (snapshot.totalTopics === 0) return 0
+    return Math.round((snapshot.completedTopics / snapshot.totalTopics) * 100)
+  }
+
   return {
     recomputeSnapshot,
     snapshotInterpretacao,
     blockProgressPercent,
-    overallPercent
+    overallPercent,
+    roadmapProgressPercent
   }
 })

@@ -6,6 +6,7 @@ import AppLink from '@/components/atoms/AppLink.vue'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppIcon from '@/components/atoms/AppIcon.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/24/outline'
 
 interface Props {
   resource: Resource
@@ -97,6 +98,12 @@ async function handleClick() {
     emit('open')
     await openLocalPath(props.resource.localPath)
     isOpeningLocal.value = false
+  }
+}
+
+function openInNewTab() {
+  if (props.resource.url) {
+    window.open(props.resource.url, '_blank')
   }
 }
 
@@ -296,6 +303,16 @@ function saveResourceEdit() {
           title="Editar recurso"
         >
           <AppIcon name="pencil" size="sm" />
+        </AppButton>
+        <AppButton
+          v-if="resource.url && resource.type !== 'local'"
+          variant="ghost"
+          size="sm"
+          class="text-gray-600 dark:text-gray-400"
+          @click="openInNewTab"
+          title="Abrir em nova aba"
+        >
+          <ArrowTopRightOnSquareIcon class="w-4 h-4" />
         </AppButton>
         <AppButton
           v-if="canMoveUp"

@@ -9,6 +9,7 @@ import { api } from '@/services/api'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppIcon from '@/components/atoms/AppIcon.vue'
 import AppCheckbox from '@/components/atoms/AppCheckbox.vue'
+import AppModal from '@/components/atoms/AppModal.vue'
 import MD5 from 'crypto-js/md5'
 
 const router = useRouter()
@@ -17,7 +18,7 @@ const settingsStore = useSettingsStore()
 const roadmapStore = useRoadmapStore()
 const dailyLogStore = useDailyLogStore()
 
-const activeSection = ref<'perfil' | 'conta' | 'aparencia' | 'preferencias' | 'metas' | 'dados' | 'sobre'>('perfil')
+const activeSection = ref<'perfil' | 'conta' | 'aparencia' | 'preferencias' | 'metas' | 'dados' | 'privacidade' | 'sobre'>('perfil')
 
 const sections = [
   { id: 'perfil', label: 'Perfil', icon: 'user' },
@@ -26,6 +27,7 @@ const sections = [
   { id: 'preferencias', label: 'Preferências', icon: 'sliders-horizontal' },
   { id: 'metas', label: 'Metas Diárias', icon: 'target' },
   { id: 'dados', label: 'Dados', icon: 'database' },
+  { id: 'privacidade', label: 'Privacidade', icon: 'shield' },
   { id: 'sobre', label: 'Sobre', icon: 'info' }
 ]
 
@@ -127,6 +129,42 @@ async function updatePassword() {
     passwordError.value = error instanceof Error ? error.message : 'Erro ao alterar senha'
   } finally {
     isChangingPassword.value = false
+  }
+}
+
+// LGPD
+const isExportingData = ref(false)
+const exportDataError = ref<string | null>(null)
+const showDeleteModal = ref(false)
+const deletePassword = ref('')
+const isDeletingAccount = ref(false)
+const deleteError = ref<string | null>(null)
+
+async function exportPersonalData() {
+  exportDataError.value = null
+  isExportingData.value = true
+  try {
+    await authStore.exportData()
+  } catch (error) {
+    exportDataError.value = error instanceof Error ? error.message : 'Erro ao exportar dados'
+  } finally {
+    isExportingData.value = false
+  }
+}
+
+async function confirmDeleteAccount() {
+  deleteError.value = null
+  if (!deletePassword.value) {
+    deleteError.value = 'Digite sua senha para confirmar'
+    return
+  }
+  isDeletingAccount.value = true
+  try {
+    await authStore.deleteAccount(deletePassword.value)
+    router.push('/')
+  } catch (error) {
+    deleteError.value = error instanceof Error ? error.message : 'Erro ao excluir conta'
+    isDeletingAccount.value = false
   }
 }
 
@@ -429,6 +467,90 @@ function importJSON(event: Event) {
             <p class="text-xs text-gray-500 dark:text-gray-400">Faça backup de todos seus roadmaps, logs e configurações</p>
           </div>
         </div>
+
+        <!-- Seção: Privacidade & LGPD -->
+        <div v-if="activeSection === 'privacidade'" class="space-y-4">
+          <!-- Seus direitos -->
+          <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
+            <div class="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-700">
+              <div class="p-2 rounded-lg bg-green-50 dark:bg-green-900/20">
+                <AppIcon name="shield" size="sm" class="text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <h2 class="font-semibold text-gray-900 dark:text-white">Privacidade & LGPD</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Seus direitos conforme a Lei Geral de Proteção de Dados</p>
+              </div>
+            </div>
+            <div class="space-y-3 text-sm text-gray-600 dark:text-gray-400">
+              <p>Coletamos apenas os dados necessários para o funcionamento do Sinapses: e-mail, nome (opcional), e seu conteúdo de estudos. Você tem controle total sobre seus dados.</p>
+              <div class="flex flex-wrap gap-2">
+                <router-link to="/privacidade" class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors">
+                  Política de Privacidade ↗
+                </router-link>
+                <router-link to="/termos" class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors">
+                  Termos de Serviço ↗
+                </router-link>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exportar dados -->
+          <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
+            <div>
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Portabilidade de Dados</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Baixe uma cópia completa de todos os seus dados pessoais (Art. 18, V, LGPD)</p>
+            </div>
+            <AppButton variant="secondary" @click="exportPersonalData" :disabled="isExportingData" class="w-full">
+              {{ isExportingData ? 'Exportando...' : 'Baixar meus dados (JSON)' }}
+            </AppButton>
+            <div v-if="exportDataError" class="text-sm text-red-600 dark:text-red-400 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+              {{ exportDataError }}
+            </div>
+          </div>
+
+          <!-- Zona de perigo -->
+          <div class="bg-white dark:bg-gray-800 border border-red-200 dark:border-red-900/50 rounded-xl p-6 space-y-4">
+            <div>
+              <h3 class="font-semibold text-red-700 dark:text-red-400 mb-1">Zona de Perigo</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">A exclusão da conta é permanente e irreversível. Todos os seus dados serão apagados (Art. 18, VI, LGPD).</p>
+            </div>
+            <AppButton variant="danger" @click="showDeleteModal = true" class="w-full">
+              Excluir minha conta permanentemente
+            </AppButton>
+          </div>
+        </div>
+
+        <!-- Modal confirmação de exclusão de conta -->
+        <AppModal
+          :open="showDeleteModal"
+          title="Excluir conta permanentemente"
+          submit-label="Confirmar exclusão"
+          cancel-label="Cancelar"
+          submit-variant="danger"
+          @submit="confirmDeleteAccount"
+          @cancel="showDeleteModal = false; deletePassword = ''; deleteError = null"
+        >
+          <div class="space-y-4">
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              Esta ação é <strong>irreversível</strong>. Todos os seus roadmaps, registros, configurações e dados pessoais serão permanentemente excluídos.
+            </p>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Digite sua senha para confirmar
+              </label>
+              <input
+                v-model="deletePassword"
+                type="password"
+                placeholder="Sua senha atual"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                @keyup.enter="confirmDeleteAccount"
+              />
+            </div>
+            <div v-if="deleteError" class="text-sm text-red-600 dark:text-red-400 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+              {{ deleteError }}
+            </div>
+          </div>
+        </AppModal>
 
         <!-- Seção: Sobre -->
         <div v-if="activeSection === 'sobre'" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">

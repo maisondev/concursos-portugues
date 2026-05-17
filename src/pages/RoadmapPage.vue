@@ -19,6 +19,9 @@ const props = defineProps<{
   roadmapId: string
 }>()
 
+roadmapStore.setActiveRoadmap(props.roadmapId)
+
+
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const showDeleteConfirm = ref(false)
@@ -144,27 +147,6 @@ function deleteBlock() {
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900">
       <div class="max-w-[120rem] mx-auto p-4 2xl:px-8 min-[2560px]:px-12 min-[3840px]:max-w-[160rem] min-[3840px]:px-16 space-y-8">
-      <!-- Breadcrumb Navigation -->
-      <nav class="flex items-center gap-2 mb-6 overflow-x-auto pb-2" aria-label="Breadcrumb">
-        <ol class="flex items-center gap-1 whitespace-nowrap">
-          <li>
-            <button
-              @click="router.push('/')"
-              class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors flex-shrink-0"
-            >
-              <AppIcon name="home" size="sm" />
-              <span class="hidden sm:inline">Início</span>
-            </button>
-          </li>
-          <li class="text-gray-400 dark:text-gray-600 flex-shrink-0">
-            <AppIcon name="chevron-right" size="sm" />
-          </li>
-          <li class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white truncate flex-shrink-0 max-w-xs sm:max-w-none">
-            {{ roadmapStore.activeRoadmap.title }}
-          </li>
-        </ol>
-      </nav>
-
       <!-- Header -->
       <div>
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
@@ -177,13 +159,13 @@ function deleteBlock() {
 
       <!-- Overall Progress -->
       <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-        <div class="flex items-center justify-between mb-2">
-          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Progresso Geral do Roadmap</p>
-          <AppButton variant="secondary" size="sm" @click="showAddModal = true">
+        <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Progresso Geral do Roadmap</p>
+        <AppProgressBar :value="progressStore.roadmapProgressPercent(activeRoadmapId)" show-label />
+        <div class="mt-4 pt-4 border-t border-gray-300 dark:border-gray-700">
+          <AppButton variant="primary" size="sm" @click="showAddModal = true">
             + Adicionar Módulo
           </AppButton>
         </div>
-        <AppProgressBar :value="progressStore.overallPercent" show-label />
       </div>
 
       <!-- Filters -->

@@ -4,12 +4,15 @@ import RoadmapPage from '@/pages/RoadmapPage.vue'
 import BlockDetailPage from '@/pages/BlockDetailPage.vue'
 import TopicResourcesPage from '@/pages/TopicResourcesPage.vue'
 import DashboardPage from '@/pages/DashboardPage.vue'
+import DailyLogPage from '@/pages/DailyLogPage.vue'
 import SettingsPage from '@/pages/SettingsPage.vue'
 import NotificationsPage from '@/pages/NotificationsPage.vue'
 import AdminPage from '@/pages/AdminPage.vue'
 import ChangelogPage from '@/pages/ChangelogPage.vue'
 import HelpPage from '@/pages/HelpPage.vue'
 import ContactPage from '@/pages/ContactPage.vue'
+import PrivacyPage from '@/pages/PrivacyPage.vue'
+import TermsPage from '@/pages/TermsPage.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const routes = [
@@ -70,6 +73,21 @@ const routes = [
     path: '/contatos',
     name: 'contact',
     component: ContactPage
+  },
+  {
+    path: '/daily-log',
+    name: 'daily-log',
+    component: DailyLogPage
+  },
+  {
+    path: '/privacidade',
+    name: 'privacy',
+    component: PrivacyPage
+  },
+  {
+    path: '/termos',
+    name: 'terms',
+    component: TermsPage
   },
   {
     path: '/:pathMatch(.*)*',

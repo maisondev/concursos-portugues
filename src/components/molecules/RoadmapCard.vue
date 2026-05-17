@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import type { Roadmap, RoadmapColor, RoadmapStatus } from '@/types'
-import { PencilIcon, ChevronUpIcon, ChevronDownIcon, StarIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, ChevronUpIcon, ChevronDownIcon, StarIcon, TrashIcon, CheckIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
 import { StarIcon as StarSolidIcon } from '@heroicons/vue/24/solid'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppIcon from '@/components/atoms/AppIcon.vue'
@@ -297,11 +297,11 @@ const handleDeleteConfirm = (password: string) => {
           <AppButton
             :variant="isCompleted ? 'secondary' : 'ghost'"
             size="sm"
-            @click="(e) => { e.stopPropagation(); $emit(isCompleted ? 'markIncomplete' : 'markComplete') }"
+            @click="(e) => { e.stopPropagation(); $emit(isCompleted ? 'mark-incomplete' : 'mark-complete') }"
             :title="isCompleted ? 'Desmarcar como concluído' : 'Marcar como concluído'"
           >
-            <StarIcon v-if="isCompleted" class="w-4 h-4 text-yellow-500" />
-            <StarIcon v-else class="w-4 h-4" />
+            <CheckCircleIcon v-if="isCompleted" class="w-4 h-4" />
+            <CheckIcon v-else class="w-4 h-4" />
           </AppButton>
           <AppButton
             variant="ghost"

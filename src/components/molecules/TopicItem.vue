@@ -110,7 +110,7 @@ function handleDeleteConfirm() {
 
 <template>
   <div
-    class="p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:shadow-md transition-shadow"
+    class="p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:shadow-md transition-shadow flex flex-col"
   >
     <div class="flex items-start gap-3">
       <AppCheckbox
@@ -140,44 +140,44 @@ function handleDeleteConfirm() {
           />
         </div>
       </div>
+    </div>
 
-      <!-- Action buttons -->
-      <div class="flex gap-1">
-        <AppButton
-          variant="ghost"
-          size="sm"
-          @click="(e) => { e.stopPropagation(); openEditModal() }"
-          title="Editar título"
-        >
-          <PencilIcon class="w-4 h-4" />
-        </AppButton>
-        <AppButton
-          v-if="canMoveUp"
-          variant="ghost"
-          size="sm"
-          @click="(e) => { e.stopPropagation(); emit('move-up') }"
-          title="Mover tópico para cima"
-        >
-          <AppIcon name="chevron-up" size="sm" />
-        </AppButton>
-        <AppButton
-          v-if="canMoveDown"
-          variant="ghost"
-          size="sm"
-          @click="(e) => { e.stopPropagation(); emit('move-down') }"
-          title="Mover tópico para baixo"
-        >
-          <AppIcon name="chevron-down" size="sm" />
-        </AppButton>
-        <AppButton
-          variant="ghost"
-          size="sm"
-          @click="(e) => { e.stopPropagation(); confirmDelete() }"
-          title="Deletar tópico"
-        >
-          <TrashIcon class="w-4 h-4 text-red-500" />
-        </AppButton>
-      </div>
+    <!-- Action buttons -->
+    <div class="flex gap-1 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+      <AppButton
+        variant="ghost"
+        size="sm"
+        @click="(e) => { e.stopPropagation(); openEditModal() }"
+        title="Editar título"
+      >
+        <PencilIcon class="w-4 h-4" />
+      </AppButton>
+      <AppButton
+        v-if="canMoveUp"
+        variant="ghost"
+        size="sm"
+        @click="(e) => { e.stopPropagation(); emit('move-up') }"
+        title="Mover tópico para cima"
+      >
+        <AppIcon name="chevron-up" size="sm" />
+      </AppButton>
+      <AppButton
+        v-if="canMoveDown"
+        variant="ghost"
+        size="sm"
+        @click="(e) => { e.stopPropagation(); emit('move-down') }"
+        title="Mover tópico para baixo"
+      >
+        <AppIcon name="chevron-down" size="sm" />
+      </AppButton>
+      <AppButton
+        variant="ghost"
+        size="sm"
+        @click="(e) => { e.stopPropagation(); confirmDelete() }"
+        title="Deletar tópico"
+      >
+        <TrashIcon class="w-4 h-4 text-red-500" />
+      </AppButton>
     </div>
   </div>
 

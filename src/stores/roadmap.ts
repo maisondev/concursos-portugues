@@ -33,17 +33,17 @@ export const useRoadmapStore = defineStore('roadmap', () => {
       data.forEach((rm: any) => {
         roadmapMap[rm.id] = {
           id: rm.id,
-          title: rm.title,
+          title: rm.title || 'Roadmap sem título',
           description: rm.description,
           blocks: (rm.blocks || []).map((block: any) => ({
             id: block.id,
             order: block.order,
-            title: block.title,
+            title: block.title || 'Bloco sem título',
             priority: block.priority || 'normal',
             topics: (block.topics || []).map((topic: any) => ({
               id: topic.id,
               order: topic.order,
-              title: topic.title,
+              title: topic.title || 'Tópico sem título',
               description: topic.description,
               status: topic.status || 'nao_iniciado',
               resources: topic.resources || [],
