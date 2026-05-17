@@ -336,23 +336,24 @@ const isActive = (name: string) => route.name === name
           </button>
 
           <!-- User area -->
-          <div class="hidden sm:flex items-center gap-2">
-            <div v-if="!authStore.isLoggedIn" class="flex gap-2">
-              <AppButton
-                variant="secondary"
-                size="sm"
-                @click="openLogin"
-              >
-                Entrar
-              </AppButton>
-              <AppButton
-                variant="primary"
-                size="sm"
-                @click="openRegister"
-              >
-                Cadastro
-              </AppButton>
-            </div>
+          <div v-if="!authStore.isLoggedIn" class="flex items-center gap-3">
+            <AppButton
+              variant="secondary"
+              size="sm"
+              @click="openLogin"
+              class="hidden sm:inline-flex"
+            >
+              Entrar
+            </AppButton>
+            <AppButton
+              variant="primary"
+              size="md"
+              @click="openRegister"
+              class="inline-flex"
+            >
+              Começar
+            </AppButton>
+          </div>
             <div v-else class="relative">
               <!-- Profile button -->
               <button
