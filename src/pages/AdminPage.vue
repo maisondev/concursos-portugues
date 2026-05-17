@@ -329,13 +329,15 @@ async function confirmDeleteUser() {
     @submit="confirmDeleteUser"
     @cancel="showDeleteModal = false"
   >
-    <div class="space-y-4">
+    <div class="space-y-3">
       <p class="text-gray-700 dark:text-gray-300">
         Tem certeza que deseja deletar o usuário <strong>{{ userToDelete?.email }}</strong>?
       </p>
-      <p class="text-sm text-red-600 dark:text-red-400 font-semibold">
-        ⚠️ Esta ação não pode ser desfeita. Todos os roadmaps, logs e dados do usuário serão permanentemente removidos.
-      </p>
+      <div class="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+        <p class="text-xs text-red-600 dark:text-red-400 font-semibold leading-relaxed">
+          ⚠️ Esta ação não pode ser desfeita. Todos os roadmaps, logs e dados do usuário serão permanentemente removidos.
+        </p>
+      </div>
     </div>
   </AppModal>
 </template>

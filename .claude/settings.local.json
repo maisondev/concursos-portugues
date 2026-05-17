@@ -24,7 +24,10 @@
       "Bash(npx husky *)",
       "Bash(Start-Sleep -Seconds 5)",
       "Bash(Write-Output \"Aguardando deploy no Railway...\")",
-      "Bash(npx tsx *)"
+      "Bash(npx tsx *)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(netstat *)",
+      "PowerShell(Stop-Process *)"
     ]
   }
 }
