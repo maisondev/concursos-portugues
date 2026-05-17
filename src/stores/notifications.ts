@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useAuthStore } from './auth'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 export type NotificationType = 'info' | 'success' | 'warning' | 'error'
 
@@ -76,15 +79,83 @@ export const useNotificationsStore = defineStore('notifications', () => {
     notifications.value = []
   }
 
+  async function markAsReadSync(id: string) {
+    const authStore = useAuthStore()
+    if (!authStore.token) return
+
+    try {
+      await fetch(`${API_URL}/api/notifications/${id}/read`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${authStore.token}` }
+      })
+      markAsRead(id)
+    } catch (error) {
+      console.error('Erro ao sincronizar notificação:', error)
+    }
+  }
+
+  async function toggleReadSync(id: string) {
+    const authStore = useAuthStore()
+    if (!authStore.token) return
+
+    const notif = notifications.value.find(n => n.id === id)
+    if (!notif) return
+
+    try {
+      const endpoint = notif.read ? `/unread` : `/read`
+      await fetch(`${API_URL}/api/notifications/${id}${endpoint}`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${authStore.token}` }
+      })
+      toggleRead(id)
+    } catch (error) {
+      console.error('Erro ao sincronizar notificação:', error)
+    }
+  }
+
+  async function removeNotificationSync(id: string) {
+    const authStore = useAuthStore()
+    if (!authStore.token) return
+
+    try {
+      await fetch(`${API_URL}/api/notifications/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${authStore.token}` }
+      })
+      removeNotification(id)
+    } catch (error) {
+      console.error('Erro ao sincronizar notificação:', error)
+    }
+  }
+
+  async function markAllAsReadSync() {
+    const authStore = useAuthStore()
+    if (!authStore.token) return
+
+    try {
+      await fetch(`${API_URL}/api/notifications/mark-all-read`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${authStore.token}` }
+      })
+      markAllAsRead()
+    } catch (error) {
+      console.error('Erro ao sincronizar notificações:', error)
+    }
+  }
+
   return {
     notifications,
     unreadCount,
     sortedNotifications,
     addNotification,
     markAsRead,
+    markAsReadSync,
     toggleRead,
+    toggleReadSync,
     markAllAsRead,
+    markAllAsReadSync,
     removeNotification,
+    removeNotificationSync,
     clearAll
   }
 })

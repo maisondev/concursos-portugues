@@ -70,17 +70,10 @@ function getNotificationTypeLabel(type: string) {
       <div class="mb-6 flex flex-wrap items-center gap-3">
         <button
           v-if="notificationsStore.unreadCount > 0"
-          @click="notificationsStore.markAllAsRead()"
+          @click="notificationsStore.markAllAsReadSync()"
           class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
         >
           Marcar tudo como lido
-        </button>
-        <button
-          v-if="notificationsStore.notifications.length > 0"
-          @click="notificationsStore.clearAll()"
-          class="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 border border-red-300 dark:border-red-700 rounded-lg transition-colors"
-        >
-          Limpar tudo
         </button>
       </div>
 
@@ -166,7 +159,7 @@ function getNotificationTypeLabel(type: string) {
             <!-- Actions -->
             <div class="flex items-center gap-2 flex-shrink-0">
               <button
-                @click="notificationsStore.toggleRead(notif.id)"
+                @click="notificationsStore.toggleReadSync(notif.id)"
                 :class="[
                   'p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors',
                   notif.read
@@ -183,7 +176,7 @@ function getNotificationTypeLabel(type: string) {
                 />
               </button>
               <button
-                @click="notificationsStore.removeNotification(notif.id)"
+                @click="notificationsStore.removeNotificationSync(notif.id)"
                 class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 title="Remover"
               >

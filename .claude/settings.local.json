@@ -29,7 +29,8 @@
       "PowerShell(netstat *)",
       "PowerShell(Stop-Process *)",
       "Bash(env)",
-      "PowerShell(Get-NetTCPConnection *)"
+      "PowerShell(Get-NetTCPConnection *)",
+      "Bash(npx prisma *)"
     ]
   }
 }

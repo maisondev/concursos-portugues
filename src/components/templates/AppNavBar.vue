@@ -238,7 +238,7 @@ const isActive = (name: string) => route.name === name
                   <div class="flex items-center gap-2">
                     <button
                       v-if="notificationsStore.unreadCount > 0"
-                      @click="notificationsStore.markAllAsRead()"
+                      @click="notificationsStore.markAllAsReadSync()"
                       class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
                     >
                       Marcar tudo
@@ -267,7 +267,7 @@ const isActive = (name: string) => route.name === name
                     ]"
                   >
                     <div class="flex items-start justify-between gap-2">
-                      <div class="flex-1 min-w-0 cursor-pointer" @click="notificationsStore.markAsRead(notif.id)">
+                      <div class="flex-1 min-w-0 cursor-pointer" @click="notificationsStore.markAsReadSync(notif.id)">
                         <p class="font-semibold text-sm text-gray-900 dark:text-white">
                           {{ notif.title }}
                         </p>
@@ -280,7 +280,7 @@ const isActive = (name: string) => route.name === name
                       </div>
                       <div class="flex items-center gap-1 flex-shrink-0">
                         <button
-                          @click.stop="notificationsStore.toggleRead(notif.id)"
+                          @click.stop="notificationsStore.toggleReadSync(notif.id)"
                           class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                           :title="notif.read ? 'Marcar como não lido' : 'Marcar como lido'"
                         >
@@ -288,7 +288,7 @@ const isActive = (name: string) => route.name === name
                           <span v-else class="w-2 h-2 bg-gray-400 rounded-full inline-block"></span>
                         </button>
                         <button
-                          @click.stop="notificationsStore.removeNotification(notif.id)"
+                          @click.stop="notificationsStore.removeNotificationSync(notif.id)"
                           class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                         >
                           <XMarkIcon class="w-4 h-4" />

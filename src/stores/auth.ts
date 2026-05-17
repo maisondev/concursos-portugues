@@ -104,6 +104,38 @@ export const useAuthStore = defineStore('auth', () => {
       } catch (error) {
         console.error('Erro ao atualizar dados do usuário:', error)
       }
+
+      // Carregar notificações do servidor
+      loadNotificationsFromServer()
+    }
+  }
+
+  async function loadNotificationsFromServer() {
+    if (!token.value) return
+
+    try {
+      const response = await fetch(`${API_URL}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token.value}` }
+      })
+      if (response.ok) {
+        const serverNotifications = await response.json()
+        const notificationsStore = useNotificationsStore()
+
+        // Limpar notificações locais e carregar as do servidor
+        notificationsStore.clearAll()
+        for (const notif of serverNotifications) {
+          notificationsStore.notifications.value.push({
+            id: notif.id,
+            title: notif.title,
+            message: notif.message,
+            type: notif.type,
+            timestamp: new Date(notif.createdAt),
+            read: notif.read
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar notificações:', error)
     }
   }
 
@@ -131,6 +163,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       localStorage.setItem(STORAGE_KEY, token.value)
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user.value))
+
+      // Carregar notificações do servidor
+      await loadNotificationsFromServer()
 
       // Notificação de boas-vindas
       const notificationsStore = useNotificationsStore()
@@ -171,6 +206,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       localStorage.setItem(STORAGE_KEY, token.value)
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user.value))
+
+      // Carregar notificações do servidor
+      await loadNotificationsFromServer()
     } catch (error) {
       if (error instanceof Error && error.message.includes('Failed to fetch')) {
         throw new Error('Erro de conexão com o servidor')
