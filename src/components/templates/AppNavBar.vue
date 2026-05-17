@@ -567,11 +567,11 @@ const isActive = (name: string) => route.name === name
           </div>
 
           <!-- Drawer Content (Não logado) -->
-          <div v-else class="flex-1 overflow-y-auto px-3 py-4 space-y-3">
+          <div v-else class="flex-1 overflow-y-auto px-3 py-4 space-y-2">
             <!-- Public Navigation Items -->
             <button
               @click="router.push('/'); showMobileMenu = false"
-              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition-colors"
             >
               <HomeIcon class="w-5 h-5 flex-shrink-0" />
               <span>Início</span>
@@ -579,7 +579,7 @@ const isActive = (name: string) => route.name === name
 
             <button
               @click="router.push('/help'); showMobileMenu = false"
-              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition-colors"
             >
               <ChatBubbleLeftEllipsisIcon class="w-5 h-5 flex-shrink-0" />
               <span>Ajuda</span>
@@ -587,39 +587,55 @@ const isActive = (name: string) => route.name === name
 
             <button
               @click="router.push('/contact'); showMobileMenu = false"
-              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition-colors"
             >
               <MapIcon class="w-5 h-5 flex-shrink-0" />
               <span>Contato</span>
             </button>
 
             <!-- Divider -->
-            <div class="h-px bg-slate-700 my-4" />
+            <div class="h-px bg-slate-700 my-3" />
 
-            <!-- Theme Toggle -->
-            <button
-              @click="toggleTheme"
-              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 transition-colors"
-            >
-              <SunIcon v-if="settingsStore.settings.theme === 'dark'" class="w-5 h-5 flex-shrink-0" />
-              <MoonIcon v-else class="w-5 h-5 flex-shrink-0" />
-              <span>{{ settingsStore.settings.theme === 'dark' ? 'Modo claro' : 'Modo escuro' }}</span>
-            </button>
+            <!-- Ações (Feedback + Dark Mode) -->
+            <div class="flex gap-2">
+              <!-- Feedback -->
+              <button
+                @click="showFeedbackModal = true"
+                class="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+                title="Enviar Feedback"
+              >
+                <ChatBubbleLeftEllipsisIcon class="w-5 h-5 flex-shrink-0" />
+                <span class="hidden xs:inline">Feedback</span>
+              </button>
+
+              <!-- Theme Toggle -->
+              <button
+                @click="toggleTheme"
+                class="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+                :title="settingsStore.settings.theme === 'dark' ? 'Modo claro' : 'Modo escuro'"
+              >
+                <SunIcon v-if="settingsStore.settings.theme === 'dark'" class="w-5 h-5 flex-shrink-0" />
+                <MoonIcon v-else class="w-5 h-5 flex-shrink-0" />
+                <span class="hidden xs:inline">{{ settingsStore.settings.theme === 'dark' ? 'Claro' : 'Escuro' }}</span>
+              </button>
+            </div>
           </div>
 
           <!-- Drawer Footer (Não logado) -->
-          <div v-if="!authStore.isLoggedIn" class="border-t border-slate-700 p-4 space-y-3">
+          <div v-if="!authStore.isLoggedIn" class="border-t border-slate-700 p-3 space-y-2.5">
             <AppButton
               variant="secondary"
+              size="sm"
               @click="openLogin(); showMobileMenu = false"
-              class="w-full"
+              class="w-full text-xs sm:text-sm"
             >
               Entrar
             </AppButton>
             <AppButton
               variant="primary"
+              size="sm"
               @click="openRegister(); showMobileMenu = false"
-              class="w-full"
+              class="w-full text-xs sm:text-sm"
             >
               Criar conta
             </AppButton>
