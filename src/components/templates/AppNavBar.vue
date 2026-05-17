@@ -5,10 +5,11 @@ import { useSettingsStore } from '@/stores/settings'
 import { useDailyLogStore } from '@/stores/dailyLog'
 import { useAuthStore } from '@/stores/auth'
 import { useSync } from '@/composables/useSync'
-import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon, ShieldCheckIcon, ChatBubbleLeftEllipsisIcon, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+import { ArrowLeftIcon, HomeIcon, Cog6ToothIcon, SunIcon, MoonIcon, Bars3Icon, MapIcon, ChartBarIcon, ShieldCheckIcon, ChatBubbleLeftEllipsisIcon, EyeIcon, EyeSlashIcon, ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline'
 import AppButton from '@/components/atoms/AppButton.vue'
 import AppModal from '@/components/atoms/AppModal.vue'
 import FeedbackModal from '@/components/molecules/FeedbackModal.vue'
+import MD5 from 'crypto-js/md5'
 
 const router = useRouter()
 const route = useRoute()
@@ -25,6 +26,18 @@ const authError = ref<string | null>(null)
 const showFeedbackModal = ref(false)
 const showMobileMenu = ref(false)
 const showPassword = ref(false)
+const showProfileMenu = ref(false)
+
+function getGravatarUrl(userEmail: string): string {
+  const emailLower = userEmail.toLowerCase().trim()
+  const hash = MD5(emailLower).toString()
+  return `https://www.gravatar.com/avatar/${hash}?s=40&d=identicon`
+}
+
+const profileAvatarUrl = computed(() => {
+  if (authStore.user?.avatar) return authStore.user.avatar
+  return getGravatarUrl(authStore.userEmail || '')
+})
 
 function openLogin() {
   authMode.value = 'login'
@@ -180,9 +193,6 @@ const isActive = (name: string) => route.name === name
 
           <!-- User area -->
           <div class="hidden sm:flex items-center gap-2">
-            <div class="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/20 text-xs text-gray-700 dark:text-gray-200">
-              <span class="font-semibold">{{ authStore.isLoggedIn ? authStore.username : 'Visitante' }}</span>
-            </div>
             <div v-if="!authStore.isLoggedIn" class="flex gap-2">
               <AppButton
                 variant="secondary"
@@ -199,15 +209,77 @@ const isActive = (name: string) => route.name === name
                 Cadastro
               </AppButton>
             </div>
-            <AppButton
-              v-else
-              variant="ghost"
-              size="sm"
-              @click="handleLogout"
-              title="Sair"
-            >
-              Sair
-            </AppButton>
+            <div v-else class="relative">
+              <!-- Profile button -->
+              <button
+                @click="showProfileMenu = !showProfileMenu"
+                class="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <img
+                  :src="profileAvatarUrl"
+                  :alt="authStore.username"
+                  class="w-8 h-8 rounded-full"
+                />
+              </button>
+
+              <!-- Dropdown menu -->
+              <Transition
+                enter-active-class="transition ease-out duration-100"
+                enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100"
+                leave-to-class="transform opacity-0 scale-95"
+              >
+                <div
+                  v-if="showProfileMenu"
+                  class="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                >
+                  <!-- Profile header -->
+                  <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4">
+                    <div class="flex items-start gap-3">
+                      <img
+                        :src="profileAvatarUrl"
+                        :alt="authStore.username"
+                        class="w-12 h-12 rounded-full border-2 border-white"
+                      />
+                      <div class="flex-1 min-w-0">
+                        <p class="text-white font-semibold text-sm truncate">
+                          {{ authStore.username || 'Usuário' }}
+                        </p>
+                        <p class="text-blue-100 text-xs truncate">
+                          {{ authStore.userEmail }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Menu items -->
+                  <div class="py-1 border-t border-gray-200 dark:border-gray-700">
+                    <button
+                      @click="router.push('/settings'); showProfileMenu = false"
+                      class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      ⚙️ Configurações
+                    </button>
+                    <button
+                      @click="handleLogout(); showProfileMenu = false"
+                      class="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2"
+                    >
+                      <ArrowRightOnRectangleIcon class="w-4 h-4" />
+                      Sair
+                    </button>
+                  </div>
+                </div>
+              </Transition>
+
+              <!-- Close dropdown on outside click -->
+              <div
+                v-if="showProfileMenu"
+                @click="showProfileMenu = false"
+                class="fixed inset-0 z-40"
+              />
+            </div>
           </div>
 
           <!-- Mobile menu button -->
