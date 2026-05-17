@@ -497,7 +497,7 @@ const isActive = (name: string) => route.name === name
         <div
           v-if="showMobileMenu"
           :class="[
-            'fixed right-0 top-0 bottom-0 w-screen sm:w-80 shadow-lg z-50 md:hidden flex flex-col',
+            'fixed right-0 top-0 bottom-0 w-screen sm:w-80 max-w-full overflow-hidden shadow-lg z-50 md:hidden flex flex-col',
             authStore.isLoggedIn ? 'bg-white dark:bg-gray-800' : 'bg-slate-900'
           ]"
         >
