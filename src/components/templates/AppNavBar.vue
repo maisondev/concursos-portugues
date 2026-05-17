@@ -113,23 +113,21 @@ const isActive = (name: string) => route.name === name
     <div class="max-w-6xl mx-auto px-4">
       <!-- Main navbar -->
       <div class="flex items-center justify-between h-16">
-        <!-- Left section: back button -->
-        <div class="flex items-center gap-4">
-          <!-- Back button -->
-          <Transition name="fade">
+        <!-- Left section: back button (only shown when needed) -->
+        <Transition name="fade">
+          <div v-if="showBackButton" class="flex items-center gap-4">
             <button
-              v-if="showBackButton"
               @click="goBack"
               class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <ArrowLeftIcon class="w-4 h-4" />
               {{ backLabel }}
             </button>
-          </Transition>
-        </div>
+          </div>
+        </Transition>
 
         <!-- Center section: desktop navigation (only when logged in) -->
-        <div v-if="authStore.isLoggedIn" class="hidden md:flex items-center gap-1">
+        <div v-if="authStore.isLoggedIn" class="hidden md:flex items-center gap-1 flex-1 justify-center">
           <button
             v-for="item in navItems"
             :key="item.name"
