@@ -26,6 +26,7 @@ const authMode = ref<'login' | 'register'>('login')
 const email = ref('')
 const password = ref('')
 const fullName = ref('')
+const consentGiven = ref(false)
 const authError = ref<string | null>(null)
 const showFeedbackModal = ref(false)
 const showMobileMenu = ref(false)
@@ -69,6 +70,7 @@ function openLogin() {
   email.value = ''
   password.value = ''
   fullName.value = ''
+  consentGiven.value = false
   authError.value = null
   showPassword.value = false
   showAuthModal.value = true
@@ -79,6 +81,7 @@ function openRegister() {
   email.value = ''
   password.value = ''
   fullName.value = ''
+  consentGiven.value = false
   authError.value = null
   showPassword.value = false
   showAuthModal.value = true
@@ -89,7 +92,7 @@ async function submitAuth() {
   try {
     if (authMode.value === 'register') {
       await withLoading(
-        authStore.register(email.value, password.value, fullName.value),
+        authStore.register(email.value, password.value, fullName.value, consentGiven.value),
         'Criando sua conta...'
       )
     } else {
@@ -494,7 +497,7 @@ const isActive = (name: string) => route.name === name
         <div
           v-if="showMobileMenu"
           :class="[
-            'fixed right-0 top-0 bottom-0 w-72 shadow-lg z-50 md:hidden flex flex-col',
+            'fixed right-0 top-0 bottom-0 w-screen sm:w-80 shadow-lg z-50 md:hidden flex flex-col',
             authStore.isLoggedIn ? 'bg-white dark:bg-gray-800' : 'bg-slate-900'
           ]"
         >
@@ -680,6 +683,22 @@ const isActive = (name: string) => route.name === name
           </div>
         </div>
 
+        <div v-if="authMode === 'register'" class="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <input
+            id="navbar-consent"
+            v-model="consentGiven"
+            type="checkbox"
+            class="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded cursor-pointer flex-shrink-0"
+          />
+          <label for="navbar-consent" class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer leading-relaxed">
+            Li e aceito a
+            <router-link to="/privacidade" class="text-blue-600 dark:text-blue-400 hover:underline" @click="showAuthModal = false">Política de Privacidade</router-link>
+            e os
+            <router-link to="/termos" class="text-blue-600 dark:text-blue-400 hover:underline" @click="showAuthModal = false">Termos de Serviço</router-link>
+            do Sinapses. Estou ciente de como meus dados serão tratados conforme a LGPD.
+          </label>
+        </div>
+
         <p v-if="authError" class="text-sm text-red-600 dark:text-red-400">
           {{ authError }}
         </p>
@@ -687,7 +706,7 @@ const isActive = (name: string) => route.name === name
         <button
           type="button"
           class="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-          @click="authMode = authMode === 'login' ? 'register' : 'login'; authError = null"
+          @click="authMode = authMode === 'login' ? 'register' : 'login'; authError = null; consentGiven = false"
         >
           {{ authMode === 'login' ? 'Criar conta' : 'Já tenho conta' }}
         </button>
