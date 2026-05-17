@@ -145,21 +145,21 @@ function deleteBlock() {
   <div class="min-h-screen bg-white dark:bg-gray-900">
       <div class="max-w-[120rem] mx-auto p-4 2xl:px-8 min-[2560px]:px-12 min-[3840px]:max-w-[160rem] min-[3840px]:px-16 space-y-8">
       <!-- Breadcrumb Navigation -->
-      <nav class="flex items-center gap-3 mb-6" aria-label="Breadcrumb">
-        <ol class="flex items-center gap-2">
+      <nav class="flex items-center gap-2 mb-6 overflow-x-auto pb-2" aria-label="Breadcrumb">
+        <ol class="flex items-center gap-1 whitespace-nowrap">
           <li>
             <button
               @click="router.push('/')"
-              class="inline-flex items-center gap-1 px-2 py-1 rounded text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+              class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors flex-shrink-0"
             >
               <AppIcon name="home" size="sm" />
-              Início
+              <span class="hidden sm:inline">Início</span>
             </button>
           </li>
-          <li class="text-gray-400 dark:text-gray-600">
+          <li class="text-gray-400 dark:text-gray-600 flex-shrink-0">
             <AppIcon name="chevron-right" size="sm" />
           </li>
-          <li class="text-sm font-semibold text-gray-900 dark:text-white">
+          <li class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white truncate flex-shrink-0 max-w-xs sm:max-w-none">
             {{ roadmapStore.activeRoadmap.title }}
           </li>
         </ol>
