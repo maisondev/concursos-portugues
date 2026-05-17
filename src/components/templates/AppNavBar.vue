@@ -173,7 +173,7 @@ const isActive = (name: string) => route.name === name
           <!-- Logo (always shown) -->
           <button
             @click="router.push('/')"
-            class="py-2 px-2 rounded-lg hover:opacity-75 transition-opacity"
+            class="py-2 px-2 rounded-lg hover:opacity-75 transition-opacity focus:outline-none"
             title="Voltar para home"
           >
             <img src="@/assets/sinapses-logo.png" alt="Sinapses" class="h-32 w-auto object-contain" />
