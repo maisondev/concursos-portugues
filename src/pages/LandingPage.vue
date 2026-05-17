@@ -115,15 +115,15 @@ const footerLinks = [
 <template>
   <div class="min-h-screen bg-gradient-to-b from-blue-50 via-white to-purple-50 dark:from-slate-950 dark:to-slate-900">
     <!-- Hero Section -->
-    <section class="max-w-6xl mx-auto px-4 py-32">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+    <section class="max-w-6xl mx-auto px-4 py-16 sm:py-24 md:py-32">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 md:gap-16 items-center">
         <!-- Left side - Content -->
-        <div class="space-y-8">
+        <div class="space-y-6 sm:space-y-8">
           <div class="space-y-4">
-            <h1 class="text-6xl md:text-7xl font-bold text-slate-900 dark:text-white leading-tight">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-tight">
               Conecte seus <span class="bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">conhecimentos</span> em sinapses
             </h1>
-            <p class="text-xl text-slate-600 dark:text-slate-300">
+            <p class="text-lg sm:text-xl text-slate-600 dark:text-slate-300">
               Crie roadmaps de aprendizado, mapeie suas fontes e fortaleça suas conexões de conhecimento
             </p>
           </div>
@@ -216,13 +216,13 @@ const footerLinks = [
     </section>
 
     <!-- Benefits Section -->
-    <section class="border-y border-slate-200 dark:border-slate-800 py-24 bg-gradient-to-b from-blue-50 via-purple-50/50 to-cyan-50 dark:from-blue-950/20 dark:via-purple-950/20 dark:to-cyan-950/20">
+    <section class="border-y border-slate-200 dark:border-slate-800 py-16 sm:py-20 md:py-24 bg-gradient-to-b from-blue-50 via-purple-50/50 to-cyan-50 dark:from-blue-950/20 dark:via-purple-950/20 dark:to-cyan-950/20">
       <div class="max-w-6xl mx-auto px-4">
-        <div class="text-center mb-20">
-          <h2 class="text-5xl font-bold text-slate-900 dark:text-white mb-4">
+        <div class="text-center mb-12 sm:mb-16 md:mb-20">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4">
             Tudo para fortalecer suas sinapses
           </h2>
-          <p class="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+          <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
             Ferramentas completas para mapear, conectar e fortalecer seus conhecimentos
           </p>
         </div>
@@ -248,17 +248,17 @@ const footerLinks = [
     </section>
 
     <!-- Science Section -->
-    <section class="max-w-6xl mx-auto px-4 py-24">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+    <section class="max-w-6xl mx-auto px-4 py-16 sm:py-20 md:py-24">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
         <!-- Left: Text -->
-        <div class="space-y-6">
+        <div class="space-y-4 sm:space-y-6">
           <div>
-            <h2 class="text-4xl font-bold text-slate-900 dark:text-white mb-4">
+            <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4">
               Baseado em neurociência
             </h2>
-            <p class="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
               "Neurons that fire together, wire together" — Lei de Hebb
-              <span class="block text-sm mt-1 text-slate-500 dark:text-slate-400 italic">
+              <span class="block text-xs sm:text-sm mt-1 text-slate-500 dark:text-slate-400 italic">
                 "Neurônios que disparam juntos, se conectam"
               </span>
             </p>
@@ -359,13 +359,13 @@ const footerLinks = [
     </section>
 
     <!-- CTA Section -->
-    <section class="max-w-6xl mx-auto px-4 py-32 text-center bg-gradient-to-b from-transparent via-blue-50/30 to-purple-50/30 dark:via-blue-950/10 dark:to-purple-950/10 rounded-3xl">
-      <div class="space-y-8">
-        <div class="space-y-4">
-          <h2 class="text-5xl font-bold text-slate-900 dark:text-white">
+    <section class="max-w-6xl mx-auto px-4 py-16 sm:py-24 md:py-32 text-center bg-gradient-to-b from-transparent via-blue-50/30 to-purple-50/30 dark:via-blue-950/10 dark:to-purple-950/10 rounded-3xl">
+      <div class="space-y-6 sm:space-y-8">
+        <div class="space-y-3 sm:space-y-4">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
             Comece a conectar seus conhecimentos
           </h2>
-          <p class="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+          <p class="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
             Crie seu primeiro roadmap e fortaleça suas sinapses de aprendizado
           </p>
         </div>
