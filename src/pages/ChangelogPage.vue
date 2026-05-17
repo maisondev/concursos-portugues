@@ -1,6 +1,17 @@
 <script setup lang="ts">
 const changelog = [
   {
+    version: '1.5.0',
+    date: '2026-05-16',
+    features: [
+      'Perfil de usuário com nome e avatar customizável',
+      'Integração com Gravatar para avatares',
+      'Sistema de notificação por email com Nodemailer',
+      'Email de boas-vindas ao novo usuário',
+      'Breadcrumb responsivo com scroll no mobile'
+    ]
+  },
+  {
     version: '1.4.0',
     date: '2026-05-06',
     features: [
