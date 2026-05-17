@@ -12,10 +12,10 @@ const roadmapStore = useRoadmapStore()
 const authStore = useAuthStore()
 const { isLoading, loadingMessage } = useGlobalLoading()
 
-onMounted(() => {
+onMounted(async () => {
   settingsStore.initSettings()
-  authStore.init()
-  roadmapStore.initRoadmap()
+  await authStore.init()
+  await roadmapStore.initRoadmap()
 })
 </script>
 
