@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import SocialIcon from '@/components/atoms/SocialIcon.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -19,9 +20,9 @@ const mainLinks: FooterLink[] = [
 ]
 
 const socialLinks = [
-  { icon: '📷', url: 'https://www.instagram.com/sinapses.site/', label: 'Instagram' },
-  { icon: '𝕏', url: 'https://x.com/sinapsesite', label: 'Twitter/X' },
-  { icon: '✉️', url: 'mailto:hello@sinapses.site', label: 'Email' }
+  { icon: 'instagram', url: 'https://www.instagram.com/sinapses.site/', label: 'Instagram' },
+  { icon: 'twitter', url: 'https://x.com/sinapsesite', label: 'Twitter/X' },
+  { icon: 'email', url: 'mailto:hello@sinapses.site', label: 'Email' }
 ]
 
 const handleNavigation = (link: FooterLink) => {
@@ -90,9 +91,9 @@ const handleNavigation = (link: FooterLink) => {
                 :title="social.label"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary hover:bg-slate-200 dark:hover:bg-gray-600 transition-all"
+                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 dark:bg-gray-700 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-all"
               >
-                <span class="text-lg">{{ social.icon }}</span>
+                <SocialIcon :icon="social.icon" :size="24" />
               </a>
             </div>
           </div>
